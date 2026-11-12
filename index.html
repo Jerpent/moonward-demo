@@ -640,7 +640,7 @@ const FILM_TEXT = {
 const BRIAR_REVEAL = 75;
 const auroraKnown = () => P('briar') >= BRIAR_REVEAL;
 const briarName = () => (auroraKnown() ? 'Aurora' : 'Briar Rose');
-const auroraText = (text, afterReveal) => (afterReveal && auroraKnown() ? String(text).replace(/Briar Rose/g, 'Aurora') : text);
+const auroraText = (text, afterReveal) => (text = typeof text === 'function' ? text() : text, afterReveal && auroraKnown() ? String(text).replace(/Briar Rose/g, 'Aurora') : text);
 
 const lightOn = () => P('fairies') >= 25 && !!S.flags.film;
 const has = id => !!(S.album && S.album[id]);
@@ -670,7 +670,7 @@ const MILESTONES = {
     [15, 'Frog and Toad live side by side by the brook. Frog saw Nyla trot past at dawn, very politely, tail up, following something sparkly. Toad was asleep and is grumpy he missed her. (Toad is grumpy until someone brings him cookies, and then he eats all of them, and then he is grumpy about that.)'],
     [25, 'Toad\'s calendar is stuck on the same page. Frog tears it off for him every morning, and every morning it\'s the same page again. "Do you ever feel like it\'s always today?" Frog asks. You do. You don\'t have time to say so.'],
     [35, 'Miffy, a small, plainly drawn white bunny, sits in the clover with a sketchbook. She hasn\'t seen Nyla, but she draws her for you, so you can show people. It looks exactly like her.'],
-    [45, 'A scruffy grey hare in a coat too big for him plays a wooden flute by the path. "Looking for someone?" He points his flute toward the brook. When you look back, he\'s gone.'],
+    [45, 'A scruffy grey squirrel in a coat too big for him sits on a fence post, playing a wooden flute. "Looking for someone?" He points his flute toward the brook. When you look back, there\'s only an acorn on the post.'],
     [50, 'You\'ve called her name from every corner of the meadow. She isn\'t here. She\'s across the brook.'],
     [60, 'Toad lost a button. It\'s a different button every day. You find it every day, on your way past.'],
     [70, 'Frog and Toad are having a picnic of their own by the brook. Toad saved a cookie for Nyla. Only one. He looks very proud of himself.'],
@@ -1588,7 +1588,7 @@ function syncStars() {
 const KEEP_MILESTONES = Object.assign({ owl50: "Owl's wisdom", tortoise100: "Grandpa Tortoise's early mornings", get briar80() { return briarName() + "'s moonstone"; } },
   Object.fromEntries(FAIRIES.map(([at, , nm]) => ['fairies' + at, 'Friends with ' + nm])));
 
-const heldBear = text => !!(S && S.flags && S.flags._x33) && bearLostNow() && /\bBear\b/.test(text);
+const heldBear = text => !!(S && S.flags && S.flags._x33) && bearLostNow() && /\bBear\b/.test(typeof text === 'function' ? text() : text);
 function releaseHeldLore() {
   if (PRED || bearLostNow() || !(S.heldLore || []).length) return;
   for (const [id, at] of S.heldLore) {
