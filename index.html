@@ -881,7 +881,7 @@ const pctOfExp = (exp, k) => Math.min(100, (-9 + Math.sqrt(81 + 4 * exp / k)) / 
 const pctRaw = id => pctOfExp(S.track[id], TRACKS[id].k);
 const P = id => Math.floor(id === 'burrow' && S.prologueTrack ? Math.max(pctRaw(id), pctOfExp(S.prologueTrack, TRACKS.burrow.k)) : pctRaw(id));
 
-const moonIdx = () => (S.loop - 1 + (inBook() ? S.books[S.away.id].day || 0 : 0)) % 8;
+const moonIdx = () => (inBook() && S.away.id === '_x246' ? 4 : (S.loop - 1 + (inBook() ? S.books[S.away.id].day || 0 : 0)) % 8);
 const moonLight = () => (1 - Math.cos(2 * Math.PI * moonIdx() / 8)) / 2;
 const moonHealed = () => S.moonPieces || 0;
 
