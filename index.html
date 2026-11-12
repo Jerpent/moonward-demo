@@ -1351,6 +1351,8 @@ function clearSpent(id) {
 function listJoin(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }
 const visible = a => !a.pro === !inPrologue() && actOf(a) <= S.act && zoneOpen(a.zone) && (!a.visible || a.visible());
 
+const runnable = a => visible(a) || (!!a.planOnly && a.planOnly());
+
 const ONCE_A_DAY = new Set(('spelljar hedgehog coax'
   + '_x44 _x24 _x6').split(' '));
 
@@ -1639,7 +1641,7 @@ function currentEntry() {
 
     if (L.skipped[e.uid]) {
       const a = A[e.id], wb = !!((e.bear || a.bearOnly) && canBear(a) && bearAvail());
-      if (canStart(a, wb)) continue;
+      if (!runnable(a) || canStart(a, wb)) continue;
       delete L.skipped[e.uid]; dirty.plan = true;
     }
     L.qi = i; switchTo(e); return e;
@@ -1732,7 +1734,7 @@ function step(mins) {
     }
     const a = A[e.id];
 
-    if (!L.started && !visible(a)) { L.skipped[e.uid] = a.id === '_x109' ? 'No new moon tonight' : 'Not available today'; L.done[e.uid] = L.done[e.uid] || 0; dirty.plan = true; continue; }
+    if (!L.started && !runnable(a)) { L.skipped[e.uid] = a.id === '_x109' ? 'No new moon tonight' : 'Not available today'; L.done[e.uid] = L.done[e.uid] || 0; dirty.plan = true; continue; }
     if (!L.started && a._x92) {
       const t = a._x92();
       if (t != null && L.time < t - 1e-9) { const w = Math.min(mins, t - L.time, left); L.time += w; mins -= w; L.idleUntil = t; continue; }
