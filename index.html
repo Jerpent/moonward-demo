@@ -161,6 +161,19 @@ section, .side > div { min-width: 0; }
 .plan li.drop-before { box-shadow: inset 0 3px 0 var(--honey); }
 .plan li.drop-after { box-shadow: inset 0 -3px 0 var(--honey); }
 body.dragging-plan, body.dragging-plan * { cursor: grabbing !important; user-select: none; }
+.sb-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0 12px; }
+.sb-tabs .btn { font-size: 12px; padding: 3px 8px; }
+.sb-tabs small { opacity: .7; font-weight: 600; }
+.sb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 10px; }
+.sticker { position: relative; border: 2px dashed var(--line); border-radius: 12px; padding: 10px 8px; text-align: center; display: grid; gap: 4px; font-size: 13px; }
+.sticker .ic { font-size: 30px; line-height: 1.1; filter: grayscale(1); opacity: .3; }
+.sticker small { color: var(--muted); font-size: 12px; }
+.sticker .kind { position: absolute; top: 4px; right: 6px; font-size: 11px; opacity: .7; }
+.sticker.got { border-style: solid; border-color: var(--moon); background: color-mix(in srgb, var(--moon) 10%, var(--panel)); }
+.sticker.got .ic { filter: none; opacity: 1; }
+.sticker.peel { animation: peel .8s ease-out; }
+@keyframes peel { 0% { transform: rotate(-10deg) scale(.6); opacity: 0; } 60% { transform: rotate(3deg) scale(1.08); opacity: 1; } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .sticker.peel { animation: none; } }
 .tpl-box { display: grid; gap: 4px; margin: 6px 0 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px; }
 .tpl-box .tpl-row { display: flex; align-items: center; gap: 4px; }
 .tpl-box .tpl-row .tn { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
@@ -796,6 +809,7 @@ function normalize(s) {
   out._x41 = Array.isArray(out._x41) ? out._x41 : [];
   out.skills = Object.assign({}, out.skills);
   out.bearDone = Object.assign({}, out.bearDone);
+  out.stickers = Object.assign({}, out.stickers);
   out.ui.panels = Object.assign({}, out.ui.panels); out.ui.groups = Object.assign({}, out.ui.groups);
   out.outfits = Object.assign({}, out.outfits);
   out.shrines = Object.assign({ plateau: 0, old: 0 }, out.shrines);
@@ -1381,6 +1395,94 @@ function canStart(a, withBear) {
   return null;
 }
 
+const STICKER_PAGES = [
+  { name: "The Hollow", open: () => true },
+  { name: "The Burrow", open: () => true },
+  { name: "Photos and Paintings", open: () => true },
+  { name: "The Sky", open: () => true },
+];
+const STICKERS = [
+  { id: "tidy_burrow", page: "The Hollow", icon: "🧹", name: "Tidy Burrow", how: "Finish the prologue.", caption: "Not a crumb out of place.", kind: "along", test: () => !inPrologue() && S.loop >= 1 },
+  { id: "found_her", page: "The Hollow", icon: "🐶", name: "Found Her!", how: "Find Nyla in Act I.", caption: "She was being very polite about it.", kind: "along", test: () => !!S.flags.metNyla },
+  { id: "same_spot", page: "The Hollow", icon: "🧺", name: "Same Spot", how: "Finish Act I.", caption: "There you are.", kind: "along", test: () => !!S.flags.act1 },
+  { id: "first_spell_jar", page: "The Hollow", icon: "🫙", name: "First Spell Jar", how: "Fill a Moonlit Spell Jar once.", caption: "A little moonlight, saved for later.", kind: "along", test: () => did('spelljar') >= 1 },
+  { id: "early_to_the_hollow", page: "The Hollow", icon: "🐝", name: "Early to the Hollow", how: "Reach Honey Hollow with more than 60% of the day left.", caption: "The bees weren't even up yet.", kind: "plan", test: () => !!stk().earlyHollow },
+  { id: "every_talent", page: "The Hollow", icon: "🧚", name: "Every Talent", how: "Friends with the talent fairies at 100%.", caption: "Tinker Bell underlined it twice.", kind: "keep", test: () => pct('fairies') >= 100 },
+  { id: "petal_pusher", page: "The Hollow", icon: "🌸", name: "Petal Pusher", how: "Pick Moonpetals 100 times.", caption: "Your paws smell like moonlight.", kind: "keep", test: () => did('petals') >= 100 },
+  { id: "moon_juice", page: "The Burrow", icon: "🌙", name: "Moon Juice", how: "Make moon water 100 times.", caption: "Bear still calls it moon juice.", kind: "keep", test: () => did('moonwater') >= 100 },
+  { id: "windowsill_glow", page: "The Burrow", icon: "🪟", name: "Windowsill Glow", how: "Make moon water and fill a spell jar on the same day, 10 times.", caption: "Everything you love, in a row on the sill.", kind: "keep", test: () => (stk().sill || 0) >= 10 },
+  { id: "hazel_s_best_work", page: "The Burrow", icon: "🧺", name: "Hazel's Best Work", how: "Reach the largest basket.", caption: "Room for everything.", kind: "keep", test: () => (S.basketTier || 0) >= BASKET_TIERS.length - 1 },
+  { id: "mastered", page: "The Burrow", icon: "⭐", name: "Mastered", how: "Reach Mastery 10 on any step.", caption: "You could do it with your eyes closed. Don't.", kind: "keep", test: () => Object.values(S.mastery).some(n => n >= 100) },
+  { id: "full_moon_nights", page: "The Burrow", icon: "🌕", name: "Full-Moon Nights", how: "Use moon water on 5 different full-moon days.", caption: "She noticed.", kind: "keep", test: () => (stk().fullMoons || []).length >= 5 },
+  { id: "say_cheese", page: "Photos and Paintings", icon: "📷", name: "Say Cheese", how: "Take your first photo.", caption: "Light, with somewhere to live.", kind: "along", test: () => Object.keys(S.album || {}).length >= 1 },
+  { id: "full_roll", page: "Photos and Paintings", icon: "🎞️", name: "Full Roll", how: "Fill the film cartridge.", caption: "Every frame a good one.", kind: "along", test: () => !!S.flags.film },
+  { id: "golden_hour", page: "Photos and Paintings", icon: "🌅", name: "Golden Hour", how: "Take the photo Golden Hour over Honey Hollow.", caption: "The best light of the day.", kind: "plan", test: () => has('hollowGold') },
+  { id: "every_spot", page: "Photos and Paintings", icon: "🖼️", name: "Every Spot", how: "Take every photo spot in the game.", caption: "A whole album of you two.", kind: "keep", heavy: true, test: () => PHOTO_SPOTS.every(p => has(p.id)) },
+  { id: "rising_sign", page: "The Sky", icon: "♋", name: "Rising Sign", how: "Light Cancer.", caption: "Her own sign, rising over your home.", kind: "along", test: () => !!S.signs.cancer },
+  { id: "every_phase", page: "The Sky", icon: "🌒", name: "Every Phase", how: "See all eight moon phases.", caption: "New to full and back.", kind: "keep", test: () => (stk().phases || []).length >= 8 },
+];
+const STICKER_KIND = { along: ['🌱', 'Along the way'], plan: ['🧭', 'A little planning'], keep: ['🔁', 'Keep at it'] };
+const stk = () => (S.stk = S.stk || {});
+const pct = id => (TRACKS[id] ? P(id) : 0);
+const addTo = (k, v) => { const a = stk()[k] = stk()[k] || []; if (!a.includes(v)) a.push(v); };
+function loreFound() {
+  let n = 0;
+  for (const [id, ls] of Object.entries(ACTION_LORE)) if (A[id]) for (const [k] of ls) if (did(id) >= k) n++;
+  for (const [t, ls] of Object.entries(MILESTONES)) if (TRACKS[t]) for (const [at] of ls) if (P(t) >= at) n++;
+  return n;
+}
+
+function stickerEvent(a) {
+  if (PRED || S.revisit) return;
+  const f = L.time / dayLen(), s = stk();
+  L.didToday = L.didToday || {}; L.didToday[a.id] = true;
+  if (a.travel) { L.zonesToday = L.zonesToday || {}; L.zonesToday[a.to] = true; }
+  if (a.travel && a.to === 3 && f < 0.4) s.earlyHollow = 1;
+  if (a.id === 'moonwater' && moonLight() > 0.99) addTo('fullMoons', S.loop);
+}
+
+function stickerDay() {
+  if (PRED || S.revisit) return;
+  const z = L.zonesToday || {}, s = stk(), d = L.didToday || {};
+  if (d.moonwater && d.spelljar) s.sill = (s.sill || 0) + 1;
+}
+
+function stickerDawn() {
+  if (PRED || S.revisit) return;
+  const s = stk();
+  addTo('phases', moonIdx());
+  const f = S.focus || null;
+  s.focusStreak = f && f === s.lastFocus ? (s.focusStreak || 0) + 1 : (f ? 1 : 0); s.lastFocus = f;
+}
+function checkStickers(full) {
+  if (PRED || S.revisit) return;
+  S.stickers = S.stickers || {};
+  const fresh = [];
+  for (const st of STICKERS) {
+    if (S.stickers[st.id] || (st.heavy && !full)) continue;
+    let ok = false; try { ok = st.test(); } catch (e) { ok = false; }
+    if (ok) { S.stickers[st.id] = S.loop; S.stickerNew = S.stickerNew || {}; S.stickerNew[st.id] = true; fresh.push(st); }
+  }
+  if (fresh.length > 3) { toast(`📒 ${fresh.length} new stickers`); story(`📒 ${fresh.length} new stickers for the book: ${fresh.map(st => st.icon + ' ' + st.name).join(', ')}. The book is in the burrow.`); }
+  else for (const st of fresh) { toast(`📒 New sticker: ${st.icon} ${st.name}`); story(`📒 A new sticker for the book: ${st.icon} ${st.name}. ${st.caption}`); }
+  if (fresh.length) burrowSig = '';
+}
+let stickerPage = null;
+const stickerPagesOpen = () => STICKER_PAGES.filter(p => { try { return p.open(); } catch (e) { return false; } });
+function stickerBookHtml() {
+  const pages = stickerPagesOpen();
+  if (!pages.some(p => p.name === stickerPage)) stickerPage = pages[0].name;
+  const got = id => !!(S.stickers || {})[id], onPage = STICKERS.filter(st => st.page === stickerPage);
+  const tabs = pages.map(p => { const list = STICKERS.filter(st => st.page === p.name), n = list.filter(st => got(st.id)).length;
+    return `<button type="button" class="btn${p.name === stickerPage ? ' primary' : ''}" data-sbpage="${esc(p.name)}">${esc(p.name)} <small>${n}/${list.length}</small></button>`; }).join('');
+  const cells = onPage.map(st => { const g = got(st.id), isNew = g && (S.stickerNew || {})[st.id], [ki, kt] = STICKER_KIND[st.kind];
+    return `<div class="sticker${g ? ' got' : ''}${isNew ? ' peel' : ''}" title="${esc(g ? st.how : kt + ': ' + st.how)}"><div class="ic">${st.icon}</div><b>${esc(st.name)}</b>${g ? `<small>${esc(st.caption)}</small>` : ''}<span class="kind" title="${esc(kt)}">${ki}</span></div>`; }).join('');
+  for (const st of onPage) if (S.stickerNew && S.stickerNew[st.id]) delete S.stickerNew[st.id];
+  const total = STICKERS.filter(st => pages.some(p => p.name === st.page)), have = total.filter(st => got(st.id)).length;
+  return `<p class="hint">Nothing in this book can be missed: every sticker can still be earned on any later morning. ${have} of ${total.length} so far.</p><div class="sb-tabs">${tabs}</div><div class="sb-grid">${cells}</div>`;
+}
+function openStickerBook() { showModal('The Sticker Book', stickerBookHtml(), [['Close', null]]); saveSoon(); }
+
 const CRY_KINDS = [];
 const CRY_GUESTS = [];
 const cryWin = () => false;
@@ -1546,6 +1648,7 @@ function complete(a, e) {
   const withBear = L.withBear;
   const mBefore = mLvl(a.id);
   S.mastery[a.id] = (S.mastery[a.id] || 0) + 1;
+  stickerEvent(a);
   if (withBear) { S.bearDone = S.bearDone || {}; S.bearDone[a.id] = (S.bearDone[a.id] || 0) + 1; }
   if (a.mystery && S.mastery[a.id] === a.mystery[0]) story('🔎 Mystery solved: ' + a.mystery[2], 'big');
   if (mLvl(a.id) > mBefore && mLvl(a.id) % 5 === 0) story(`You've done "${a.name}" so many times you could do it in your sleep. Mastery ${mLvl(a.id)}.`);
@@ -1566,6 +1669,7 @@ function complete(a, e) {
     if (!PRED) { S.spellbook = S.spellbook || {}; if (!S.spellbook[k]) { S.spellbook[k] = true; story('🕯️ New in your spellbook: ' + candleText(e.recipe)); } }
   }
   const eff = withBear && a.bear && a.bear.effect ? a.bear.effect : a.effect;
+  setTimeout(() => checkStickers(false), 0);
   if (a.limited) { L.used[a.id] = (L.used[a.id] || 0) + 1; if (eff) eff(); }
   else if (a.good) {
     const g = goodState(a);
@@ -1659,6 +1763,7 @@ const dayLabel = () => `Day ${S.act + 1}, morning ${morningNo()}`;
 function afterDawn() {}
 function endDay(reason) {
   if (PRED) { PRED.end = reason; return; }
+  if (reason !== 'revisit' && reason !== 'prologue') { stickerDay(); checkStickers(true); }
   if (reason === 'revisit') { leaveRevisit(); return; }
   if (reason === 'prologue') { L = freshLoop(); viewZone = 0; predDirty = true; dirty.all = true; saveLocal(); return; }
   const changes = [];
@@ -1683,6 +1788,7 @@ function endDay(reason) {
     story('🌙 The Moon whispers: Loose light can\'t remember anything, little one. I take it back at dawn without meaning to. Build something with it, and it will have a shape to remember.', 'moon');
   }
   S.loop++;
+  stickerDawn();
   afterDawn();
   if (focusOn() && S.focus) { S.focusDays = S.focusDays || {}; for (const k of focusSet()) S.focusDays[k] = (S.focusDays[k] || 0) + 1; }
   if (bearLostNow() && lostMorning() > 1) story('🐻 The doormat is empty again. Nyla waits by the door, then comes along when you ask.', 'loop');
@@ -1996,7 +2102,7 @@ function applyUnlocks() {
   $('signPanel').hidden = !U('signs');
   $('revisitBar').hidden = !S.revisit;
   $('revisitBtn').hidden = !!S.revisit || inPrologue();
-  $('burrowPanel').hidden = !(U('_x35') || U('photowall') || U('_x19') || U('candles') || U('outfits') || U('painting'));
+  $('burrowPanel').hidden = !(Object.keys(S.stickers || {}).length || U('_x35') || U('photowall') || U('_x19') || U('candles') || U('outfits') || U('painting'));
 }
 
 const dirty = { all: true, actions: true, plan: true, journal: true, signs: true };
@@ -2418,10 +2524,14 @@ const times = n => { n = n || 0; return n === 1 ? 'once' : n + ' times'; };
 let burrowSig = '';
 function renderBurrow() {
   if ($('burrowPanel').hidden) return;
-  const sig = JSON.stringify([U('painting'), S.gallery, S.paint, fame(), U('outfits'), S.outfits, S.flags._x20, L.outfit, S.signs._x117, U('candles'), S.spellbook, S.flags._x4, S.album, S.mastery.moonwater, S.mastery.spelljar, U('_x35'), U('photowall'), U('_x19'), S.drift, moonIdx(), PHOTO_SPOTS.map(sp => sp.known())]);
+  const sig = JSON.stringify([S.stickers, S.stickerNew, U('painting'), S.gallery, S.paint, fame(), U('outfits'), S.outfits, S.flags._x20, L.outfit, S.signs._x117, U('candles'), S.spellbook, S.flags._x4, S.album, S.mastery.moonwater, S.mastery.spelljar, U('_x35'), U('photowall'), U('_x19'), S.drift, moonIdx(), PHOTO_SPOTS.map(sp => sp.known())]);
   if (sig === burrowSig) return;
   burrowSig = sig;
   let h = '';
+  if (Object.keys(S.stickers || {}).length) {
+    const n = Object.keys(S.stickers).length, nn = Object.keys(S.stickerNew || {}).length;
+    h += `<div class="corner"><h3>📒 The Sticker Book</h3><p>${n} sticker${n === 1 ? '' : 's'} so far${nn ? ` · <b>${nn} new</b>` : ''}. One page for each world, and a few for everything in between.</p><button type="button" class="btn" data-stickers>Open the book</button></div>`;
+  }
   if (U('_x35')) {
     h += `<div class="corner"><h3>🫙 The windowsill</h3><p>Today's moon water would add ${fmtDur(Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x60')) + (farDone('_x1') ? 20 : 0))} of daylight (the fuller the moon, the stronger). A spell jar doubles talent growth for the day.</p></div>`;
   }
@@ -2854,6 +2964,8 @@ function recordBeat(title, html) {
 const markSeen = key => { S.seenAt = S.seenAt || {}; if (!S.seenAt[key]) S.seenAt[key] = nowStamp(); };
 
 const modalQ = [];
+
+document.addEventListener('click', ev => { const t = ev.target.closest && ev.target.closest('[data-sbpage]'); if (!t) return; stickerPage = t.dataset.sbpage; $('mBody').innerHTML = stickerBookHtml(); burrowSig = ''; saveSoon(); });
 function showModal(title, html, btns) {
   if (PRED) return;
   if (!$('modal').hidden) { modalQ.push([title, html, btns]); return; }
@@ -3038,7 +3150,7 @@ function demoCarryOver() {
   S.bear.unlocked = true; startAct(1); return true;
 }
 function adopt(save) {
-  S = normalize(save); retroTemplates(); migrateSkills(); const carried = demoCarryOver(); L = freshLoop(); viewZone = L.zone; dirty.all = true; saveLocal();
+  S = normalize(save); retroTemplates(); migrateSkills(); const carried = demoCarryOver(); L = freshLoop(); viewZone = L.zone; checkStickers(true); dirty.all = true; saveLocal();
   if (carried) showModal(ACTS[1].name, ACTS[1].intro, [['Wake up', null]]);
 }
 
@@ -3102,6 +3214,7 @@ $('unhideLore').addEventListener('click', () => {
 });
 $('showHidden').addEventListener('change', ev => { S.opts.showHidden = ev.target.checked; saveSoon(); dirty.actions = true; render(); });
 $('burrow').addEventListener('click', ev => {
+  if (ev.target.closest('[data-stickers]')) { openStickerBook(); return; }
   const add = ev.target.closest('[data-candle-add]');
   if (add) { const box = add.closest('.candles'), v = k => box.querySelector(`[data-cpart="${k}"]`).value; addCandle({ c: v('c'), h: v('h'), l: v('l') }); return; }
   if (ev.target.matches && ev.target.matches('[data-paint-next]')) return;
@@ -3245,6 +3358,7 @@ function start(data) {
     setTimeout(() => toast(`Welcome back. ${fmtSecs(away)} of moonlight stored while you were away.`), 600);
   }
   L = (data && data.loop) ? data.loop : freshLoop();
+  checkStickers(true);
   viewZone = L.zone;
   sizeSky();
   setSpeed(0);
