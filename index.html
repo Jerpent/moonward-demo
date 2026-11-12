@@ -509,7 +509,7 @@ const BASE_DAY = 6 * 60;
 const HEALED_DAY = 120;
 const DAWN = 6 * 60;
 const MAX_BANK_BASE = 14 * 24 * 3600;
-const maxBank = () => MAX_BANK_BASE * (S && S.flags && S.flags._xfar ? 1.5 : 1) * (S && (S._x296 || []).includes('light') ? 2 : 1);
+const maxBank = () => MAX_BANK_BASE * (S && S.flags && S.flags._xfar ? 1.5 : 1) * (S && (S._x299 || []).includes('light') ? 2 : 1);
 const MOON_PIECES = 12;
 
 const STAT_KEYS = ['hop', 'sniff', 'charm', 'smarts', 'grit'];
@@ -533,7 +533,7 @@ const BEAR_TAGS = {
   social: { mult: .9,  skill: 'heart',    note: 'A little faster with Bear: everyone likes Bear' },
   brave:  { mult: .85, skill: 'bravery',  note: 'A little faster with Bear: he goes first' },
   sneak:  { mult: 1.6, skill: 'heart',    note: 'Slower with Bear: he is not subtle' },
-  _x316:   { mult: .9,  skill: 'heart',    note: 'A little faster with Bear: good company' },
+  _x319:   { mult: .9,  skill: 'heart',    note: 'A little faster with Bear: good company' },
 };
 
 const MOON_PHASES = [
@@ -610,7 +610,7 @@ const GOODS = [
   'petals',
   'dust',
 ];
-const TOOLS = ['hamper', 'rope', 'lantern', '_x76', 'rose', 'stones', 'carrot', 'cocoatin', 'bubbles', 'bookspot', 'storybook'];
+const TOOLS = ['hamper', 'rope', 'lantern', '_x77', 'rose', 'stones', 'carrot', 'cocoatin', 'bubbles', 'bookspot', 'storybook'];
 const BASKET_TIERS = [12, 16, 20, 26];
 
 const PHOTO_SPOTS = [
@@ -638,7 +638,7 @@ for (const sp of PHOTO_SPOTS) {
     const left = dayLen() - L.time, k = sp.left[0], x = spotMark(sp);
     return (k === 'more' ? left > x : left <= x) ? null : 'Only with ' + spotWindowText(sp).toLowerCase();
   };
-  if (sp.left && sp.left[0] === 'less') sp._x190 = () => (!sp.onlyIf || sp.onlyIf() ? dayLen() - spotMark(sp) : null);
+  if (sp.left && sp.left[0] === 'less') sp._x192 = () => (!sp.onlyIf || sp.onlyIf() ? dayLen() - spotMark(sp) : null);
 }
 
 const FILM_TEXT = {
@@ -764,11 +764,11 @@ const PROJECT_BEATS = {
   ],
 };
 
-const florinOn = () => !!S.flags._x328 && !S.flags._x238;
+const florinOn = () => !!S.flags._x331 && !S.flags._x240;
 const MOON_HINTS = [
   [() => S.act === 0 && S.loop <= 2, '...little one... can you hear me? ...a piece of me fell into the woods... your dog went after it... look for her trail...'],
   [() => S.act === 0 && P('meadow') < 6, 'Ask around the meadow first. Someone here saw which way she went.'],
-  [() => P('fairies') >= 25 && !S.flags.film && (P('fairies') >= 40 || (S.flags._x158 != null && S.loop - S.flags._x158 >= 5)), FILM_TEXT.hint],
+  [() => P('fairies') >= 25 && !S.flags.film && (P('fairies') >= 40 || (S.flags._x160 != null && S.loop - S.flags._x160 >= 5)), FILM_TEXT.hint],
   [() => lightOn() && !Object.keys(S.album || {}).length, 'Catch the light where it is prettiest. Some places only shine at certain times. Watch the light.'],
   [() => S.act === 0 && P('tortoise') > 0 && P('tortoise') < 10, 'Grandpa Tortoise knows a way across the brook. He is only slow to say it.'],
   [() => S.act === 0 && P('tortoise') >= 10 && !S.reached[1], 'The brook is shallow by the willow. Cross it, little one.'],
@@ -793,8 +793,8 @@ function freshSave() {
     seen: {}, reached: { 0: true }, flags: { held: false }, signs: {},
     mastery: {}, proj: {},
     bear: { unlocked: false, skill: blank(BEAR_KEYS), knack: {} },
-    _x330: { ans: [0, 1, 2].map(() => (Math.random() < .5 ? 'left' : 'right')), known: [null, null, null] },
-    _x338: { ans: [0, 1].map(() => ['sweet', 'sad', 'true'][Math.floor(Math.random() * 3)]).concat(['true']), tried: [[], [], []] },
+    _x333: { ans: [0, 1, 2].map(() => (Math.random() < .5 ? 'left' : 'right')), known: [null, null, null] },
+    _x341: { ans: [0, 1].map(() => ['sweet', 'sad', 'true'][Math.floor(Math.random() * 3)]).concat(['true']), tried: [[], [], []] },
     queue: [],
     journal: [], speed: 1, wins: 0, savedAt: 0, lastSeen: Date.now(), bank: 0, introSeen: false,
     lastHint: '', lastHintLoop: 0, moonPieces: 0, unlocked: {}, album: {}, basketTier: 0, tut: 0, notices: [], noticeSeq: 1,
@@ -817,7 +817,7 @@ function normalize(s) {
   out.album = Object.assign({}, out.album);
   if (Object.keys(out.album).length) out.flags = Object.assign({}, out.flags, { film: true });
   out.ui = Object.assign({ panels: {}, groups: {}, planOpts: false }, out.ui);
-  out._x100 = Array.isArray(out._x100) ? out._x100 : [];
+  out._x102 = Array.isArray(out._x102) ? out._x102 : [];
   out.skills = Object.assign({}, out.skills);
   out.bearDone = Object.assign({}, out.bearDone);
   out.stickers = Object.assign({}, out.stickers);
@@ -838,11 +838,11 @@ function normalize(s) {
   out.bear = Object.assign(f.bear, out.bear);
   out.bear.skill = Object.assign(blank(BEAR_KEYS), out.bear.skill);
   out.bear.knack = Object.assign({}, out.bear.knack);
-  if (!out._x330 || !Array.isArray(out._x330.ans)) out._x330 = f._x330;
-  if (!out._x338 || !Array.isArray(out._x338.ans) || !Array.isArray(out._x338.tried)) out._x338 = f._x338;
+  if (!out._x333 || !Array.isArray(out._x333.ans)) out._x333 = f._x333;
+  if (!out._x341 || !Array.isArray(out._x341.ans) || !Array.isArray(out._x341.tried)) out._x341 = f._x341;
   if ((s && s.v || 0) < 3 && s) {
     if (out.act >= 1) out.reached[14] = true;
-    if (out.flags._x328) out.flags._x238 = true;
+    if (out.flags._x331) out.flags._x240 = true;
     out.v = 3;
   }
   out.queue = (out.queue || []).filter(e => e && A[e.id] && e.n >= 0);
@@ -852,22 +852,22 @@ function normalize(s) {
 const snapPlan = () => (S.queue || []).map(e => Object.assign({}, e, e.recipe ? { recipe: Object.assign({}, e.recipe) } : {}));
 function freshLoop() {
   const l = {
-    time: 0, zone: 0, _x291: 0,
+    time: 0, zone: 0, _x294: 0,
     stat: blank(STAT_KEYS),
     inv: blank(Object.keys(ITEMS)),
-    used: {}, good: {}, nyla: !!(typeof S !== 'undefined' && S && S.flags && (S.flags._x294 || S.flags._xfar || (S._x296 || []).includes('protect'))), jar: false,  buffs: {}, fellow: {}, fed: false, lantern: false, begun: false, waiting: false,
+    used: {}, good: {}, nyla: !!(typeof S !== 'undefined' && S && S.flags && (S.flags._x297 || S.flags._xfar || (S._x299 || []).includes('protect'))), jar: false,  buffs: {}, fellow: {}, fed: false, lantern: false, begun: false, waiting: false,
     bear: false, bearStam: 0, bearAsleep: false, knacked: {},
-    witsRound: 0, _x325: false, sand: false, _x232: false, _x230: false, inside: false,
-    cryRound: 0, cryWon: false, wave: false, pass: false, candle: null, milk: 0, _x250: false, link: false, outfit: null,
+    witsRound: 0, _x328: false, sand: false, _x234: false, _x232: false, inside: false,
+    cryRound: 0, cryWon: false, wave: false, pass: false, candle: null, milk: 0, _x252: false, link: false, outfit: null,
     qi: 0, curUid: null, done: {}, skipped: {}, prog: 0, started: false, withBear: false,
     endNow: null,
     today: snapPlan(),
     trackAtDawn: Object.assign({}, S.track),
   };
-  if (S.flags._xfar) l.inv._x90 = 1;
+  if (S.flags._xfar) l.inv._x91 = 1;
   if (inBook()) bookDawn(l);
-  if (S.flags._x238) l.inv.pill = 1;
-  if (typeof S !== 'undefined' && S && (S._x296 || []).includes('wake') && S.bear && S.bear.unlocked) { l.bear = true; l.bearStam = bearMax(); }
+  if (S.flags._x240) l.inv.pill = 1;
+  if (typeof S !== 'undefined' && S && (S._x299 || []).includes('wake') && S.bear && S.bear.unlocked) { l.bear = true; l.bearStam = bearMax(); }
   return l;
 }
 
@@ -885,8 +885,8 @@ const moonIdx = () => (S.loop - 1 + (inBook() ? S.books[S.away.id].day || 0 : 0)
 const moonLight = () => (1 - Math.cos(2 * Math.PI * moonIdx() / 8)) / 2;
 const moonHealed = () => S.moonPieces || 0;
 
-const moonShine = () => Math.max(0, moonHealed() - (S.flags && S.flags._x329 && !S.flags._x293 ? 0.7 : 0)) / MOON_PIECES;
-const moonPower = () => (S.signs.cancer ? 2 : 1) * (P('briar') >= 80 ? 1.5 : 1) * (1 + 0.1 * moonHealed()) * (1 + 0.05 * ph('_x155'));
+const moonShine = () => Math.max(0, moonHealed() - (S.flags && S.flags._x332 && !S.flags._x296 ? 0.7 : 0)) / MOON_PIECES;
+const moonPower = () => (S.signs.cancer ? 2 : 1) * (P('briar') >= 80 ? 1.5 : 1) * (1 + 0.1 * moonHealed()) * (1 + 0.05 * ph('_x157'));
 const moonTalent = () => 1 + 0.3 * moonLight() * moonPower() * candleMoon();
 
 const dawnBonus = () => (P('tortoise') >= 100 ? 30 : 0);
@@ -897,21 +897,21 @@ const driftBonus = () => Math.min(0.3, driftLvl() * (farDone('_x28') ? 0.075 : 0
 const trophy = t => !!S.drift.trophies[t];
 const PROLOGUE_START = 20 * 60, PROLOGUE_LEN = Infinity;
 const dayStart = () => (inPrologue() ? PROLOGUE_START : DAWN - dawnBonus());
-const dayLen = () => inPrologue() ? PROLOGUE_LEN : inBook() ? BOOK_DAY : BASE_DAY + HEALED_DAY * moonHealed() + (S.flags && S.flags._xfar ? 20 : 0) + (S.flags && S.flags._xfar && moonIdx() === 4 ? 20 : 0) + dawnBonus() + (S.flags._x97 ? 40 : 0) + shrineDay() + L._x291;
+const dayLen = () => inPrologue() ? PROLOGUE_LEN : inBook() ? BOOK_DAY : BASE_DAY + HEALED_DAY * moonHealed() + (S.flags && S.flags._xfar ? 20 : 0) + (S.flags && S.flags._xfar && moonIdx() === 4 ? 20 : 0) + dawnBonus() + (S.flags._x98 ? 40 : 0) + shrineDay() + L._x294;
 
 const shrinesSolved = () => ((S.shrines || {}).plateau || 0) + ((S.shrines || {}).old || 0);
 const shrineDay = () => 6 * Math.floor(shrinesSolved() / 4);
-const talentRate = () => (farDone('_x134') ? 1.1 : 1) * (1 + 0.05 * ph('_x156')) * 0.15 * candleTalent() * (trophy('cup') ? 1.05 : 1) * (farDone('farOwlBooks') ? 1.15 : 1) * (P('owl') >= 50 ? 1.5 : 1) * (L.jar ? 2 : 1) * moonTalent();
+const talentRate = () => (farDone('_x136') ? 1.1 : 1) * (1 + 0.05 * ph('_x158')) * 0.15 * candleTalent() * (trophy('cup') ? 1.05 : 1) * (farDone('farOwlBooks') ? 1.15 : 1) * (P('owl') >= 50 ? 1.5 : 1) * (L.jar ? 2 : 1) * moonTalent();
 const fairyMult = s => (FAIRIES.some(([at, fs]) => fs === s && P('fairies') >= at) ? (farDone('_x11') ? 1.35 : 1.25) : 1);
 const signMult = s => Object.entries(SIGNS).reduce((m, [id, g]) => m * (S.signs[id] && g.stat === s ? 1.15 : 1), 1) * 1;
-const pb = () => (farDone('_x102') ? 1.15 : 1.1) + (S.album && S.album._x112 ? 0.05 : 0) + (farDone('_x219') && moonIdx() === 4 ? 0.05 : 0) + (S.album && S.album._x108 ? 0.05 : 0) + (farDone('_x225') ? 0.05 : 0);
+const pb = () => (farDone('_x104') ? 1.15 : 1.1) + (S.album && S.album._x114 ? 0.05 : 0) + (farDone('_x221') && moonIdx() === 4 ? 0.05 : 0) + (S.album && S.album._x110 ? 0.05 : 0) + (farDone('_x227') ? 0.05 : 0);
 const memoriesFound = () => PHOTO_SPOTS.filter(sp => sp.memory && has(sp.id)).length;
-const photoMult = s => (s === 'grit' ? phm('_x69') : 1) * (s === 'smarts' ? phm('_x71') : 1) * (s === 'sniff' ? phm('_x154') : 1) * (s === 'grit' ? phm('_x25') : 1) * (s === 'hop' ? phm('_x265') : 1) * (s === 'charm' ? phm('_x157') * phm('_x113') : 1) * (s === 'sniff' ? phm('_x41') : 1) * (s === 'hop' ? phm('_x22') : 1) * (s === 'charm' ? phm('_x40') : 1) * (s === 'grit' ? phm('_x105') : 1) * (s === 'sniff' ? phm('nylaZoom') : 1) * (s === 'charm' ? phm('_x67') : 1) * (s === 'charm' ? phm('_x104') : 1) * (s === 'grit' ? phm('_x192') : 1);
+const photoMult = s => (s === 'grit' ? phm('_x70') : 1) * (s === 'smarts' ? phm('_x72') : 1) * (s === 'sniff' ? phm('_x156') : 1) * (s === 'grit' ? phm('_x25') : 1) * (s === 'hop' ? phm('_x267') : 1) * (s === 'charm' ? phm('_x159') * phm('_x115') : 1) * (s === 'sniff' ? phm('_x41') : 1) * (s === 'hop' ? phm('_x22') : 1) * (s === 'charm' ? phm('_x40') : 1) * (s === 'grit' ? phm('_x107') : 1) * (s === 'sniff' ? phm('nylaZoom') : 1) * (s === 'charm' ? phm('_x68') : 1) * (s === 'charm' ? phm('_x106') : 1) * (s === 'grit' ? phm('_x194') : 1);
 
 const buff = n => !!(L.buffs && L.buffs[n] > L.time);
 const fellow = n => !!(L.fellow && L.fellow[n]);
 const fellowMax = () => (0 >= 100 ? 3 : 2);
-const buffMult = s => (s === 'hop' ? (trophy('silver') ? 1.05 : 1) * (trophy('gold') ? 1.05 : 1) : 1) * (buff('_x115') ? 1.25 : 1) * (s === 'grit' && buff('_x62') ? 1.5 : 1) * (s === 'sniff' && fellow('_x301') ? 1.5 : 1) * farMult(s);
+const buffMult = s => (s === 'hop' ? (trophy('silver') ? 1.05 : 1) * (trophy('gold') ? 1.05 : 1) : 1) * (buff('_x117') ? 1.25 : 1) * (s === 'grit' && buff('_x62') ? 1.5 : 1) * (s === 'sniff' && fellow('_x304') ? 1.5 : 1) * farMult(s);
 const expMult = s => focusMult(s) * buffMult(s) * candleMult(s) * (1 + 0.1 * lvl(S.talent[s])) * (L.nyla && s === 'sniff' ? 2 : 1) * fairyMult(s) * signMult(s) * photoMult(s);
 const wl = a => Object.entries(a.stats).reduce((t, [s, w]) => t + w * lvl(L.stat[s]), 0);
 const mLvl = id => Math.floor(Math.sqrt(S.mastery[id] || 0));
@@ -932,7 +932,7 @@ const bookCal = a => { const sd = ZONES[a.zone].side, bk = sd && BOOKS[sd] && S.
 const progOf = a => (a.pro ? 1 : progX(skillN(skillFor(a))) / progX(a.timeGate ? a.timeGate[1] : bookCal(a) ?? calLvl(actOf(a))));
 const MIN_COST = 0.1;
 const paceKind = a => (a.train ? 'r' : a.travel ? 't' : a.project ? 'p' : a.track ? 'x' : a.limited ? 'g' : 's');
-const paced = a => !(a.pro || a.photo || a._x190);
+const paced = a => !(a.pro || a.photo || a._x192);
 function paceBase(a) {
   const b = baseCost(a);
   if (!paced(a) || typeof b !== 'number') return b;
@@ -946,10 +946,10 @@ const actNow = () => { let n = 0; while (n < 12 && S.flags['act' + (n + 1)]) n++
 const behind = a => (ZONES[a.zone].side ? 0 : Math.max(0, actNow() - actOf(a)));
 const softSpeed = x => (x <= 4 ? x : 4 * Math.sqrt(x / 4));
 const bearLvl = k => lvl(S.bear.skill[k] * 0.4);
-const bearMax = () => (30 * ph('_x147')) + (30 * ph('_x106')) + (30 * ph('_x151')) + (farDone('_x2') && moonIdx() === 0 ? 30 : 0) + (30 * ph('_x153')) + (30 * ph('_x111')) + (farDone('_x137') ? 30 : 0) + (farDone('_x14') ? 30 : 0) + (30 * ph('_x24')) + (farDone('_x130') ? 60 : 0) + (farDone('_x167') ? 30 : 0) + (30 * ph('_x195')) + 240 + 25 * bearLvl('heart') + (30 * ph('_x114')) + (30 * ph('_x145')) + (30 * ph('_x42')) + (trophy('bronze') ? 15 : 0);
+const bearMax = () => (30 * ph('_x149')) + (30 * ph('_x108')) + (30 * ph('_x153')) + (farDone('_x2') && moonIdx() === 0 ? 30 : 0) + (30 * ph('_x155')) + (30 * ph('_x113')) + (farDone('_x139') ? 30 : 0) + (farDone('_x14') ? 30 : 0) + (30 * ph('_x24')) + (farDone('_x132') ? 60 : 0) + (farDone('_x169') ? 30 : 0) + (30 * ph('_x197')) + 240 + 25 * bearLvl('heart') + (30 * ph('_x116')) + (30 * ph('_x147')) + (30 * ph('_x42')) + (trophy('bronze') ? 15 : 0);
 const knack = id => S.bear.knack[id] || 0;
 function bearMult(a) {
-  const t = BEAR_TAGS[a.bear && a.bear.tag || '_x316'];
+  const t = BEAR_TAGS[a.bear && a.bear.tag || '_x319'];
   const skillBoost = t.mult < 1 ? 1 + bearLvl(t.skill) / 30 : 1;
   return t.mult / skillBoost * (BW_TAGS.has(a.bear && a.bear.tag) ? 1 : 1 - 0.08 * knack(a.id));
 }
@@ -1032,18 +1032,18 @@ function cost(a, withBear) {
   if (a.travel && L.nyla) c *= 0.5;
   c *= candleCost(a);
   if (a.travel && L.inv.dust > 0) c *= 0.4;
-  if (a.zone === 11 && fellow('_x247')) c *= 0.6;
-  if (a._x144) c *= a._x144();
+  if (a.zone === 11 && fellow('_x249')) c *= 0.6;
+  if (a._x146) c *= a._x146();
   if (a.zone === 45 && !a.travel) c *= L.bwFogFree ? 1 : fogMult();
-  if (a.id === '_x133' && L.bw_race) c *= 0.8;
+  if (a.id === '_x135' && L.bw_race) c *= 0.8;
   c *= weatherCost(a) * focusCost(a);
   if (a.drives) c *= 1 - driftBonus();
   c *= outfitCost(a);
   if (a.downhill && glideOn()) c *= 0.3;
   if (/^gate\d$/.test(a.id) && farDone('_x47')) c *= 0.5;
-  if (withBear) c *= bearMult(a) * (farDone('_x122') && a.bear && a.bear.tag === 'brave' ? 0.85 : 1);
-  if (a.travel && actOf(a) === 4 && a.zone !== 0 && farDone('_x123')) c *= 0.5;
-  if (withBear && a.travel) c *= (farDone('_x15') ? 0.9 : 1) / phm('_x193');
+  if (withBear) c *= bearMult(a) * (farDone('_x124') && a.bear && a.bear.tag === 'brave' ? 0.85 : 1);
+  if (a.travel && actOf(a) === 4 && a.zone !== 0 && farDone('_x125')) c *= 0.5;
+  if (withBear && a.travel) c *= (farDone('_x15') ? 0.9 : 1) / phm('_x195');
   if (a.train && farDone('_x6')) c *= 0.9;
   if (a.travel && L.shoutReady) return MIN_COST;
   if (L.bwFree && L.bwFree[a.id] && S.mastery[a.id] > 0) return MIN_COST;
@@ -1099,7 +1099,7 @@ function gainSkill(a, units) {
   const k = skillOf(a); if (!k) return;
   S.skills = S.skills || {};
   const before = skillLvl(k);
-  S.skills[k] = (S.skills[k] || 0) + units / 6 * (a.train ? 0.5 : 1) * (k === 'music' ? phm('_x110') : 1) * (k === 'moonmagic' ? phm('_x109') : 1) * (k === 'creatures' ? phm('_x152') : 1) * (k === 'painting' ? phm('_x150') : 1) * (k === 'photography' ? phm('_x23') : 1) * (k === 'creatures' ? phm('_x149') : 1) * (k === 'reading' ? phm('_x107') : 1) * (k === 'moonmagic' ? phm('_x148') : 1) * (k === 'painting' ? phm('_x68') : 1) * (k === 'aim' && farDone('_x1') ? 1.1 : 1);
+  S.skills[k] = (S.skills[k] || 0) + units / 6 * (a.train ? 0.5 : 1) * (k === 'music' ? phm('_x112') : 1) * (k === 'moonmagic' ? phm('_x111') : 1) * (k === 'creatures' ? phm('_x154') : 1) * (k === 'painting' ? phm('_x152') : 1) * (k === 'photography' ? phm('_x23') : 1) * (k === 'creatures' ? phm('_x151') : 1) * (k === 'reading' ? phm('_x109') : 1) * (k === 'moonmagic' ? phm('_x150') : 1) * (k === 'painting' ? phm('_x69') : 1) * (k === 'aim' && farDone('_x1') ? 1.1 : 1);
   const after = skillLvl(k);
   dirty.stats = true;
   if (!S.flags.skillsIntro) {
@@ -1126,7 +1126,7 @@ const carried = () => Object.entries(L.inv).reduce((t, [k, v]) => t + (NOT_CARRI
 
 const FILLS_BASKET = new Set('hedgehog bake driftwood reeds'.split(' '));
 const weaveNeed = () => 16 * ((S.basketTier || 0) + 1);
-const capacity = () => BASKET_TIERS[Math.min(BASKET_TIERS.length - 1, S.basketTier || 0)] + (S.signs._x243 ? 4 : 0) + (S.flags && S.flags._xfar ? 4 : 0);
+const capacity = () => BASKET_TIERS[Math.min(BASKET_TIERS.length - 1, S.basketTier || 0)] + (S.signs._x245 ? 4 : 0) + (S.flags && S.flags._xfar ? 4 : 0);
 const actOf = a => ZONES[a.zone].act;
 
 const BURROW_FINDS = [[25, 'carrot'], [50, 'cocoatin'], [75, 'bubbles'], [100, 'bookspot']];
@@ -1181,7 +1181,7 @@ const matExtra = k => () => `<span>${MATERIALS[k].icon} ${MATERIALS[k].name} on 
 def({ id: 'wander', zone: 0, icon: '🌼', name: 'Search the Meadow for Nyla', cost: 30, stats: { hop: .4, sniff: .4, smarts: .2 }, track: 'meadow',
   desc: 'Call her name across the clover, and check every spot she likes to nap.' });
 def({ id: 'dew', zone: 0, icon: '💧', name: 'Sip Morning Dew', cost: 5, stats: { hop: .6, grit: .4 },
-  visible: () => P('meadow') >= 2, limited: () => Math.floor(P('meadow') / 4) + (1 * ph('meadowDawn')) + (farDone('_x239') ? 2 : 0), effect: () => { L._x291 += 20; },
+  visible: () => P('meadow') >= 2, limited: () => Math.floor(P('meadow') / 4) + (1 * ph('meadowDawn')) + (farDone('_x241') ? 2 : 0), effect: () => { L._x294 += 20; },
   lockNote: 'Not yet. Dew turns up once the meadow is 4% searched.',
   desc: 'No time for breakfast. A sip of dew keeps you going, and each one adds ' + fmtDur(20) + ' of daylight.' });
 def({ id: 'bushes', gives: 'berries', zone: 0, icon: '🍓', name: 'Check the Berry Bushes', cost: 12, stats: { sniff: .7, smarts: .3 },
@@ -1207,7 +1207,7 @@ def({ id: 'weave', zone: 0, icon: '🧺', name: 'Weave a Bigger Basket with Haze
       story(`Hazel ties off the last reed. Your new basket holds ${capacity()} things, and it stays yours even when the day starts over.` + (S.basketTier === 1 ? ' She squints at something above your head: a frayed silver thread running from you up to the Moon. "Somebody\'s been pulling on that one," she says. "Good. It means it\'s still tied."' : ''), 'big');
     }
   },
-  _x291: () => matExtra('reeds')() + (nutNeed() ? `<span>Korok seeds: ${nutSeeds()} of ${nutNeed()} needed for this one</span>` : '') + `<span class="track"><span class="label">Bigger basket</span><span class="bar"><i style="width:${((S.proj.weave || 0) / weaveNeed() * 100).toFixed(1)}%;background:var(--honey)"></i></span><span class="num">${S.proj.weave || 0}/${weaveNeed()}</span></span>`,
+  _x294: () => matExtra('reeds')() + (nutNeed() ? `<span>Korok seeds: ${nutSeeds()} of ${nutNeed()} needed for this one</span>` : '') + `<span class="track"><span class="label">Bigger basket</span><span class="bar"><i style="width:${((S.proj.weave || 0) / weaveNeed() * 100).toFixed(1)}%;background:var(--honey)"></i></span><span class="num">${S.proj.weave || 0}/${weaveNeed()}</span></span>`,
   desc: 'Hazel is a Weaver: she sees the loose threads between things and stitches them back together. "Things that are mended with care," she says, "stay mended." So a bigger basket, a little each day, stays woven.' });
 def({ id: 'reeds', zone: 0, icon: '🌾', name: 'Cut Moon-Silvered Reeds', cost: 10, stats: { hop: .5, sniff: .5 },
   visible: () => P('meadow') >= 12 && (S.basketTier || 0) < BASKET_TIERS.length - 1, limited: () => 1 + Math.floor(P('meadow') / 30), effect: () => addMat('reeds', 1),
@@ -1218,7 +1218,7 @@ def({ id: 'bake', zone: 0, icon: '🧁', name: 'Bake Nyla\'s Favorite Pupcakes',
   desc: 'Grandpa Tortoise\'s recipe. Two berries make one. Nyla has never once said no to one, though she always accepts it like a lady.' });
 def({ id: 'footbridge', zone: 0, icon: '🔨', name: 'Build a Footbridge', cost: 30, stats: { grit: .6, smarts: .4 },
   project: 'footbridge', visible: () => !!S.reached[1] && !S.flags.footbridge,
-  can: needMat('driftwood'), effect: () => addMat('driftwood', -1), _x291: matExtra('driftwood'),
+  can: needMat('driftwood'), effect: () => addMat('driftwood', -1), _x294: matExtra('driftwood'),
   desc: 'The brook is slowing you down. Each plank takes a piece of moonlit driftwood, and the planks you lay stay laid, even when the day starts over.' });
 def({ id: 'driftwood', zone: 0, icon: '🪵', name: 'Gather Moonlit Driftwood', cost: 10, stats: { sniff: .5, grit: .5 },
   visible: () => !!S.reached[1] && !S.flags.footbridge, limited: () => 1 + Math.floor(P('meadow') / 30), effect: () => addMat('driftwood', 1),
@@ -1229,7 +1229,7 @@ def({ id: 'brook', mystery: [8, .35, 'You know every stepping stone in the brook
 
 const nutSeeds = () => Object.keys(S.nuts || {}).length;
 
-const korokAt = n => (S.flags._x253 ? Math.floor(n / 2) : n);
+const korokAt = n => (S.flags._x255 ? Math.floor(n / 2) : n);
 const nutNeed = () => ((S.basketTier || 0) >= 1 ? S.basketTier : 0);
 const nutFind = key => () => {
   if (PRED) return;
@@ -1259,7 +1259,7 @@ const trainHint = st => {
 def({ id: 'woods', zone: 1, icon: '🌲', name: 'Search the Woods', cost: 35, stats: { sniff: .4, hop: .3, grit: .3 }, track: 'woods',
   desc: 'Pine needles, moss, and a hundred places a dog could hide. Keep calling.' });
 def({ id: 'glowcaps', zone: 1, icon: '🍄', name: 'Gather Glowcaps', cost: 10, stats: { sniff: .5, smarts: .5 },
-  visible: () => P('woods') >= 3, limited: () => Math.floor(P('woods') / 4), effect: () => { L._x291 += 25; },
+  visible: () => P('woods') >= 3, limited: () => Math.floor(P('woods') / 4), effect: () => { L._x294 += 25; },
   lockNote: 'Not yet. Glowcaps turn up once the woods are 4% searched.',
   desc: 'More light means more time to look. Each glowing mushroom holds off dusk for ' + fmtDur(25) + '.' });
 def({ id: 'logs', gives: 'acorns', zone: 1, icon: '🌰', name: 'Rummage Hollow Logs', cost: 15, stats: { grit: .5, sniff: .5 },
@@ -1308,11 +1308,11 @@ def({ id: 'dust', gives: 'dust', zone: 2, icon: '✨', name: 'Catch Fairy Dust',
   lockNote: 'Not yet. Fairy dust turns up once the glade is 6% explored.',
   desc: 'A pinch of glowing dust from the fairy spring. For travel: each travel step uses one pinch and goes 60% faster, so you fly the next stretch of road. Dust empties at dawn.' });
 def({ id: 'petals', gives: 'petals', zone: 2, icon: '🌸', name: 'Pick Moonpetals', cost: 10, stats: { sniff: .5, smarts: .5 },
-  visible: () => P('glade') >= 8, limited: () => Math.floor(P('glade') / 5) + (1 * ph('_x66')), effect: () => { inv().petals++; },
+  visible: () => P('glade') >= 8, limited: () => Math.floor(P('glade') / 5) + (1 * ph('_x67')), effect: () => { inv().petals++; },
   desc: 'Silver flowers that only open in the moss here. Every hedge witch wants some.' });
 def({ id: 'moonwater', zone: 2, icon: '🫙', name: 'Make Moon Water', cost: 20, stats: { smarts: .6, grit: .4 },
   visible: () => P('glade') >= 15, can: () => (inv().petals < 2 ? 'Needs 2 moonpetals' : null),
-  effect: () => { inv().petals -= 2; L._x291 += Math.round((Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x146')) + (10 * ph('_x70')) + (farDone('_x7') ? 20 : 0)) * (S.signs._x242 ? 1.25 : 1)); },
+  effect: () => { inv().petals -= 2; L._x294 += Math.round((Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x148')) + (10 * ph('_x71')) + (farDone('_x7') ? 20 : 0)) * (S.signs._x244 ? 1.25 : 1)); },
   desc: 'Spring water and two moonpetals in a jar, left where last night\'s moonlight fell. Adds ' + fmtDur(30) + ' to ' + fmtDur(70) + ' of daylight. The fuller the moon, the stronger it is.' });
 def({ id: 'spelljar', zone: 2, icon: '🫙', name: 'Fill a Moonlit Spell Jar', cost: 25, stats: { smarts: .5, charm: .5 },
   visible: () => P('glade') >= 30,
@@ -1351,7 +1351,7 @@ const FAR = {
 };
 const farDone = id => !!S.flags['far_' + id];
 function farMult(s) {
-  return (s === 'hop' && farDone('_x127') ? 1.15 : 1) * (s === 'charm' && farDone('_x202') ? 1.1 : 1) * (s === 'charm' && farDone('_x38') ? 1.1 : 1) * (s === 'charm' && farDone('_x64') ? 1.1 : 1) * (s === 'hop' && farDone('_x8') ? 1.15 : 1);
+  return (s === 'hop' && farDone('_x129') ? 1.15 : 1) * (s === 'charm' && farDone('_x204') ? 1.1 : 1) * (s === 'charm' && farDone('_x38') ? 1.1 : 1) * (s === 'charm' && farDone('_x65') ? 1.1 : 1) * (s === 'hop' && farDone('_x8') ? 1.15 : 1);
 }
 function farDef(o) {
 
@@ -1370,7 +1370,7 @@ farDef({ id: 'farOwlBooks', key: 'owlbooks', zone: 1, name: "Read Owl's Restrict
 
 for (const sp of PHOTO_SPOTS) {
   def({ id: 'photo_' + sp.id, zone: sp.zone, icon: '📸', name: 'Catch the Light: ' + sp.name, cost: 15, stats: { sniff: .5, smarts: .5 },
-    visible: () => lightOn() && sp.known() && !has(sp.id), can: sp.can, photo: sp, _x190: sp._x190,
+    visible: () => lightOn() && sp.known() && !has(sp.id), can: sp.can, photo: sp, _x192: sp._x192,
     effect: () => {
       S.album = S.album || {}; S.album[sp.id] = true;
       story(`You catch the light: ${sp.name}. It goes on the photo wall in the burrow. ${sp.bonus}.`, 'big');
@@ -1425,9 +1425,9 @@ function planShortLine(a) {
 
 for (const id of ORDER) {
   const a = A[id];
-  if (!a.limited || a.pro || ['_x61', '_x62', '_x234', '_x37', 'milk', '_x97'].includes(id)) continue;
+  if (!a.limited || a.pro || ['_x61', '_x62', '_x236', '_x37', 'milk', '_x98'].includes(id)) continue;
   const base = a.limited;
-  a.limBase = () => base() + (farDone('_x81') && kindOf(a) === '_x246' ? 1 : 0);
+  a.limBase = () => base() + (farDone('_x82') && kindOf(a) === '_x248' ? 1 : 0);
   a.limited = a.limBase;
 }
 
@@ -1448,16 +1448,16 @@ function spentForGood(a) {
   if (a.id === 'oakdoor') return !!S.flags.gladeFound;
   if (a.id === 'film') return !!S.flags.film;
   if (a.id === 'reachbook') return !!(L && L.inv.storybook);
-  if (a.id === '_x253') return !!S.flags._x253;
-  if (a.id === '_x254') return !!S.flags._x327;
-  if (a.id === '_x204') return !!S.flags._x204;
-  if (a.id === '_x33') return !!S.flags._x100;
-  if (a.id === '_x53') return !!S.flags._x237;
-  if (a.id === '_x49') return !!S.flags._x329;
+  if (a.id === '_x255') return !!S.flags._x255;
+  if (a.id === '_x256') return !!S.flags._x330;
+  if (a.id === '_x206') return !!S.flags._x206;
+  if (a.id === '_x33') return !!S.flags._x102;
+  if (a.id === '_x53') return !!S.flags._x239;
+  if (a.id === '_x49') return !!S.flags._x332;
   if (a.id === '_x48') return EXPERIMENTS.every(([k]) => tested(k));
   if (a.id === 'weave') return (S.basketTier || 0) >= BASKET_TIERS.length - 1;
-  if (a.id.startsWith('_x304')) return ownsOutfit(a.id.slice(4));
-  if (a.id.startsWith('_x339')) return outfitStars(a.id.slice(3)) >= 2;
+  if (a.id.startsWith('_x307')) return ownsOutfit(a.id.slice(4));
+  if (a.id.startsWith('_x342')) return outfitStars(a.id.slice(3)) >= 2;
   return false;
 }
 const sweepSpent = () => { for (const id of new Set(S.queue.map(e => e.id))) if (spentForGood(A[id])) clearSpent(id); };
@@ -1475,7 +1475,7 @@ const visible = a => !a.pro === !inPrologue() && actOf(a) <= S.act && zoneOpen(a
 const runnable = a => visible(a) || (!!a.planOnly && a.planOnly());
 
 const ONCE_A_DAY = new Set(('spelljar hedgehog coax'
-  + '_x75 _x44 _x9').split(' '));
+  + '_x76 _x44 _x9').split(' '));
 
 function gatherMax(a) {
   if (a.limited && !a.pro && !a.project) return Math.max(0, limLeft(a));
@@ -1652,6 +1652,9 @@ const hasOath = () => false;
 const spirit = () => false;
 const seasonCrops = () => [];
 const dewNote = () => "";
+const MARKET_INTRO = "";
+const marketCrate = () => {};
+const marketDawn = () => {};
 const isles = () => ({ book: [] });
 const TROPHIES = [];
 const tandemLeft = () => 0;
@@ -1667,12 +1670,12 @@ function story(text, kind = 'story') {
   dirty.journal = true;
 }
 function bearSays(text) { story('🐻 ' + text, 'bearline'); }
-function findSign(id, text, _x290) {
+function findSign(id, text, _x293) {
   if (S.signs[id]) return;
 
   S.signs[id] = true;
   dirty.signs = true;
-  if (_x290) return;
+  if (_x293) return;
   story(text, 'big');
   const g = SIGNS[id];
   keepPop(`Constellation: ${g.glyph} ${g.name}`, text, g.bonus || STATS[g.stat].name + ' grows 15% faster');
@@ -1687,19 +1690,19 @@ const SIGN_STARS = {
   ] },
 };
 const starsOf = sign => (S.stars && S.stars[sign]) || [];
-function addStar(sign, key, _x290) {
+function addStar(sign, key, _x293) {
   if (PRED) return;
   S.stars = S.stars || {};
   const got = S.stars[sign] = starsOf(sign).slice(), def = SIGN_STARS[sign];
   if (got.includes(key)) return;
   got.push(key);
-  if (!_x290) {
+  if (!_x293) {
     markSeen('s:' + sign + key);
     { const st = def.stars.find(x => x[0] === key); story('⭐ ' + auroraText(st[2], st[1] != null && st[1] > BRIAR_REVEAL), 'big'); }
     if (got.length < def.stars.length) notice(`You found a star of ${SIGNS[sign].glyph} ${SIGNS[sign].name}: ${got.length} of ${def.stars.length}.`, 'moon');
   }
   dirty.signs = true;
-  if (got.length >= def.stars.length) findSign(sign, def.rise, _x290);
+  if (got.length >= def.stars.length) findSign(sign, def.rise, _x293);
 }
 
 function completeSign(sign) { for (const [key] of SIGN_STARS[sign].stars) addStar(sign, key, true); findSign(sign, SIGN_STARS[sign].rise); }
@@ -1708,7 +1711,7 @@ function syncStars() {
   for (const [sign, def] of Object.entries(SIGN_STARS)) {
     if (S.signs[sign]) { for (const [key] of def.stars) if (!starsOf(sign).includes(key)) addStar(sign, key, true); continue; }
     for (const [key, at, , trk] of def.stars) {
-      const earned = at != null ? P(trk || key) >= at : key === '_x338' ? !!S.flags.cryWin : key === '_x97' ? !!S.flags._x97 : false;
+      const earned = at != null ? P(trk || key) >= at : key === '_x341' ? !!S.flags.cryWin : key === '_x98' ? !!S.flags._x98 : false;
       if (earned && !starsOf(sign).includes(key)) addStar(sign, key, true);
     }
   }
@@ -1750,8 +1753,8 @@ function train(a, mins, withBear) {
     L.stat[s] += g; S.talent[s] += g * r;
   }
   if (withBear) {
-    const t = BEAR_TAGS[a.bear && a.bear.tag || '_x316'];
-    const bg = 1 + 0.1 * ph('_x72'), hg = k => (k === 'heart' ? 1 + 0.1 * ph('_x194') : k === 'strength' && farDone('_x85') ? 1.15 : 1);
+    const t = BEAR_TAGS[a.bear && a.bear.tag || '_x319'];
+    const bg = 1 + 0.1 * ph('_x73'), hg = k => (k === 'heart' ? 1 + 0.1 * ph('_x196') : k === 'strength' && farDone('_x86') ? 1.15 : 1);
     S.bear.skill[t.skill] += 2 * mins * bg * hg(t.skill);
     for (const k of BEAR_KEYS) if (k !== t.skill) S.bear.skill[k] += 0.5 * mins * bg * hg(k);
     L.bearStam = Math.max(0, L.bearStam - mins * (bwHas(bwo, 'tire2') ? 2 : 1));
@@ -1811,8 +1814,8 @@ function complete(a, e) {
   if (a.travel && L.shoutReady) L.shoutReady = false;
   if (withBear) { S.bearDone = S.bearDone || {}; S.bearDone[a.id] = (S.bearDone[a.id] || 0) + 1; }
   if (withBear && !L.knacked[a.id]) {
-    const k = knack(a.id), t = BEAR_TAGS[a.bear && a.bear.tag || '_x316'], w = bwOf(a);
-    if (k < 5 && bearLvl(t.skill) * (1 + 0.1 * ph('_x101')) >= k * 4) {
+    const k = knack(a.id), t = BEAR_TAGS[a.bear && a.bear.tag || '_x319'], w = bwOf(a);
+    if (k < 5 && bearLvl(t.skill) * (1 + 0.1 * ph('_x103')) >= k * 4) {
       S.bear.knack[a.id] = k + 1; L.knacked[a.id] = true;
       if (!PRED && w && k === 0) bearSays(`🆕 Bear's way: <b>${esc(w.n)}</b>. ${esc(bwFx(w))}`);
       else if (!PRED && w && k === 2 && w.joke) bearSays(w.joke);
@@ -1838,7 +1841,7 @@ function complete(a, e) {
     }
     if (bw) for (const o of bw) if (o[0] === 'also' && TRACKS[o[1]]) addTrack(o[1], g0 * (o[2] || 0.5));
   }
-  if (farDone('_x129') && !L.swarmCopied && !a.travel) { L.swarmCopied = true; S.mastery[a.id]++; if (a.track) addTrack(a.track, 100 * (1 + wl(a) / 20)); }
+  if (farDone('_x131') && !L.swarmCopied && !a.travel) { L.swarmCopied = true; S.mastery[a.id]++; if (a.track) addTrack(a.track, 100 * (1 + wl(a) / 20)); }
   if (a.project) {
     let n = 1;
     const tw = bwGet(bw, 'twice');
@@ -1850,7 +1853,7 @@ function complete(a, e) {
   if (a.food && !L.fed) { if (L.inv.lembread > 0) { L.inv.lembread--; L.fed = true; } else L.inv.seedcake -= a.food; }
   if (a.once) { S.flags['far_' + a.id] = true; }
   if (a.id === 'candle' && e.recipe) {
-    inv()._x251--; const salted = e.recipe.l === 'salt' && inv().salt > 0; if (salted) inv().salt--;
+    inv()._x253--; const salted = e.recipe.l === 'salt' && inv().salt > 0; if (salted) inv().salt--;
     L.candle = Object.assign({}, e.recipe, { salted }); L.candle.until = L.time + candleLen(L.candle);
     const k = candleKey(e.recipe);
     if (!PRED) { S.spellbook = S.spellbook || {}; if (!S.spellbook[k]) { S.spellbook[k] = true; story('🕯️ New in your spellbook: ' + candleText(e.recipe)); } }
@@ -1896,9 +1899,9 @@ function step(mins) {
     }
     const a = A[e.id];
 
-    if (!L.started && !runnable(a)) { L.skipped[e.uid] = a.id === '_x234' ? 'No new moon tonight' : 'Not available today'; L.done[e.uid] = L.done[e.uid] || 0; dirty.plan = true; continue; }
-    if (!L.started && a._x190) {
-      const t = a._x190();
+    if (!L.started && !runnable(a)) { L.skipped[e.uid] = a.id === '_x236' ? 'No new moon tonight' : 'Not available today'; L.done[e.uid] = L.done[e.uid] || 0; dirty.plan = true; continue; }
+    if (!L.started && a._x192) {
+      const t = a._x192();
       if (t != null && L.time < t - 1e-9) { const w = Math.min(mins, t - L.time, left); L.time += w; mins -= w; L.idleUntil = t; continue; }
     }
     L.idleUntil = null;
@@ -1927,7 +1930,7 @@ const MOON_MUSINGS = [
   [0, "You're the only one who remembers. That's lonely. It won't always be."],
 ];
 function moonHint() {
-  if (S.flags._x294) return;
+  if (S.flags._x297) return;
   let h = MOON_HINTS.find(([cond]) => { try { return cond(); } catch (e) { return false; } });
   if (!h || (h[1] === S.lastHint && S.loop - S.lastHintLoop < 5)) {
 
@@ -1966,7 +1969,7 @@ function endDay(reason) {
   const nothing = reason === 'done' && L.time < 1;
   if (reason === 'restart') story(dayLabel() + ': you went to bed early, with ' + left + ' of daylight left.' + (changes.length ? ' ' + changes.join(', ') + '.' : ''), 'loop');
   else if (reason === 'act') {  }
-  else if (!nothing) story(dayLabel() + (reason === 'moonrise' ? (S.flags._x294 ? ': the Moon rose and stayed up. A whole night, and then a new morning.' : ': the Moon tried to rise, and the day folded back to dawn.') : reason === 'asleep' ? ': you dozed off with ' + left + ' of daylight left, after the wrong cup.' : reason === 'rule' ? ': you broke a treaty rule and went straight to bed, with ' + left + ' of daylight left.' : ': plan finished with ' + left + ' of daylight left, so you curled up for a nap.') + (changes.length ? ' ' + changes.join(', ') + '.' : (S.flags._x294 ? '' : ' You wake at dawn, same as always.')), 'loop');
+  else if (!nothing) story(dayLabel() + (reason === 'moonrise' ? (S.flags._x297 ? ': the Moon rose and stayed up. A whole night, and then a new morning.' : ': the Moon tried to rise, and the day folded back to dawn.') : reason === 'asleep' ? ': you dozed off with ' + left + ' of daylight left, after the wrong cup.' : reason === 'rule' ? ': you broke a treaty rule and went straight to bed, with ' + left + ' of daylight left.' : ': plan finished with ' + left + ' of daylight left, so you curled up for a nap.') + (changes.length ? ' ' + changes.join(', ') + '.' : (S.flags._x297 ? '' : ' You wake at dawn, same as always.')), 'loop');
   const firstNight = !nothing && reason !== 'act' && !S.flags.firstMoonrise;
   if (firstNight) S.flags.firstMoonrise = true;
   if (!nothing && reason !== 'act' && !firstNight) {
@@ -2147,14 +2150,14 @@ function loadTemplate(T, replace) {
 }
 let tplSig = '';
 function renderTemplates() {
-  const on = !!S.flags._x100 && !inPrologue();
+  const on = !!S.flags._x102 && !inPrologue();
   $('tplBtn').hidden = !on; $('tplBtn').setAttribute('aria-expanded', String(!!(on && S.ui.tplOpen)));
   $('tplBox').hidden = !(on && S.ui.tplOpen);
   if ($('tplBox').hidden) return;
-  const sig = JSON.stringify(S._x100.map(t => [t.name, t.steps.length])) + S.queue.length;
+  const sig = JSON.stringify(S._x102.map(t => [t.name, t.steps.length])) + S.queue.length;
   if (sig === tplSig) return; tplSig = sig;
   $('tplBox').innerHTML = `<div class="tpl-row"><span class="tn">Saved plans</span><button class="btn" data-tpl="save" title="Save the current plan under a name">Save plan as…</button></div>` +
-    (S._x100.length ? S._x100.map((t, i) => `<div class="tpl-row"><span class="tn" title="${esc(t.name)}">${esc(t.name)} <small>${t.steps.length} step${t.steps.length === 1 ? '' : 's'}</small></span>
+    (S._x102.length ? S._x102.map((t, i) => `<div class="tpl-row"><span class="tn" title="${esc(t.name)}">${esc(t.name)} <small>${t.steps.length} step${t.steps.length === 1 ? '' : 's'}</small></span>
       <button class="btn" data-tpl="load" data-i="${i}" title="Replace the plan with this one">Load</button><button class="btn" data-tpl="add" data-i="${i}" title="Add these steps to the end of the plan">Add</button><button class="btn" data-tpl="ren" data-i="${i}" title="Rename" aria-label="Rename">✎</button><button class="btn" data-tpl="del" data-i="${i}" title="Delete" aria-label="Delete">✕</button></div>`).join('')
       : '<div class="tpl-empty">No saved plans yet.</div>');
 }
@@ -2231,7 +2234,7 @@ const UNLOCKS = [
   ['bank', () => S.loop >= 4, 'The Moon whispers: while you rest, I keep a little moonlight for you. Spend it to make the day run faster. Stored moonlight and faster speeds are now available.'],
   ['moonphase', () => S.loop >= 6, 'The Moon has a new shape today. She changes every day, and the fuller she is, the faster your talent grows.'],
   ['signs', () => Object.keys(S.signs).length > 0 || Object.values(S.stars || {}).some(v => v.length), null],
-  ['_x74', () => (S.mastery.moonwater || 0) + (S.mastery.spelljar || 0) > 0, 'You set your first jar on the burrow windowsill. From now on, the burrow keeps your witchcraft: what today\'s moon water and a spell jar would do.'],
+  ['_x75', () => (S.mastery.moonwater || 0) + (S.mastery.spelljar || 0) > 0, 'You set your first jar on the burrow windowsill. From now on, the burrow keeps your witchcraft: what today\'s moon water and a spell jar would do.'],
   ['photowall', () => lightOn(), null],
   ['predictor', () => 0 >= 25, null],
   ['training', () => S.flags.metNyla && visible(A.train1_grit), 'Some days you just need practice. There\'s a training step for every trait: cheap, repeatable all day, and it builds only that trait and its talent (and a little of one skill).'],
@@ -2243,7 +2246,7 @@ const UNLOCK_TITLES = {
   basket: 'The basket',
   bank: 'Stored moonlight',
   moonphase: 'Moon phases',
-  _x74: 'The _x74',
+  _x75: 'The _x75',
   mastery: 'Mastery',
   training: 'Training',
 };
@@ -2259,7 +2262,7 @@ function checkNewActions() {
 }
 function checkUnlocks() {
   syncStars();
-  if (S.flags._x158 == null && !S.flags.film && !inPrologue() && visible(A.film)) S.flags._x158 = S.loop;
+  if (S.flags._x160 == null && !S.flags.film && !inPrologue() && visible(A.film)) S.flags._x160 = S.loop;
   checkNewActions();
   for (const [key, when, text] of UNLOCKS) {
     if (S.unlocked[key]) continue;
@@ -2295,7 +2298,7 @@ function applyUnlocks() {
   $('bookBar').hidden = !inBook();
   if (inBook()) $('bookBarText').textContent = `📖 ${SIDES[S.away.id].name} · its own day, at 1× · the day at home waits and the Moon keeps your moonlight` + (bookDone(S.away.id) ? ' · finished: only lore, stickers and photos are left' : '');
   $('revisitBtn').hidden = !!S.revisit || inPrologue();
-  $('burrowPanel').hidden = !(Object.keys(S.stickers || {}).length || U('_x74') || U('photowall') || U('_x45') || U('candles') || U('outfits') || U('painting'));
+  $('burrowPanel').hidden = !(Object.keys(S.stickers || {}).length || U('_x75') || U('photowall') || U('_x45') || U('candles') || U('outfits') || U('painting'));
 }
 
 const dirty = { all: true, actions: true, plan: true, journal: true, signs: true };
@@ -2395,8 +2398,8 @@ const timesLabel = n => (n === 1 ? 'first time' : n + ' times');
 
 const ACTION_LORE_BEAR = {};
 
-const BEAR_WAYS = {"counter":{"n":"Bear Takes the Heavy Kettles","fx":"+1 coin a shift (at knack 5: +2). Bear tires twice as fast.","line":"Bernie grumbles at Bear exactly as much as at everyone else, then saves him the burnt lava puff.","ops":{"1":[["give","_x295",1],["tire2"]],"5":[["give","_x295",2]]}},"wave":{"n":"Wade Talks to Bear","fx":"Also moves Explore the Canals. Your traits grow half as much.","line":"Wade tells Bear about a menu he read today. By the end, they're both dabbing their eyes.","ops":{"1":[["also","_x198"],["half"]]}},"_x77":{"n":"Wade Brings a Spare Handkerchief","fx":"Wade pays Bear's way: +1 coin.","line":"Wade brings a spare handkerchief for Bear, just in case. Bear needs it by the second canal.","ops":{"1":[["give","_x295",1]]}},"_x116":{"n":"Bear Carries the Bucket","fx":"+1 moonsand (at knack 5: +2). Bear tires twice as fast.","line":"Bear carries the bucket on his head so both paws are free for scooping. The sand gets everywhere.","ops":{"1":[["give","_x116",1],["tire2"]],"5":[["give","_x116",2]]}},"_x160":{"n":"Bear in the Front Row","fx":"Knack 1: nothing. At knack 3: Get a Sea Wall Pass is free today.","line":"The breeze ball finds Bear's face three times. The crowd does the wave for him anyway.","ops":{"1":[["joke"]],"3":[["freePass"]]},"joke":"Bear catches the ball one-pawed. Gale is so impressed she hands him a sea wall pass.","st":["🌬️","Face Full of Breeze"]},"_x248":{"n":"Gale Shakes Bear's Paw","fx":"The pass costs 1 coin instead of 2.","line":"Gale shakes Bear's paw so hard his ears flap, and knocks a coin off the price.","ops":{"1":[["passCost"]]}},"_x26":{"n":"Bear Walks the Sea Side","fx":"The first Inspect the Old Floodgate today gets +25%.","line":"Bear walks on the sea side of the wall the whole way, and gets all the spray.","ops":{"1":[["next","_x78",25]]}},"_x78":{"n":"Bear Listens for the Cracks","fx":"Bar +25%. At knack 5: the ✦ Fix the Old Floodgate for Good shows its next requirement.","line":"Bear puts his ear to the stone and listens for the sea. He finds two cracks you'd have missed.","ops":{"1":[["boost",25]],"5":[["reveal","_x21"]]}},"_x117":{"n":"Two Sandbags at Once","fx":"Each session counts as two, for two scoops of moonsand. Bear tires twice as fast.","line":"Bear stacks two sandbags at a time and hums the same three notes while he does it.","ops":{"1":[["twice","_x116"],["tire2"]]}},"_x250":{"n":"Seth's Window, with Bear","fx":"Knack 1: nothing. At knack 3: also moves Explore the Wild Woods.","line":"Seth shows Bear a window that isn't theirs. Grandma Sorrelson catches them both. Bear apologizes all the way back to the manor.","ops":{"1":[["joke"]],"3":[["also","wild"]]},"joke":"Seth shows Bear a better window, one on the right side of the rules. You can see the Wild Woods from it.","st":["🪟","Not Our Window"]},"_x80":{"n":"The Bees Pick Bear","fx":"+1 frostcomb. Bear loses 30 energy.","line":"The bees sting Bear on the nose instead of you. He says it's fine, through a very puffy nose.","ops":{"1":[["give","_x80",1],["energy",-30]]}},"_x302":{"n":"Bear Forks the Hay","fx":"Bar +40%. Bear tires twice as fast.","line":"Viola watches Bear fork the hay and moos, once, approvingly. Nobody has ever heard her approve of anything.","ops":{"1":[["boost",40],["tire2"]]}},"_x199":{"n":"Bear Holds the Hedge Open","fx":"The first Explore the Wild Woods today gets +25%.","line":"Bear holds the inner hedge open with both arms, so not one bramble catches your ears.","ops":{"1":[["next","wild",25]]}},"wild":{"n":"Bear Stays on the Path","fx":"Bar +25%. At knack 5: 🐻↩ errand: Bear scouts the far paths and is back at dusk with a firefly jar.","line":"Bear stays on the path. Mostly. He comes back from the mostly with burrs in his fur.","ops":{"1":[["boost",25]],"5":[["errand","_x251",1]]}},"_x161":{"n":"Bear Tells the Catfish a Story","fx":"Knack 1: nothing. At knack 3: the catfish tells his story twice: bar +40%.","line":"Bear tells the old catfish a story instead of asking for his. The catfish sinks out of sight in protest.","ops":{"1":[["joke"]],"3":[["boost",40]]},"joke":"Bear asks for the catfish's story, then asks for it again. The catfish has never been so happy.","st":["🐟","The Catfish Sulks"]},"stones":{"n":"Bear Wades for the Deep Ones","fx":"A second circle of stones; the spare goes to Grandma's garden, and a Sorrelson trade costs one less today. Bear tires twice as fast.","line":"Bear wades in up to his middle for the smoothest stones at the bottom. He comes out with twelve stones and a very surprised frog.","ops":{"1":[["also","_x303",0.4],["tire2"]]}},"_x27":{"n":"Bear Goes Down First","fx":"The first Explore Twin Bridges today gets +25%.","line":"Bear goes down the cliff path first and tests every ledge with one paw before you step on it.","ops":{"1":[["next","_x162",25]]}},"_x162":{"n":"The Children Ask Bear","fx":"Also moves Search for Shrines (the children point the way). Your traits grow half as much.","line":"The children want to know what Bear's paws are for. He shows them: carrying children, two at a time.","ops":{"1":[["also","shrines"],["half"]]}},"_x120":{"n":"The Great Fairy Fluffs Bear","fx":"Bear +10 energy.","line":"The Great Fairy fluffs Bear's fur until he's twice his size. He doesn't fit through the door on the way out.","ops":{"1":[["energy",10]]}},"shrines":{"n":"Bear Takes the Next Hill First","fx":"Bar +25%. At knack 5: the ✦ Tame the Wild Horse shows its next requirement.","line":"Bear runs up every hill first and waves you on when he sees blue.","ops":{"1":[["boost",25]],"5":[["reveal","_x123"]]}},"_x3":{"n":"Bear Takes the Wind","fx":"The first step at Hyrule Castle today gets +25%.","line":"Bear walks into the wind so you can walk behind him, out of it.","ops":{"1":[["next","z28",25]]}},"_x200":{"n":"Every Cabin Wants Bear","fx":"Also moves Share Hot Cider with Haymitch. Your traits grow half as much.","line":"Every cabin wants Bear on its team. He says he's on yours. They're all a little bit jealous.","ops":{"1":[["also","_x124"],["half"]]}},"_x124":{"n":"Haymitch Sizes Up Bear","fx":"Knack 1: nothing. At knack 3: +1 hot cider.","line":"Haymitch looks Bear up and down and says he's seen scarier furniture. Bear takes it as a compliment.","ops":{"1":[["joke"]],"3":[["give","_x278",1]]},"joke":"Haymitch pours Bear a mug of hot cider. He says it isn't a compliment. It is.","st":["🪑","Scarier Furniture"]},"_x305":{"n":"Pita Frosts a Cake for Bear","fx":"A cake for Bear: worth 3× hot cider for his energy.","line":"Pita frosts a little bear on top. It looks exactly like him, down to the worried eyebrows.","ops":{"1":[["energy",60]]}},"_x255":{"n":"Percy Teaches Bear to Swim","fx":"Knack 1: nothing. At knack 3: +1 sea glass.","line":"Bear can't swim. Percy explains how, badly. Bear sinks, very calmly, and walks out along the bottom.","ops":{"1":[["joke"]],"3":[["give","_x125",1]]},"joke":"Bear swims! Mostly sideways. He comes up with a piece of sea glass in his teeth.","st":["🌊","Along the Bottom"]},"_x256":{"n":"Bear Paddles Hard","fx":"The first Explore the Arena Woods today gets +40%. Bear tires twice as fast.","line":"Bear paddles so hard the canoe leaves a wake. You steer, and try not to laugh.","ops":{"1":[["next","_x257",40],["tire2"]]}},"_x257":{"n":"Bear Goes First into the Woods","fx":"Bar +25%. At knack 5: one ✦ at Camp Half-Moon shows its next requirement.","line":"The birds sing Bear's humming back to him, slightly off-key, on purpose.","ops":{"1":[["boost",25]],"5":[["reveal"]]}},"_x306":{"n":"Aloy Uses Bear as a Step","fx":"Bar +25%. At knack 3: also moves Climb the Tallneck.","line":"Aloy climbs up Bear to reach the first handhold. He holds very still. She says he's the best handhold in the woods.","ops":{"1":[["boost",25]],"3":[["also","_x126"]]}},"_x126":{"n":"Bear Climbs Behind You","fx":"A Memory: a with-Bear photo spot at the top.","line":"From the top of the Tallneck, Bear points the way home. He's wrong. You let him have it.","ops":{"1":[["memory"]]}},"_x201":{"n":"Bear Takes Both Packs","fx":"The first Talk with Katniss today gets +40%. Bear tires twice as fast.","line":"Bear carries both packs up Half-Moon Hill and pretends they're light.","ops":{"1":[["next","_x163",40],["tire2"]]}},"_x163":{"n":"Katniss Talks to Bear","fx":"Also moves Explore the Arena Woods. Your traits grow half as much.","line":"Katniss asks Bear how he found you. He tells her. She listens to the whole thing, and whistles the four notes at the end.","ops":{"1":[["also","_x257"],["half"]]}},"_x258":{"n":"Grace Remembers Bear First","fx":"Also moves Learn Rocky's Words. Your traits grow half as much.","line":"Grace looks at Bear for a long time. \"You've got a very easy face to remember,\" he says. It helps, a little.","ops":{"1":[["also","_x260"],["half"]]}},"_x128":{"n":"Bear Floats In First","fx":"Drift in the Tunnel gets +25% today.","line":"Bear floats into the tunnel first, upside down, and insists it's the right way up.","ops":{"1":[["next","_x203",25]]}},"_x82":{"n":"Bear Checks Your Tether","fx":"The first Float Outside today gets +25%.","line":"Bear checks your tether three times, then a fourth, then holds your paw anyway.","ops":{"1":[["next","outside",25]]}},"_x259":{"n":"The Swarm Copies Bear","fx":"Knack 1: nothing. At knack 3: also moves Help Grace Remember.","line":"The swarm copies Bear's yawn. Then Bear yawns again. This goes on for some time.","ops":{"1":[["joke"]],"3":[["also","_x258"]]},"joke":"The swarm makes itself into a tiny glittering bear and waves. Grace laughs, and remembers something.","st":["🥱","Catching Yawns"]},"_x203":{"n":"Bear Tows You","fx":"Bar +25%.","line":"Bear tows you along by the paw, like a balloon, and you let him.","ops":{"1":[["boost",25]]}},"_x260":{"n":"Rocky Learns Bear's Name","fx":"Also moves Help Grace Remember. Your traits grow half as much.","line":"Rocky plays a chord that means Bear. It's low and warm and goes on a bit long. Bear says it's perfect.","ops":{"1":[["also","_x258"],["half"]]}},"outside":{"n":"Out on the Tether Alone","fx":"🐻↩ errand: Bear floats out alone and is back at dusk with a spark in a jar (+1 spark).","line":"Bear floats off into the sparks, waving with both paws, and comes back at dusk holding one very carefully.","ops":{"1":[["errand","spark",1]]}},"_x261":{"n":"Bear Takes the Case","fx":"Bar +25%. At knack 5: 🐻↩ errand with Sam, back at dusk with +1 salt.","line":"The sock-stealing wisp takes one look at Bear and hands back every sock.","ops":{"1":[["boost",25]],"5":[["errand","salt",1]]}},"_x262":{"n":"Everyone Waves at Bear","fx":"Also moves Share a Slice with Dean. Your traits grow half as much.","line":"The waitress gives Bear the big booth without being asked. He fits in it exactly.","ops":{"1":[["also","_x332"],["half"]]}},"_x341":{"n":"Dean Shares with Bear","fx":"Knack 1: nothing. At knack 3: Bear +15 energy.","line":"Bear eats Dean's slice while Dean is mid-story. Dean is devastated. Bear's very sorry. He isn't.","ops":{"1":[["joke"]],"3":[["energy",15]]},"joke":"Today Dean orders two slices, one for Bear, and tells the story twice.","st":["🥧","Very Sorry (Isn't)"]},"_x168":{"n":"Bear Lifts the Car","fx":"+1 lucky bolt. Bear tires twice as fast.","line":"Bear lifts the back of a rusty car so Bobby can look under it. Bobby calls him a nitwit and hands him the good wrench.","ops":{"1":[["give","_x263",1],["tire2"]]}},"_x169":{"n":"Bear Holds Baby Up","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear holds Baby's front end up while Bobby tightens the bolts. Dean hovers like it's his kid on the first day of school.","ops":{"1":[["twice","_x263"],["tire2"]]}},"_x170":{"n":"Castiel Takes Bear Literally","fx":"Knack 1: nothing. At knack 3: also moves Work a Case with Dean and Sam.","line":"Bear says he could eat a horse. Castiel looks worried for the rest of the afternoon.","ops":{"1":[["joke"]],"3":[["also","_x261"]]},"joke":"Castiel asks Bear to explain a saying. Bear picks \"saving people, fixing things,\" and Castiel decides to come on the case.","st":["🐴","Could Eat a Horse"]},"_x171":{"n":"A Dance with Bear","fx":"A Memory: a with-Bear photo spot by the jukebox.","line":"The jukebox plays something slow. Bear asks you to dance. Dean pretends to read the menu.","ops":{"1":[["memory"]]}},"_x50":{"n":"Bear Waits Beside You","fx":"Bar +25%.","line":"The crow in the nice suit looks at Bear, and decides to stand a little further away.","ops":{"1":[["boost",25]]}},"cars":{"n":"Bear Walks the Aisle First","fx":"Bar +25%. At knack 5: one ✦ on the train shows its next requirement.","line":"Bear walks the aisle first, ducking every luggage rack, and checks each seat before you sit.","ops":{"1":[["boost",25]],"5":[["reveal"]]}},"doors":{"n":"Bear Holds the Other Side","fx":"Bunny's next step today is free of the passenger-car danger. Bear tires twice as fast.","line":"Sang-hwa leans on one side, Bear on the other. Sang-hwa tells a joke. Bear laughs so hard the door rattles.","ops":{"1":[["fogFree"],["tire2"]]}},"_x83":{"n":"A Rack in Each Paw","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear braces the far door with a luggage rack in each paw. The spikes ring when he sets them, like little bells.","ops":{"1":[["twice","_x205"],["tire2"]]}},"_x266":{"n":"Mercy Wakes Bear Too","fx":"Bear +15 energy.","line":"Mercy touches Bear's shoulder on her way past. He wasn't sleepwalking. He feels wonderful anyway.","ops":{"1":[["energy",15]]}},"_x206":{"n":"The Cook Feeds Bear","fx":"Bear +20 energy.","line":"The kind cook gives Bear a mug of hot chocolate with a marshmallow on top, and another on the side for later.","ops":{"1":[["energy",20]]}},"_x309":{"n":"Su-an Sings for Bear","fx":"Also moves Sit in the Dining Car. Your traits grow half as much.","line":"Su-an sings her song for Bear. He listens with his whole face. She gets through it without a single wobble.","ops":{"1":[["also","_x206"],["half"]]}},"_x207":{"n":"Tracer Races Bear","fx":"Knack 1: nothing. At knack 3: also moves Walk the Passenger Cars.","line":"Tracer races Bear to the end of the car. She wins, comes back, and wins again before he's halfway.","ops":{"1":[["joke"]],"3":[["also","cars"]]},"joke":"Tracer stops racing Bear and walks the aisle with him instead. She says he's the only one on the train who never rushes.","st":["⏱️","Lapped Twice"]},"_x208":{"n":"Bear Shovels Coal","fx":"Bar +40%. Bear tires twice as fast.","line":"The gruff engineer hands Bear the coal shovel. Two scoops later, he hands him his cap too.","ops":{"1":[["boost",40],["tire2"]]}},"_x267":{"n":"Chief Swan Waves Bear Over","fx":"Moves Sit with Chief Swan at the Diner instead.","line":"Bella trips on the flat. Bear catches her without looking up, as if he always has.","ops":{"1":[["instead","_x173"]]}},"pines":{"n":"Bear Walks Between the Trees","fx":"Bar +25%.","line":"Something very fast moves between the trees, sees Bear, and slows to a walk.","ops":{"1":[["boost",25]]}},"_x174":{"n":"Bear Rolls the Moss Flat","fx":"Each session counts as two. Bear tires twice as fast.","line":"Emmett and Bear roll the stillmoss flat side by side, racing without saying so.","ops":{"1":[["twice","_x84"],["tire2"]]}},"_x131":{"n":"Bear Bats","fx":"+1 to the Cullens' bar, and a home-run sticker the first time.","line":"The thunder covers the crack of the bat. Bear runs the bases anyway, very slowly, waving.","ops":{"1":[["also","_x209",1],["sticker","homerun"]]}},"_x268":{"n":"Jacob Runs with Bear","fx":"Knack 1: nothing. At knack 3: also moves Wander the Misty Pines.","line":"Jacob runs with Bear. Then he runs back to see where Bear went. Then he runs back again.","ops":{"1":[["joke"]],"3":[["also","pines"]]},"joke":"Jacob slows down for Bear, and they talk all the way round La Push. He still doesn't run out of things to say.","st":["🐺","Where'd Bear Go?"]},"_x269":{"n":"Alice Sees Bear's Tomorrow","fx":"Reveals the next storm day for Thunderstorm Baseball.","line":"Alice looks at Bear and laughs. She won't say why. She says you'll like it.","ops":{"1":[["forecast"]]}},"_x310":{"n":"A Heavier Part","fx":"Rebuild Anakin's Podracer gets a bigger piece, but no duskglass today. Bear tires twice as fast.","line":"Bear pulls the glowing thing out from under the tarp. Watto buzzes over to charge him for it.","ops":{"1":[["nextTwice","_x132"],["block","_x86","Bear took the heavy part instead, so no duskglass today"],["tire2"]]}},"_x270":{"n":"Watto Haggles with Bear","fx":"Knack 1: Moss Espa buys cost one more today. At knack 3: they cost one less.","line":"Watto takes one look at Bear and doubles every price. Bear pays it. He thought it was fair.","ops":{"1":[["joke"]],"3":[["give","_x86",1]]},"joke":"Bear has learned to stare. Watto lasts three seconds and knocks a coin off everything.","st":["💰","A Fair Price"]},"_x132":{"n":"Bear Holds the Engine","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear holds the engine up while Anakin crawls under it. Anakin says Bear is the best jack he's ever had.","ops":{"1":[["twice","_x86"],["tire2"]]}},"_x311":{"n":"Bear Walks the Course First","fx":"Bar +25%.","line":"Bear walks the racecourse with his paws over his ears and points out every rock.","ops":{"1":[["boost",25]]}},"_x210":{"n":"Anakin Takes Bear for a Lap","fx":"Bar +25%. At knack 3: also moves Work the Pit with Bear.","line":"Anakin takes Bear round once in the racer. Bear comes back very quiet and very windswept.","ops":{"1":[["boost",25]],"3":[["also","_x175"]]}},"_x175":{"n":"Bear's Opinions About Tires","fx":"Bar +40% (at knack 5: Race the Moonta Eve Classic +25%). Bear tires twice as fast.","line":"Bear has a lot of opinions about tires. Anakin listens to all of them and agrees with two.","ops":{"1":[["boost",40],["tire2"]],"5":[["flag","_x311"]]}},"_x51":{"n":"Bear Takes the Front","fx":"Bridge Four +25%, and Lay Bridges to the Heart Plateau gets a bigger piece. Bear tires twice as fast.","line":"Bear takes the front of the bridge. Bridge Four says they've never had a run so steady.","ops":{"1":[["boost",25],["nextTwice","_x12"],["tire2"]]}},"rock":{"n":"Rock Feeds Bear Twice","fx":"Bear +20 energy.","line":"Rock gives Bear a second bowl before he's finished the first. Then a third, to be safe.","ops":{"1":[["energy",20]]}},"_x135":{"n":"Bear Holds the Ladder","fx":"The first Explore the Chasms today gets +25%.","line":"Bear climbs down first and holds the rope ladder steady for a spirit who weighs nothing at all.","ops":{"1":[["next","_x211",25]]}},"_x52":{"n":"Bear Runs the Front","fx":"The first Cross the Plateaus today gets +40%. Bear tires twice as fast.","line":"Bear runs at the front of the bridge and talks to you the whole way. By the second plateau, Bridge Four stops asking who he's talking to.","ops":{"1":[["next","_x136",40],["tire2"]]}},"_x211":{"n":"Bear Says Hello","fx":"Bar +25%. At knack 5: 🐻↩ errand, back at dusk with +1 empty gem.","line":"Something enormous scuttles past. Bear stands very still and says hello. It doesn't answer, but it doesn't leave.","ops":{"1":[["boost",25]],"5":[["errand","gems",1]]}},"_x136":{"n":"Bear Stamps Every Plank","fx":"Bar +25%.","line":"Bear crosses each bridge first, stamping on every plank so you'll know it holds.","ops":{"1":[["boost",25]]}},"_x12":{"n":"One Plank Ahead","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear lays a plank, stands on it, and lays the next. Bridge Four counts out loud for him.","ops":{"1":[["twice","_x87"],["tire2"]]}},"_x29":{"n":"Bear Keeps a Paw Out","fx":"The first Watch the Stormwall today gets +25%.","line":"Bear leans into the storm wind and keeps a paw out behind him, in case you need it.","ops":{"1":[["next","_x88",25]]}},"_x13":{"n":"Bear Brings Back Stormwood","fx":"+1 stormwood. Bear tires twice as fast.","line":"On the way back, Bear carries the bridge on his shoulders and a plank of stormwood under one arm.","ops":{"1":[["give","_x87",1],["tire2"]]}},"_x88":{"n":"Bear Faces the Storm","fx":"Bar +25%. At knack 5: 🐻↩ errand, back at dusk with +1 stormlight.","line":"The storm rolls in. Bear stands in front of you anyway, and lets it soak him.","ops":{"1":[["boost",25]],"5":[["errand","_x65",1]]}},"_x177":{"n":"Dalinar Talks to Bear","fx":"Also moves Carry the Bridge with Bridge Four. Your traits grow half as much.","line":"Dalinar talks to Bear like an old soldier, and leaves a little pause after each question, as if someone else might answer.","ops":{"1":[["also","_x51"],["half"]]}},"_x54":{"n":"Bear Does the Stumps","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear does the stumps. The very stubborn boulder takes him all afternoon. He names it.","ops":{"1":[["twice"],["tire2"]]}},"_x271":{"n":"Bear Pours the Cider","fx":"At knack 3: a Memory, a with-Bear photo spot of the porch at dusk.","line":"Bear pours the hot cider, hands you the bigger mug, and pretends he didn't.","ops":{"3":[["memory"]]}},"_x178":{"n":"The Town Likes Bear","fx":"Also moves Hot Cider at the Stardrop Saloon. Your traits grow half as much.","line":"The general store tells Bear all about the community center's roof. Bear is already looking at it.","ops":{"1":[["also","_x213"],["half"]]}},"_x213":{"n":"Everyone Buys Bear a Cider","fx":"A gift seed today (+1 seed).","line":"Everyone in the saloon buys Bear a hot cider. He has to carry the extras home.","ops":{"1":[["give","seed",1]]}},"_x179":{"n":"The Junimos Climb Bear","fx":"Knack 1: nothing. At knack 3: +1 seed.","line":"The Junimos climb Bear like a hill and won't come down. He spends the whole afternoon very still.","ops":{"1":[["joke"]],"3":[["give","seed",1]]},"joke":"The Junimos ride on Bear's shoulders and point out where the good seeds are.","st":["🌱","Junimo Hill"]},"_x272":{"n":"Bear Holds the Slippers","fx":"Also moves Dance with Genevieve. Your traits grow half as much.","line":"Bear holds each slipper up to the lantern so Derek can find the holes. Derek says Bear has steady paws.","ops":{"1":[["also","_x89"],["half"]]}},"_x342":{"n":"Bear Rows","fx":"The first step at the Pavilion today gets +40%. Bear tires twice as fast.","line":"Bear rows. The little boat sits very low in the water, and the upside-down lights wobble.","ops":{"1":[["next","z69",40],["tire2"]]}},"_x55":{"n":"Bear Shows Derek His Step","fx":"Knack 1: nothing. At knack 3: counts as two lessons.","line":"Bear shows Derek how to dance. Derek learns how not to. It's still useful.","ops":{"1":[["joke"]],"3":[["masteryPlus"]]},"joke":"Bear shows Derek how he counts: out loud, slowly, and always to three. Derek gets it at once, and they count together, very seriously.","st":["🩰","How Not to Dance"]},"_x180":{"n":"Bear Rows Back Slowly","fx":"The first step on the shore today gets +40%. Bear tires twice as fast.","line":"Bear rows back slowly, so the music lasts a little longer.","ops":{"1":[["next","z68",40],["tire2"]]}},"_x273":{"n":"A Sister Dances with Bear","fx":"Knack 1: nothing. At knack 3: star-sense gives a second hint this visit.","line":"Bear dances with a sister and steps on her feet twice. She says it's the most interesting dance she's had all year.","ops":{"1":[["joke"]],"3":[["secondHint"]]},"joke":"The sister teaches Bear to count. He counts out loud the whole dance, and at the end she whispers the shape of her sign to him.","st":["👣","Twice on the Toes"]},"_x89":{"n":"Bear Cuts In","fx":"Also moves Mending with Derek. Your traits grow half as much.","line":"Bear cuts in, dances one turn with Genevieve, and hands her to Derek. Derek goes very pink.","ops":{"1":[["also","_x272"],["half"]]}},"_x138":{"n":"The Goats Have Opinions","fx":"Knack 1: nothing. At knack 3: also moves Adventure with Lydia.","line":"A goat has opinions about Bear. It shares them, loudly, all the way up the market street.","ops":{"1":[["joke"]],"3":[["also","_x274"]]},"joke":"The goat follows Bear everywhere all day. Lydia says it's the first goat in Whiterun to pick a side.","st":["🐐","The Goat Chose"]},"_x274":{"n":"Lydia and Bear Trade Burdens","fx":"Bar +25%. At knack 3: +1 sweetroll.","line":"Lydia offers to carry Bear's burdens. Bear offers to carry hers. They end up carrying each other's, and both seem happier.","ops":{"1":[["boost",25]],"3":[["give","_x90",1]]}},"steps":{"n":"He Carries Her Up","fx":"The climb +25%, but the Greyhares' bar gets nothing today (he's too loud). Bear tires twice as fast.","line":"Bear carries you up the steps on his back. The Greyhares hear him coming from halfway down.","ops":{"1":[["boost",25],["block","_x91","Bear was too loud on the steps today. The Greyhares aren't talking"],["tire2"]]}},"_x215":{"n":"Bear Breaks the Snow","fx":"The first Stand on the Dragon's Peak today gets +40%. Bear tires twice as fast.","line":"Bear goes first through the deep snow and leaves a path exactly your size.","ops":{"1":[["next","_x313",40],["tire2"]]}},"_x313":{"n":"Bear Answers Snowmane","fx":"Bar +25%. At knack 5: the ✦ Teach Bear a Shout shows its next requirement.","line":"Snowmane talks in his sleep. Bear answers him, very quietly, like it's a conversation.","ops":{"1":[["boost",25]],"5":[["reveal","_x15"]]}},"_x217":{"n":"The Cats Like Bear","fx":"Also moves Help Mineko with Her Ideas, and +1 sweet bean bun. Your traits grow half as much.","line":"Every cat in the square wants Bear to try their stall. He tries all of them, and saves you a bun from each.","ops":{"1":[["also","_x218"],["give","_x181",1],["half"]]}},"_x139":{"n":"Bear Wins Her a Prize","fx":"A prize for her (a paper lantern keepsake).","line":"Bear's ring wobbles round the middle peg and, against all odds, stays. The ring-toss cat sulks, and hands over a lantern anyway.","ops":{"1":[["sticker","ringPrize"]]}},"_x218":{"n":"Mineko Picks Bear's Idea","fx":"Build the Stall gets a free piece, once a visit.","line":"Bear has one idea all day. Mineko says it's the best one, and actually finishes it.","ops":{"1":[["freePiece","_x275"]]}},"_x275":{"n":"Bear Holds the Awning","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear holds the awning up while Mineko ties it. She ties it to him by mistake, once.","ops":{"1":[["twice","_x92"],["tire2"]]}},"_x314":{"n":"Rost Teaches Bear to Carve","fx":"Also moves Explore the Ruins with Aloy. Your traits grow half as much.","line":"Rost shows Bear how to carve a little wooden Strider. Bear carves one for you. It has five legs.","ops":{"1":[["also","_x103"],["half"]]}},"_x220":{"n":"Bear Pulls the Heavy Seams","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear pulls the heavy seams tight while Rost stitches. Rost says nothing, and moves Bear's paw a little to the left.","ops":{"1":[["twice","_x315"],["tire2"]]}},"_x93":{"n":"Aloy Reads to Bear","fx":"Also moves Learn from Rost. Your traits grow half as much.","line":"Aloy reads the old ruins out loud. Bear asks a question about every word. She doesn't seem to mind.","ops":{"1":[["also","_x314"],["half"]]}},"_x94":{"n":"Bear Holds You Up","fx":"A Memory: a with-Bear photo spot, the whole country as a map. Bear tires twice as fast.","line":"At the top of the Great Tallneck, Bear holds you up so you can see past his ears.","ops":{"1":[["memory"],["tire2"]]}},"_x221":{"n":"Esquie Gives Bear a Ride","fx":"A shortcut: the next trip to the Expedition Camp today costs nothing.","line":"Esquie lets Bear ride on his back. \"Whee!\" says Esquie. \"Whee,\" says Bear, a little quieter.","ops":{"1":[["free","_x222"]]}},"_x4":{"n":"The Gestrals Challenge Bear","fx":"Also moves Learn to Parry with the Gestrals. Your traits grow half as much.","line":"Every Gestral in the village challenges Bear to a game. He loses all of them, gracefully, and they adore him for it.","ops":{"1":[["also","_x277"],["half"]]}},"_x277":{"n":"Bear Takes the Pillows","fx":"Bar +25%. Bear loses 20 energy.","line":"Bear takes every pillow meant for you. He says it doesn't hurt. He is covered in feathers.","ops":{"1":[["boost",25],["energy",-20]]}},"_x317":{"n":"Bear Breaks the Tie","fx":"Knack 1: nothing. At knack 3: one more Gestral Game today.","line":"Bear is the tiebreaker. He agrees with both Gestrals. They start a new argument about him.","ops":{"1":[["joke"]],"3":[["moreToday","_x317"]]},"joke":"Bear picks a side and sticks to it. The Gestrals are so impressed they settle a second argument too.","st":["⚖️","Both Sides"]},"_x318":{"n":"The Fox Lends Bear a Toolbox","fx":"Also moves Swim with Esquie. Your traits grow half as much.","line":"The fox engineer lets Bear hold the toolbox for the mechanical arm. Bear holds it like a baby bird.","ops":{"1":[["also","_x221"],["half"]]}},"_x343":{"n":"Professor Oak Measures Bear","fx":"The picture book gets a free piece, once a visit.","line":"Professor Oak measures Bear's paw, writes \"large\" in a notebook, and underlines it three times.","ops":{"1":[["freeBar"]]}},"_x182":{"n":"Pikachu Shocks Bear","fx":"Knack 1: nothing. At knack 3: a free safari photo.","line":"Pikachu shocks Bear. His fur stands up in every direction. Pikachu looks extremely pleased with itself.","ops":{"1":[["joke"]],"3":[["free","_x224"]]},"joke":"Pikachu charges the camera instead of Bear. One free photo, and Bear's fur stays down.","st":["⚡","Static Bear"]},"_x140":{"n":"Squirtle Bubbles Bear","fx":"Knack 1: nothing. At knack 3: +1 Oran Berry.","line":"Squirtle blows bubbles in Bear's face until he sneezes. Then it does it again, to be sure.","ops":{"1":[["joke"]],"3":[["give","_x319",1]]},"joke":"Squirtle blows one big bubble around an Oran Berry and floats it over to Bear.","st":["🫧","Bubble Sneeze"]},"_x141":{"n":"Nyla Talks to Bear","fx":"Also moves Trade Words with Mogget. Your traits grow half as much.","line":"Nyla tells Bear, in perfect sentences, exactly how she likes her ears scratched. He gets it right on the second try.","ops":{"1":[["also","_x226"],["half"]]}},"_x142":{"n":"Heavy Stones","fx":"One stone counts as two. Bear tires twice as fast.","line":"Bear sets each stone back and holds it there until its mark lights up.","ops":{"1":[["twice"],["tire2"]]}},"_x226":{"n":"Mogget Is Rude to Bear","fx":"Knack 1: nothing. At knack 3: Bear +15 energy.","line":"Mogget tells Bear he's too big, too loud and too fond of honey. Bear agrees with all three.","ops":{"1":[["joke"]],"3":[["energy",15]]},"joke":"Mogget naps on Bear's lap. He says it's only because Bear is warm. He purrs anyway.","st":["🔔","Too Big, Too Loud"]},"_x280":{"n":"Bear Knocks on the Door","fx":"Bar +25%.","line":"Bear knocks on the tower's heavy door. Noble Team looks at him, then at the door, and decides he can hold it.","ops":{"1":[["boost",25]]}},"_x143":{"n":"Bear Holds It Alone","fx":"Run the Relays is free today. Bear tires twice as fast.","line":"Bear plants his paws and holds the door. Jorge asks if he needs a hand. Bear says he has two.","ops":{"1":[["free","_x281"],["tire2"]]}},"_x282":{"n":"Noble Six Nods at Bear","fx":"Bar +25%. At knack 3: also moves Walk Patrol with the Guardians.","line":"Noble Six nods at Bear, once. Kat says it's the friendliest she's ever seen them.","ops":{"1":[["boost",25]],"3":[["also","_x227"]]}},"_x227":{"n":"Bear Walks Patrol","fx":"Bar +25%. At knack 5: 🐻↩ errand, back at dusk with +1 mote of Light.","line":"A Guardian asks Bear to reach something off a high shelf for an old woman. They talk about it all the way round the city.","ops":{"1":[["boost",25]],"5":[["errand","_x283",1]]}},"_x32":{"n":"Bear Carries the Cells","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear carries each power cell to the ship like an egg. The Ghost hovers by his shoulder, giving directions.","ops":{"1":[["twice","_x283"],["tire2"]]}},"_x95":{"n":"Bear Holds the Lift","fx":"Also moves Survive Emily's Briefing. Your traits grow half as much.","line":"Nobody at Gustave smiles before noon. Then Bear holds the lift door for everyone, and three people do.","ops":{"1":[["also","_x284"],["half"]]}},"_x183":{"n":"Miranda Sends Bear Across Town","fx":"🐻↩ errand: Bear is gone until dusk and back with the seating chart, signed, and Miranda's dry cleaning: Assist Miranda +25%.","line":"\"The seating chart,\" Miranda says softly, to Bear. \"And the dry cleaning.\" He's gone before she finishes, and back at dusk with both, perfectly pressed.","ops":{"1":[["errandBar","_x183",25]]}},"_x284":{"n":"Emily Briefs Bear","fx":"Also moves Get Through a Day at Gustave Tower. At knack 3: Bear +10 energy.","line":"Emily briefs Bear at top speed. He nods at all of it. At the end she slips him a granola bar and tells him not to tell anyone.","ops":{"1":[["also","_x95"]],"3":[["energy",10]]}},"_x285":{"n":"Nigel Dresses Bear","fx":"Knack 1: a photo and a sticker, nothing else. At knack 3: Bear +10 energy each visit.","line":"Nigel dresses Bear instead. Bear comes out in a cardigan, a scarf and a very small hat. Nigel says it's a choice.","ops":{"1":[["joke"]],"3":[["energy",10]]},"joke":"Nigel lends Bear the cardigan for the day. It's soft and warm, and Bear walks taller in it.","st":["🎩","It's a Choice"]},"_x324":{"n":"Bear at the Gala","fx":"A Memory: a with-Bear photo spot. Your traits grow half as much.","line":"Bear wears a borrowed bow tie, crooked. Every photographer at the gala wants him in the picture.","ops":{"1":[["memory"],["half"]]}},"_x229":{"n":"Bear Kneads","fx":"+1 rope (an extra loaf, traded). Bear tires twice as fast.","line":"Bear kneads the dough so hard the table walks across the floor. The baker gives him all the crumbs.","ops":{"1":[["give","rope",1],["tire2"]]}},"_x230":{"n":"Indigo Spars with Bear","fx":"Bar +25%.","line":"Indigo says Bear holds a sword like a soup spoon. Then Bear blocks every single thrust.","ops":{"1":[["boost",25]]}},"_x231":{"n":"Bear Starts a Rumor","fx":"Knack 1: nothing. At knack 3: also moves Explore the Fire Swamp.","line":"Bear tells the inn that the Prince is afraid of ducks. By dusk all of Florinbloom knows it, and nobody knows who started it.","ops":{"1":[["joke"]],"3":[["also","_x344"]]},"joke":"Bear listens instead of talking, and everyone tells him things. One of them is the way through the Fire Swamp.","st":["🦆","Afraid of Ducks"]},"_x344":{"n":"Bear Goes First, Carefully","fx":"Bar +25%. At knack 5: the ✦ Befriend the Rodent of Unusual Size shows its next requirement.","line":"Bear goes first. Carefully. A flame spurt singes the very tip of his little tail, and he pretends it didn't.","ops":{"1":[["boost",25]],"5":[["reveal","_x191"]]}},"sand":{"n":"Bear Pulls You Out","fx":"The rope isn't used up today. Bear tires twice as fast.","line":"You sink. Bear pulls you out by the ears, gently, before you're even up to your whiskers.","ops":{"1":[["tire2"]]}},"_x325":{"n":"Bear Stares It Down","fx":"Bar +25%.","line":"The Rodent of Unusual Size looks at Bear. Bear looks back. The Rodent decides it has somewhere else to be.","ops":{"1":[["boost",25]]}},"_x286":{"n":"Bunny Rides on Bear","fx":"The first step at the Cliff Top today gets +40%. Bear tires twice as fast.","line":"Bear climbs. You hold on. Halfway up he starts humming, so you'll know he isn't scared.","ops":{"1":[["next","z7",40],["tire2"]]}},"_x287":{"n":"Bear Stirs the Miracle","fx":"The big miracle gets a free stir, once a visit.","line":"Miracle Max lets Bear stir. He says Bear has the arms for miracles, if not the patience.","ops":{"1":[["freePiece","miracle"]]}},"storm":{"n":"Bear Roars","fx":"Bar +25%.","line":"Bear roars, and three guards decide to become bakers.","ops":{"1":[["boost",25]]}},"_x345":{"n":"Bear Ducks the Beams","fx":"Bar +25%.","line":"Bear goes down the stairs behind the kitchen first, ducking every low beam, and only bumps three.","ops":{"1":[["boost",25]]}},"_x61":{"n":"Third Breakfast","fx":"Knack 1: nothing. At knack 3: +1 seedcake.","line":"Bear has second breakfast, then asks, quite seriously, about third. The hobbits are delighted.","ops":{"1":[["joke"]],"3":[["give","seedcake",1]]},"joke":"The hobbits pack Bear a seedcake for the road. Anyone who asks about third breakfast is one of them.","st":["🍳","Third Breakfast"]},"seedcake":{"n":"Bear Packs Lembread","fx":"Once Riverdell is open, he packs lembread instead of seedcakes. Bear tires twice as fast.","line":"Bear packs the basket so carefully that it shuts on the first try. It has never shut on the first try.","ops":{"1":[["swapLembread"],["tire2"]]}},"_x186":{"n":"Gandalf Tells Bear a Story","fx":"Also moves Sit with the Council. Your traits grow half as much.","line":"Gandalf tells Bear a story about a bear who could change his shape. Bear says he likes the shape he is. Gandalf says that's the point.","ops":{"1":[["also","_x187"],["half"]]}},"lembread":{"n":"The Elves Bake for Bear","fx":"+1 lembread.","line":"The elves give Bear a lembread the size of his paw. On anyone else it would be a loaf.","ops":{"1":[["give","lembread",1]]}},"_x187":{"n":"Gimli Argues with Bear","fx":"Also moves Explore the Mines (Gimli shows him the way). Your traits grow half as much.","line":"Gimli tells Bear the council is all talk. Bear tells Gimli the talk is the good part. They argue about it happily until supper.","ops":{"1":[["also","_x288"],["half"]]}},"_x188":{"n":"Bear Carries the Lantern","fx":"The first Explore the Mines today gets +25%.","line":"Bear carries the lantern high so the light goes further, and walks into the first cobweb so you don't.","ops":{"1":[["next","_x288",25]]}},"_x288":{"n":"Bear Scouts Ahead","fx":"Bar +25%. At knack 5: 🐻↩ errand, back at dusk with an elven lantern.","line":"Bear and Gimli argue about which tunnel is which. Gimli is right. Bear brings back a lantern anyway.","ops":{"1":[["boost",25]],"5":[["errand","lantern",1]]}},"_x96":{"n":"Bear Crosses First","fx":"The first step in Fangorn today gets +25%.","line":"Bear crosses the narrow bridge first, without looking down, and holds out both paws at the far end.","ops":{"1":[["next","z12",25]]}},"_x289":{"n":"Let Me Take It","fx":"Bar +40%. Bear tires twice as fast.","line":"Every step is heavier than the last. Bear carries the pack, then you, and then, for a little while, both.","ops":{"1":[["boost",40],["tire2"]]}}};
-const BEAR_NONE = new Set(["_x79","_x119","_x121","_x123","_x164","_x166","_x172","_x133","_x30","_x137","_x31","_x15","_x16","_x56","_x5","_x17","_x57","_x58","_x59","_x323","_x18","_x232","_x60","_x185","_x189","_x233","_x234","_x239","_x21","_x191"]);
+const BEAR_WAYS = {"counter":{"n":"Bear Takes the Heavy Kettles","fx":"+1 coin a shift (at knack 5: +2). Bear tires twice as fast.","line":"Bernie grumbles at Bear exactly as much as at everyone else, then saves him the burnt lava puff.","ops":{"1":[["give","_x298",1],["tire2"]],"5":[["give","_x298",2]]}},"wave":{"n":"Wade Talks to Bear","fx":"Also moves Explore the Canals. Your traits grow half as much.","line":"Wade tells Bear about a menu he read today. By the end, they're both dabbing their eyes.","ops":{"1":[["also","_x200"],["half"]]}},"_x78":{"n":"Wade Brings a Spare Handkerchief","fx":"Wade pays Bear's way: +1 coin.","line":"Wade brings a spare handkerchief for Bear, just in case. Bear needs it by the second canal.","ops":{"1":[["give","_x298",1]]}},"_x118":{"n":"Bear Carries the Bucket","fx":"+1 moonsand (at knack 5: +2). Bear tires twice as fast.","line":"Bear carries the bucket on his head so both paws are free for scooping. The sand gets everywhere.","ops":{"1":[["give","_x118",1],["tire2"]],"5":[["give","_x118",2]]}},"_x162":{"n":"Bear in the Front Row","fx":"Knack 1: nothing. At knack 3: Get a Sea Wall Pass is free today.","line":"The breeze ball finds Bear's face three times. The crowd does the wave for him anyway.","ops":{"1":[["joke"]],"3":[["freePass"]]},"joke":"Bear catches the ball one-pawed. Gale is so impressed she hands him a sea wall pass.","st":["🌬️","Face Full of Breeze"]},"_x250":{"n":"Gale Shakes Bear's Paw","fx":"The pass costs 1 coin instead of 2.","line":"Gale shakes Bear's paw so hard his ears flap, and knocks a coin off the price.","ops":{"1":[["passCost"]]}},"_x26":{"n":"Bear Walks the Sea Side","fx":"The first Inspect the Old Floodgate today gets +25%.","line":"Bear walks on the sea side of the wall the whole way, and gets all the spray.","ops":{"1":[["next","_x79",25]]}},"_x79":{"n":"Bear Listens for the Cracks","fx":"Bar +25%. At knack 5: the ✦ Fix the Old Floodgate for Good shows its next requirement.","line":"Bear puts his ear to the stone and listens for the sea. He finds two cracks you'd have missed.","ops":{"1":[["boost",25]],"5":[["reveal","_x21"]]}},"_x119":{"n":"Two Sandbags at Once","fx":"Each session counts as two, for two scoops of moonsand. Bear tires twice as fast.","line":"Bear stacks two sandbags at a time and hums the same three notes while he does it.","ops":{"1":[["twice","_x118"],["tire2"]]}},"_x252":{"n":"Seth's Window, with Bear","fx":"Knack 1: nothing. At knack 3: also moves Explore the Wild Woods.","line":"Seth shows Bear a window that isn't theirs. Grandma Sorrelson catches them both. Bear apologizes all the way back to the manor.","ops":{"1":[["joke"]],"3":[["also","wild"]]},"joke":"Seth shows Bear a better window, one on the right side of the rules. You can see the Wild Woods from it.","st":["🪟","Not Our Window"]},"_x81":{"n":"The Bees Pick Bear","fx":"+1 frostcomb. Bear loses 30 energy.","line":"The bees sting Bear on the nose instead of you. He says it's fine, through a very puffy nose.","ops":{"1":[["give","_x81",1],["energy",-30]]}},"_x305":{"n":"Bear Forks the Hay","fx":"Bar +40%. Bear tires twice as fast.","line":"Viola watches Bear fork the hay and moos, once, approvingly. Nobody has ever heard her approve of anything.","ops":{"1":[["boost",40],["tire2"]]}},"_x201":{"n":"Bear Holds the Hedge Open","fx":"The first Explore the Wild Woods today gets +25%.","line":"Bear holds the inner hedge open with both arms, so not one bramble catches your ears.","ops":{"1":[["next","wild",25]]}},"wild":{"n":"Bear Stays on the Path","fx":"Bar +25%. At knack 5: 🐻↩ errand: Bear scouts the far paths and is back at dusk with a firefly jar.","line":"Bear stays on the path. Mostly. He comes back from the mostly with burrs in his fur.","ops":{"1":[["boost",25]],"5":[["errand","_x253",1]]}},"_x163":{"n":"Bear Tells the Catfish a Story","fx":"Knack 1: nothing. At knack 3: the catfish tells his story twice: bar +40%.","line":"Bear tells the old catfish a story instead of asking for his. The catfish sinks out of sight in protest.","ops":{"1":[["joke"]],"3":[["boost",40]]},"joke":"Bear asks for the catfish's story, then asks for it again. The catfish has never been so happy.","st":["🐟","The Catfish Sulks"]},"stones":{"n":"Bear Wades for the Deep Ones","fx":"A second circle of stones; the spare goes to Grandma's garden, and a Sorrelson trade costs one less today. Bear tires twice as fast.","line":"Bear wades in up to his middle for the smoothest stones at the bottom. He comes out with twelve stones and a very surprised frog.","ops":{"1":[["also","_x306",0.4],["tire2"]]}},"_x27":{"n":"Bear Goes Down First","fx":"The first Explore Twin Bridges today gets +25%.","line":"Bear goes down the cliff path first and tests every ledge with one paw before you step on it.","ops":{"1":[["next","_x164",25]]}},"_x164":{"n":"The Children Ask Bear","fx":"Also moves Search for Shrines (the children point the way). Your traits grow half as much.","line":"The children want to know what Bear's paws are for. He shows them: carrying children, two at a time.","ops":{"1":[["also","shrines"],["half"]]}},"_x122":{"n":"The Great Fairy Fluffs Bear","fx":"Bear +10 energy.","line":"The Great Fairy fluffs Bear's fur until he's twice his size. He doesn't fit through the door on the way out.","ops":{"1":[["energy",10]]}},"shrines":{"n":"Bear Takes the Next Hill First","fx":"Bar +25%. At knack 5: the ✦ Tame the Wild Horse shows its next requirement.","line":"Bear runs up every hill first and waves you on when he sees blue.","ops":{"1":[["boost",25]],"5":[["reveal","_x125"]]}},"_x3":{"n":"Bear Takes the Wind","fx":"The first step at Hyrule Castle today gets +25%.","line":"Bear walks into the wind so you can walk behind him, out of it.","ops":{"1":[["next","z28",25]]}},"_x202":{"n":"Every Cabin Wants Bear","fx":"Also moves Share Hot Cider with Haymitch. Your traits grow half as much.","line":"Every cabin wants Bear on its team. He says he's on yours. They're all a little bit jealous.","ops":{"1":[["also","_x126"],["half"]]}},"_x126":{"n":"Haymitch Sizes Up Bear","fx":"Knack 1: nothing. At knack 3: +1 hot cider.","line":"Haymitch looks Bear up and down and says he's seen scarier furniture. Bear takes it as a compliment.","ops":{"1":[["joke"]],"3":[["give","_x281",1]]},"joke":"Haymitch pours Bear a mug of hot cider. He says it isn't a compliment. It is.","st":["🪑","Scarier Furniture"]},"_x308":{"n":"Pita Frosts a Cake for Bear","fx":"A cake for Bear: worth 3× hot cider for his energy.","line":"Pita frosts a little bear on top. It looks exactly like him, down to the worried eyebrows.","ops":{"1":[["energy",60]]}},"_x257":{"n":"Percy Teaches Bear to Swim","fx":"Knack 1: nothing. At knack 3: +1 sea glass.","line":"Bear can't swim. Percy explains how, badly. Bear sinks, very calmly, and walks out along the bottom.","ops":{"1":[["joke"]],"3":[["give","_x127",1]]},"joke":"Bear swims! Mostly sideways. He comes up with a piece of sea glass in his teeth.","st":["🌊","Along the Bottom"]},"_x258":{"n":"Bear Paddles Hard","fx":"The first Explore the Arena Woods today gets +40%. Bear tires twice as fast.","line":"Bear paddles so hard the canoe leaves a wake. You steer, and try not to laugh.","ops":{"1":[["next","_x259",40],["tire2"]]}},"_x259":{"n":"Bear Goes First into the Woods","fx":"Bar +25%. At knack 5: one ✦ at Camp Half-Moon shows its next requirement.","line":"The birds sing Bear's humming back to him, slightly off-key, on purpose.","ops":{"1":[["boost",25]],"5":[["reveal"]]}},"_x309":{"n":"Aloy Uses Bear as a Step","fx":"Bar +25%. At knack 3: also moves Climb the Tallneck.","line":"Aloy climbs up Bear to reach the first handhold. He holds very still. She says he's the best handhold in the woods.","ops":{"1":[["boost",25]],"3":[["also","_x128"]]}},"_x128":{"n":"Bear Climbs Behind You","fx":"A Memory: a with-Bear photo spot at the top.","line":"From the top of the Tallneck, Bear points the way home. He's wrong. You let him have it.","ops":{"1":[["memory"]]}},"_x203":{"n":"Bear Takes Both Packs","fx":"The first Talk with Katniss today gets +40%. Bear tires twice as fast.","line":"Bear carries both packs up Half-Moon Hill and pretends they're light.","ops":{"1":[["next","_x165",40],["tire2"]]}},"_x165":{"n":"Katniss Talks to Bear","fx":"Also moves Explore the Arena Woods. Your traits grow half as much.","line":"Katniss asks Bear how he found you. He tells her. She listens to the whole thing, and whistles the four notes at the end.","ops":{"1":[["also","_x259"],["half"]]}},"_x260":{"n":"Grace Remembers Bear First","fx":"Also moves Learn Rocky's Words. Your traits grow half as much.","line":"Grace looks at Bear for a long time. \"You've got a very easy face to remember,\" he says. It helps, a little.","ops":{"1":[["also","_x262"],["half"]]}},"_x130":{"n":"Bear Floats In First","fx":"Drift in the Tunnel gets +25% today.","line":"Bear floats into the tunnel first, upside down, and insists it's the right way up.","ops":{"1":[["next","_x205",25]]}},"_x83":{"n":"Bear Checks Your Tether","fx":"The first Float Outside today gets +25%.","line":"Bear checks your tether three times, then a fourth, then holds your paw anyway.","ops":{"1":[["next","outside",25]]}},"_x261":{"n":"The Swarm Copies Bear","fx":"Knack 1: nothing. At knack 3: also moves Help Grace Remember.","line":"The swarm copies Bear's yawn. Then Bear yawns again. This goes on for some time.","ops":{"1":[["joke"]],"3":[["also","_x260"]]},"joke":"The swarm makes itself into a tiny glittering bear and waves. Grace laughs, and remembers something.","st":["🥱","Catching Yawns"]},"_x205":{"n":"Bear Tows You","fx":"Bar +25%.","line":"Bear tows you along by the paw, like a balloon, and you let him.","ops":{"1":[["boost",25]]}},"_x262":{"n":"Rocky Learns Bear's Name","fx":"Also moves Help Grace Remember. Your traits grow half as much.","line":"Rocky plays a chord that means Bear. It's low and warm and goes on a bit long. Bear says it's perfect.","ops":{"1":[["also","_x260"],["half"]]}},"outside":{"n":"Out on the Tether Alone","fx":"🐻↩ errand: Bear floats out alone and is back at dusk with a spark in a jar (+1 spark).","line":"Bear floats off into the sparks, waving with both paws, and comes back at dusk holding one very carefully.","ops":{"1":[["errand","spark",1]]}},"_x263":{"n":"Bear Takes the Case","fx":"Bar +25%. At knack 5: 🐻↩ errand with Sam, back at dusk with +1 salt.","line":"The sock-stealing wisp takes one look at Bear and hands back every sock.","ops":{"1":[["boost",25]],"5":[["errand","salt",1]]}},"_x264":{"n":"Everyone Waves at Bear","fx":"Also moves Share a Slice with Dean. Your traits grow half as much.","line":"The waitress gives Bear the big booth without being asked. He fits in it exactly.","ops":{"1":[["also","_x335"],["half"]]}},"_x344":{"n":"Dean Shares with Bear","fx":"Knack 1: nothing. At knack 3: Bear +15 energy.","line":"Bear eats Dean's slice while Dean is mid-story. Dean is devastated. Bear's very sorry. He isn't.","ops":{"1":[["joke"]],"3":[["energy",15]]},"joke":"Today Dean orders two slices, one for Bear, and tells the story twice.","st":["🥧","Very Sorry (Isn't)"]},"_x170":{"n":"Bear Lifts the Car","fx":"+1 lucky bolt. Bear tires twice as fast.","line":"Bear lifts the back of a rusty car so Bobby can look under it. Bobby calls him a nitwit and hands him the good wrench.","ops":{"1":[["give","_x265",1],["tire2"]]}},"_x171":{"n":"Bear Holds Baby Up","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear holds Baby's front end up while Bobby tightens the bolts. Dean hovers like it's his kid on the first day of school.","ops":{"1":[["twice","_x265"],["tire2"]]}},"_x172":{"n":"Castiel Takes Bear Literally","fx":"Knack 1: nothing. At knack 3: also moves Work a Case with Dean and Sam.","line":"Bear says he could eat a horse. Castiel looks worried for the rest of the afternoon.","ops":{"1":[["joke"]],"3":[["also","_x263"]]},"joke":"Castiel asks Bear to explain a saying. Bear picks \"saving people, fixing things,\" and Castiel decides to come on the case.","st":["🐴","Could Eat a Horse"]},"_x173":{"n":"A Dance with Bear","fx":"A Memory: a with-Bear photo spot by the jukebox.","line":"The jukebox plays something slow. Bear asks you to dance. Dean pretends to read the menu.","ops":{"1":[["memory"]]}},"_x50":{"n":"Bear Waits Beside You","fx":"Bar +25%.","line":"The crow in the nice suit looks at Bear, and decides to stand a little further away.","ops":{"1":[["boost",25]]}},"cars":{"n":"Bear Walks the Aisle First","fx":"Bar +25%. At knack 5: one ✦ on the train shows its next requirement.","line":"Bear walks the aisle first, ducking every luggage rack, and checks each seat before you sit.","ops":{"1":[["boost",25]],"5":[["reveal"]]}},"doors":{"n":"Bear Holds the Other Side","fx":"Bunny's next step today is free of the passenger-car danger. Bear tires twice as fast.","line":"Sang-hwa leans on one side, Bear on the other. Sang-hwa tells a joke. Bear laughs so hard the door rattles.","ops":{"1":[["fogFree"],["tire2"]]}},"_x84":{"n":"A Rack in Each Paw","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear braces the far door with a luggage rack in each paw. The spikes ring when he sets them, like little bells.","ops":{"1":[["twice","_x207"],["tire2"]]}},"_x268":{"n":"Mercy Wakes Bear Too","fx":"Bear +15 energy.","line":"Mercy touches Bear's shoulder on her way past. He wasn't sleepwalking. He feels wonderful anyway.","ops":{"1":[["energy",15]]}},"_x208":{"n":"The Cook Feeds Bear","fx":"Bear +20 energy.","line":"The kind cook gives Bear a mug of hot chocolate with a marshmallow on top, and another on the side for later.","ops":{"1":[["energy",20]]}},"_x312":{"n":"Su-an Sings for Bear","fx":"Also moves Sit in the Dining Car. Your traits grow half as much.","line":"Su-an sings her song for Bear. He listens with his whole face. She gets through it without a single wobble.","ops":{"1":[["also","_x208"],["half"]]}},"_x209":{"n":"Tracer Races Bear","fx":"Knack 1: nothing. At knack 3: also moves Walk the Passenger Cars.","line":"Tracer races Bear to the end of the car. She wins, comes back, and wins again before he's halfway.","ops":{"1":[["joke"]],"3":[["also","cars"]]},"joke":"Tracer stops racing Bear and walks the aisle with him instead. She says he's the only one on the train who never rushes.","st":["⏱️","Lapped Twice"]},"_x210":{"n":"Bear Shovels Coal","fx":"Bar +40%. Bear tires twice as fast.","line":"The gruff engineer hands Bear the coal shovel. Two scoops later, he hands him his cap too.","ops":{"1":[["boost",40],["tire2"]]}},"_x269":{"n":"Chief Swan Waves Bear Over","fx":"Moves Sit with Chief Swan at the Diner instead.","line":"Bella trips on the flat. Bear catches her without looking up, as if he always has.","ops":{"1":[["instead","_x175"]]}},"pines":{"n":"Bear Walks Between the Trees","fx":"Bar +25%.","line":"Something very fast moves between the trees, sees Bear, and slows to a walk.","ops":{"1":[["boost",25]]}},"_x176":{"n":"Bear Rolls the Moss Flat","fx":"Each session counts as two. Bear tires twice as fast.","line":"Emmett and Bear roll the stillmoss flat side by side, racing without saying so.","ops":{"1":[["twice","_x85"],["tire2"]]}},"_x133":{"n":"Bear Bats","fx":"+1 to the Cullens' bar, and a home-run sticker the first time.","line":"The thunder covers the crack of the bat. Bear runs the bases anyway, very slowly, waving.","ops":{"1":[["also","_x211",1],["sticker","homerun"]]}},"_x270":{"n":"Jacob Runs with Bear","fx":"Knack 1: nothing. At knack 3: also moves Wander the Misty Pines.","line":"Jacob runs with Bear. Then he runs back to see where Bear went. Then he runs back again.","ops":{"1":[["joke"]],"3":[["also","pines"]]},"joke":"Jacob slows down for Bear, and they talk all the way round La Push. He still doesn't run out of things to say.","st":["🐺","Where'd Bear Go?"]},"_x271":{"n":"Alice Sees Bear's Tomorrow","fx":"Reveals the next storm day for Thunderstorm Baseball.","line":"Alice looks at Bear and laughs. She won't say why. She says you'll like it.","ops":{"1":[["forecast"]]}},"_x313":{"n":"A Heavier Part","fx":"Rebuild Anakin's Podracer gets a bigger piece, but no duskglass today. Bear tires twice as fast.","line":"Bear pulls the glowing thing out from under the tarp. Watto buzzes over to charge him for it.","ops":{"1":[["nextTwice","_x134"],["block","_x87","Bear took the heavy part instead, so no duskglass today"],["tire2"]]}},"_x272":{"n":"Watto Haggles with Bear","fx":"Knack 1: Moss Espa buys cost one more today. At knack 3: they cost one less.","line":"Watto takes one look at Bear and doubles every price. Bear pays it. He thought it was fair.","ops":{"1":[["joke"]],"3":[["give","_x87",1]]},"joke":"Bear has learned to stare. Watto lasts three seconds and knocks a coin off everything.","st":["💰","A Fair Price"]},"_x134":{"n":"Bear Holds the Engine","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear holds the engine up while Anakin crawls under it. Anakin says Bear is the best jack he's ever had.","ops":{"1":[["twice","_x87"],["tire2"]]}},"_x314":{"n":"Bear Walks the Course First","fx":"Bar +25%.","line":"Bear walks the racecourse with his paws over his ears and points out every rock.","ops":{"1":[["boost",25]]}},"_x212":{"n":"Anakin Takes Bear for a Lap","fx":"Bar +25%. At knack 3: also moves Work the Pit with Bear.","line":"Anakin takes Bear round once in the racer. Bear comes back very quiet and very windswept.","ops":{"1":[["boost",25]],"3":[["also","_x177"]]}},"_x177":{"n":"Bear's Opinions About Tires","fx":"Bar +40% (at knack 5: Race the Moonta Eve Classic +25%). Bear tires twice as fast.","line":"Bear has a lot of opinions about tires. Anakin listens to all of them and agrees with two.","ops":{"1":[["boost",40],["tire2"]],"5":[["flag","_x314"]]}},"_x51":{"n":"Bear Takes the Front","fx":"Bridge Four +25%, and Lay Bridges to the Heart Plateau gets a bigger piece. Bear tires twice as fast.","line":"Bear takes the front of the bridge. Bridge Four says they've never had a run so steady.","ops":{"1":[["boost",25],["nextTwice","_x12"],["tire2"]]}},"rock":{"n":"Rock Feeds Bear Twice","fx":"Bear +20 energy.","line":"Rock gives Bear a second bowl before he's finished the first. Then a third, to be safe.","ops":{"1":[["energy",20]]}},"_x137":{"n":"Bear Holds the Ladder","fx":"The first Explore the Chasms today gets +25%.","line":"Bear climbs down first and holds the rope ladder steady for a spirit who weighs nothing at all.","ops":{"1":[["next","_x213",25]]}},"_x52":{"n":"Bear Runs the Front","fx":"The first Cross the Plateaus today gets +40%. Bear tires twice as fast.","line":"Bear runs at the front of the bridge and talks to you the whole way. By the second plateau, Bridge Four stops asking who he's talking to.","ops":{"1":[["next","_x138",40],["tire2"]]}},"_x213":{"n":"Bear Says Hello","fx":"Bar +25%. At knack 5: 🐻↩ errand, back at dusk with +1 empty gem.","line":"Something enormous scuttles past. Bear stands very still and says hello. It doesn't answer, but it doesn't leave.","ops":{"1":[["boost",25]],"5":[["errand","gems",1]]}},"_x138":{"n":"Bear Stamps Every Plank","fx":"Bar +25%.","line":"Bear crosses each bridge first, stamping on every plank so you'll know it holds.","ops":{"1":[["boost",25]]}},"_x12":{"n":"One Plank Ahead","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear lays a plank, stands on it, and lays the next. Bridge Four counts out loud for him.","ops":{"1":[["twice","_x88"],["tire2"]]}},"_x29":{"n":"Bear Keeps a Paw Out","fx":"The first Watch the Stormwall today gets +25%.","line":"Bear leans into the storm wind and keeps a paw out behind him, in case you need it.","ops":{"1":[["next","_x89",25]]}},"_x13":{"n":"Bear Brings Back Stormwood","fx":"+1 stormwood. Bear tires twice as fast.","line":"On the way back, Bear carries the bridge on his shoulders and a plank of stormwood under one arm.","ops":{"1":[["give","_x88",1],["tire2"]]}},"_x89":{"n":"Bear Faces the Storm","fx":"Bar +25%. At knack 5: 🐻↩ errand, back at dusk with +1 stormlight.","line":"The storm rolls in. Bear stands in front of you anyway, and lets it soak him.","ops":{"1":[["boost",25]],"5":[["errand","_x66",1]]}},"_x179":{"n":"Dalinar Talks to Bear","fx":"Also moves Carry the Bridge with Bridge Four. Your traits grow half as much.","line":"Dalinar talks to Bear like an old soldier, and leaves a little pause after each question, as if someone else might answer.","ops":{"1":[["also","_x51"],["half"]]}},"_x54":{"n":"Bear Does the Stumps","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear does the stumps. The very stubborn boulder takes him all afternoon. He names it.","ops":{"1":[["twice"],["tire2"]]}},"_x273":{"n":"Bear Pours the Cider","fx":"At knack 3: a Memory, a with-Bear photo spot of the porch at dusk.","line":"Bear pours the hot cider, hands you the bigger mug, and pretends he didn't.","ops":{"3":[["memory"]]}},"_x180":{"n":"The Town Likes Bear","fx":"Also moves Hot Cider at the Stardrop Saloon. Your traits grow half as much.","line":"The general store tells Bear all about the community center's roof. Bear is already looking at it.","ops":{"1":[["also","_x215"],["half"]]}},"_x215":{"n":"Everyone Buys Bear a Cider","fx":"A gift seed today (+1 seed).","line":"Everyone in the saloon buys Bear a hot cider. He has to carry the extras home.","ops":{"1":[["give","seed",1]]}},"_x181":{"n":"The Junimos Climb Bear","fx":"Knack 1: nothing. At knack 3: +1 seed.","line":"The Junimos climb Bear like a hill and won't come down. He spends the whole afternoon very still.","ops":{"1":[["joke"]],"3":[["give","seed",1]]},"joke":"The Junimos ride on Bear's shoulders and point out where the good seeds are.","st":["🌱","Junimo Hill"]},"_x274":{"n":"Bear Holds the Slippers","fx":"Also moves Dance with Genevieve. Your traits grow half as much.","line":"Bear holds each slipper up to the lantern so Derek can find the holes. Derek says Bear has steady paws.","ops":{"1":[["also","_x90"],["half"]]}},"_x345":{"n":"Bear Rows","fx":"The first step at the Pavilion today gets +40%. Bear tires twice as fast.","line":"Bear rows. The little boat sits very low in the water, and the upside-down lights wobble.","ops":{"1":[["next","z69",40],["tire2"]]}},"_x55":{"n":"Bear Shows Derek His Step","fx":"Knack 1: nothing. At knack 3: counts as two lessons.","line":"Bear shows Derek how to dance. Derek learns how not to. It's still useful.","ops":{"1":[["joke"]],"3":[["masteryPlus"]]},"joke":"Bear shows Derek how he counts: out loud, slowly, and always to three. Derek gets it at once, and they count together, very seriously.","st":["🩰","How Not to Dance"]},"_x182":{"n":"Bear Rows Back Slowly","fx":"The first step on the shore today gets +40%. Bear tires twice as fast.","line":"Bear rows back slowly, so the music lasts a little longer.","ops":{"1":[["next","z68",40],["tire2"]]}},"_x275":{"n":"A Sister Dances with Bear","fx":"Knack 1: nothing. At knack 3: star-sense gives a second hint this visit.","line":"Bear dances with a sister and steps on her feet twice. She says it's the most interesting dance she's had all year.","ops":{"1":[["joke"]],"3":[["secondHint"]]},"joke":"The sister teaches Bear to count. He counts out loud the whole dance, and at the end she whispers the shape of her sign to him.","st":["👣","Twice on the Toes"]},"_x90":{"n":"Bear Cuts In","fx":"Also moves Mending with Derek. Your traits grow half as much.","line":"Bear cuts in, dances one turn with Genevieve, and hands her to Derek. Derek goes very pink.","ops":{"1":[["also","_x274"],["half"]]}},"_x140":{"n":"The Goats Have Opinions","fx":"Knack 1: nothing. At knack 3: also moves Adventure with Lydia.","line":"A goat has opinions about Bear. It shares them, loudly, all the way up the market street.","ops":{"1":[["joke"]],"3":[["also","_x276"]]},"joke":"The goat follows Bear everywhere all day. Lydia says it's the first goat in Whiterun to pick a side.","st":["🐐","The Goat Chose"]},"_x276":{"n":"Lydia and Bear Trade Burdens","fx":"Bar +25%. At knack 3: +1 sweetroll.","line":"Lydia offers to carry Bear's burdens. Bear offers to carry hers. They end up carrying each other's, and both seem happier.","ops":{"1":[["boost",25]],"3":[["give","_x91",1]]}},"steps":{"n":"He Carries Her Up","fx":"The climb +25%, but the Greyhares' bar gets nothing today (he's too loud). Bear tires twice as fast.","line":"Bear carries you up the steps on his back. The Greyhares hear him coming from halfway down.","ops":{"1":[["boost",25],["block","_x92","Bear was too loud on the steps today. The Greyhares aren't talking"],["tire2"]]}},"_x217":{"n":"Bear Breaks the Snow","fx":"The first Stand on the Dragon's Peak today gets +40%. Bear tires twice as fast.","line":"Bear goes first through the deep snow and leaves a path exactly your size.","ops":{"1":[["next","_x316",40],["tire2"]]}},"_x316":{"n":"Bear Answers Snowmane","fx":"Bar +25%. At knack 5: the ✦ Teach Bear a Shout shows its next requirement.","line":"Snowmane talks in his sleep. Bear answers him, very quietly, like it's a conversation.","ops":{"1":[["boost",25]],"5":[["reveal","_x15"]]}},"_x219":{"n":"The Cats Like Bear","fx":"Also moves Help Mineko with Her Ideas, and +1 sweet bean bun. Your traits grow half as much.","line":"Every cat in the square wants Bear to try their stall. He tries all of them, and saves you a bun from each.","ops":{"1":[["also","_x220"],["give","_x183",1],["half"]]}},"_x141":{"n":"Bear Wins Her a Prize","fx":"A prize for her (a paper lantern keepsake).","line":"Bear's ring wobbles round the middle peg and, against all odds, stays. The ring-toss cat sulks, and hands over a lantern anyway.","ops":{"1":[["sticker","ringPrize"]]}},"_x220":{"n":"Mineko Picks Bear's Idea","fx":"Build the Stall gets a free piece, once a visit.","line":"Bear has one idea all day. Mineko says it's the best one, and actually finishes it.","ops":{"1":[["freePiece","_x277"]]}},"_x277":{"n":"Bear Holds the Awning","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear holds the awning up while Mineko ties it. She ties it to him by mistake, once.","ops":{"1":[["twice","_x93"],["tire2"]]}},"_x317":{"n":"Rost Teaches Bear to Carve","fx":"Also moves Explore the Ruins with Aloy. Your traits grow half as much.","line":"Rost shows Bear how to carve a little wooden Strider. Bear carves one for you. It has five legs.","ops":{"1":[["also","_x105"],["half"]]}},"_x222":{"n":"Bear Pulls the Heavy Seams","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear pulls the heavy seams tight while Rost stitches. Rost says nothing, and moves Bear's paw a little to the left.","ops":{"1":[["twice","_x318"],["tire2"]]}},"_x94":{"n":"Aloy Reads to Bear","fx":"Also moves Learn from Rost. Your traits grow half as much.","line":"Aloy reads the old ruins out loud. Bear asks a question about every word. She doesn't seem to mind.","ops":{"1":[["also","_x317"],["half"]]}},"_x95":{"n":"Bear Holds You Up","fx":"A Memory: a with-Bear photo spot, the whole country as a map. Bear tires twice as fast.","line":"At the top of the Great Tallneck, Bear holds you up so you can see past his ears.","ops":{"1":[["memory"],["tire2"]]}},"_x223":{"n":"Esquie Gives Bear a Ride","fx":"A shortcut: the next trip to the Expedition Camp today costs nothing.","line":"Esquie lets Bear ride on his back. \"Whee!\" says Esquie. \"Whee,\" says Bear, a little quieter.","ops":{"1":[["free","_x224"]]}},"_x4":{"n":"The Gestrals Challenge Bear","fx":"Also moves Learn to Parry with the Gestrals. Your traits grow half as much.","line":"Every Gestral in the village challenges Bear to a game. He loses all of them, gracefully, and they adore him for it.","ops":{"1":[["also","_x279"],["half"]]}},"_x279":{"n":"Bear Takes the Pillows","fx":"Bar +25%. Bear loses 20 energy.","line":"Bear takes every pillow meant for you. He says it doesn't hurt. He is covered in feathers.","ops":{"1":[["boost",25],["energy",-20]]}},"_x320":{"n":"Bear Breaks the Tie","fx":"Knack 1: nothing. At knack 3: one more Gestral Game today.","line":"Bear is the tiebreaker. He agrees with both Gestrals. They start a new argument about him.","ops":{"1":[["joke"]],"3":[["moreToday","_x320"]]},"joke":"Bear picks a side and sticks to it. The Gestrals are so impressed they settle a second argument too.","st":["⚖️","Both Sides"]},"_x321":{"n":"The Fox Lends Bear a Toolbox","fx":"Also moves Swim with Esquie. Your traits grow half as much.","line":"The fox engineer lets Bear hold the toolbox for the mechanical arm. Bear holds it like a baby bird.","ops":{"1":[["also","_x223"],["half"]]}},"_x346":{"n":"Professor Oak Measures Bear","fx":"The picture book gets a free piece, once a visit.","line":"Professor Oak measures Bear's paw, writes \"large\" in a notebook, and underlines it three times.","ops":{"1":[["freeBar"]]}},"_x184":{"n":"Pikachu Shocks Bear","fx":"Knack 1: nothing. At knack 3: a free safari photo.","line":"Pikachu shocks Bear. His fur stands up in every direction. Pikachu looks extremely pleased with itself.","ops":{"1":[["joke"]],"3":[["free","_x226"]]},"joke":"Pikachu charges the camera instead of Bear. One free photo, and Bear's fur stays down.","st":["⚡","Static Bear"]},"_x142":{"n":"Squirtle Bubbles Bear","fx":"Knack 1: nothing. At knack 3: +1 Oran Berry.","line":"Squirtle blows bubbles in Bear's face until he sneezes. Then it does it again, to be sure.","ops":{"1":[["joke"]],"3":[["give","_x322",1]]},"joke":"Squirtle blows one big bubble around an Oran Berry and floats it over to Bear.","st":["🫧","Bubble Sneeze"]},"_x143":{"n":"Nyla Talks to Bear","fx":"Also moves Trade Words with Mogget. Your traits grow half as much.","line":"Nyla tells Bear, in perfect sentences, exactly how she likes her ears scratched. He gets it right on the second try.","ops":{"1":[["also","_x228"],["half"]]}},"_x144":{"n":"Heavy Stones","fx":"One stone counts as two. Bear tires twice as fast.","line":"Bear sets each stone back and holds it there until its mark lights up.","ops":{"1":[["twice"],["tire2"]]}},"_x228":{"n":"Mogget Is Rude to Bear","fx":"Knack 1: nothing. At knack 3: Bear +15 energy.","line":"Mogget tells Bear he's too big, too loud and too fond of honey. Bear agrees with all three.","ops":{"1":[["joke"]],"3":[["energy",15]]},"joke":"Mogget naps on Bear's lap. He says it's only because Bear is warm. He purrs anyway.","st":["🔔","Too Big, Too Loud"]},"_x283":{"n":"Bear Knocks on the Door","fx":"Bar +25%.","line":"Bear knocks on the tower's heavy door. Noble Team looks at him, then at the door, and decides he can hold it.","ops":{"1":[["boost",25]]}},"_x145":{"n":"Bear Holds It Alone","fx":"Run the Relays is free today. Bear tires twice as fast.","line":"Bear plants his paws and holds the door. Jorge asks if he needs a hand. Bear says he has two.","ops":{"1":[["free","_x284"],["tire2"]]}},"_x285":{"n":"Noble Six Nods at Bear","fx":"Bar +25%. At knack 3: also moves Walk Patrol with the Guardians.","line":"Noble Six nods at Bear, once. Kat says it's the friendliest she's ever seen them.","ops":{"1":[["boost",25]],"3":[["also","_x229"]]}},"_x229":{"n":"Bear Walks Patrol","fx":"Bar +25%. At knack 5: 🐻↩ errand, back at dusk with +1 mote of Light.","line":"A Guardian asks Bear to reach something off a high shelf for an old woman. They talk about it all the way round the city.","ops":{"1":[["boost",25]],"5":[["errand","_x286",1]]}},"_x32":{"n":"Bear Carries the Cells","fx":"Each session counts as two. Bear tires twice as fast.","line":"Bear carries each power cell to the ship like an egg. The Ghost hovers by his shoulder, giving directions.","ops":{"1":[["twice","_x286"],["tire2"]]}},"_x96":{"n":"Bear Holds the Lift","fx":"Also moves Survive Emily's Briefing. Your traits grow half as much.","line":"Nobody at Gustave smiles before noon. Then Bear holds the lift door for everyone, and three people do.","ops":{"1":[["also","_x287"],["half"]]}},"_x185":{"n":"Miranda Sends Bear Across Town","fx":"🐻↩ errand: Bear is gone until dusk and back with the seating chart, signed, and Miranda's dry cleaning: Assist Miranda +25%.","line":"\"The seating chart,\" Miranda says softly, to Bear. \"And the dry cleaning.\" He's gone before she finishes, and back at dusk with both, perfectly pressed.","ops":{"1":[["errandBar","_x185",25]]}},"_x287":{"n":"Emily Briefs Bear","fx":"Also moves Get Through a Day at Gustave Tower. At knack 3: Bear +10 energy.","line":"Emily briefs Bear at top speed. He nods at all of it. At the end she slips him a granola bar and tells him not to tell anyone.","ops":{"1":[["also","_x96"]],"3":[["energy",10]]}},"_x288":{"n":"Nigel Dresses Bear","fx":"Knack 1: a photo and a sticker, nothing else. At knack 3: Bear +10 energy each visit.","line":"Nigel dresses Bear instead. Bear comes out in a cardigan, a scarf and a very small hat. Nigel says it's a choice.","ops":{"1":[["joke"]],"3":[["energy",10]]},"joke":"Nigel lends Bear the cardigan for the day. It's soft and warm, and Bear walks taller in it.","st":["🎩","It's a Choice"]},"_x327":{"n":"Bear at the Gala","fx":"A Memory: a with-Bear photo spot. Your traits grow half as much.","line":"Bear wears a borrowed bow tie, crooked. Every photographer at the gala wants him in the picture.","ops":{"1":[["memory"],["half"]]}},"_x231":{"n":"Bear Kneads","fx":"+1 rope (an extra loaf, traded). Bear tires twice as fast.","line":"Bear kneads the dough so hard the table walks across the floor. The baker gives him all the crumbs.","ops":{"1":[["give","rope",1],["tire2"]]}},"_x232":{"n":"Indigo Spars with Bear","fx":"Bar +25%.","line":"Indigo says Bear holds a sword like a soup spoon. Then Bear blocks every single thrust.","ops":{"1":[["boost",25]]}},"_x233":{"n":"Bear Starts a Rumor","fx":"Knack 1: nothing. At knack 3: also moves Explore the Fire Swamp.","line":"Bear tells the inn that the Prince is afraid of ducks. By dusk all of Florinbloom knows it, and nobody knows who started it.","ops":{"1":[["joke"]],"3":[["also","_x347"]]},"joke":"Bear listens instead of talking, and everyone tells him things. One of them is the way through the Fire Swamp.","st":["🦆","Afraid of Ducks"]},"_x347":{"n":"Bear Goes First, Carefully","fx":"Bar +25%. At knack 5: the ✦ Befriend the Rodent of Unusual Size shows its next requirement.","line":"Bear goes first. Carefully. A flame spurt singes the very tip of his little tail, and he pretends it didn't.","ops":{"1":[["boost",25]],"5":[["reveal","_x193"]]}},"sand":{"n":"Bear Pulls You Out","fx":"The rope isn't used up today. Bear tires twice as fast.","line":"You sink. Bear pulls you out by the ears, gently, before you're even up to your whiskers.","ops":{"1":[["tire2"]]}},"_x328":{"n":"Bear Stares It Down","fx":"Bar +25%.","line":"The Rodent of Unusual Size looks at Bear. Bear looks back. The Rodent decides it has somewhere else to be.","ops":{"1":[["boost",25]]}},"_x289":{"n":"Bunny Rides on Bear","fx":"The first step at the Cliff Top today gets +40%. Bear tires twice as fast.","line":"Bear climbs. You hold on. Halfway up he starts humming, so you'll know he isn't scared.","ops":{"1":[["next","z7",40],["tire2"]]}},"_x290":{"n":"Bear Stirs the Miracle","fx":"The big miracle gets a free stir, once a visit.","line":"Miracle Max lets Bear stir. He says Bear has the arms for miracles, if not the patience.","ops":{"1":[["freePiece","miracle"]]}},"storm":{"n":"Bear Roars","fx":"Bar +25%.","line":"Bear roars, and three guards decide to become bakers.","ops":{"1":[["boost",25]]}},"_x348":{"n":"Bear Ducks the Beams","fx":"Bar +25%.","line":"Bear goes down the stairs behind the kitchen first, ducking every low beam, and only bumps three.","ops":{"1":[["boost",25]]}},"_x61":{"n":"Third Breakfast","fx":"Knack 1: nothing. At knack 3: +1 seedcake.","line":"Bear has second breakfast, then asks, quite seriously, about third. The hobbits are delighted.","ops":{"1":[["joke"]],"3":[["give","seedcake",1]]},"joke":"The hobbits pack Bear a seedcake for the road. Anyone who asks about third breakfast is one of them.","st":["🍳","Third Breakfast"]},"seedcake":{"n":"Bear Packs Lembread","fx":"Once Riverdell is open, he packs lembread instead of seedcakes. Bear tires twice as fast.","line":"Bear packs the basket so carefully that it shuts on the first try. It has never shut on the first try.","ops":{"1":[["swapLembread"],["tire2"]]}},"_x188":{"n":"Gandalf Tells Bear a Story","fx":"Also moves Sit with the Council. Your traits grow half as much.","line":"Gandalf tells Bear a story about a bear who could change his shape. Bear says he likes the shape he is. Gandalf says that's the point.","ops":{"1":[["also","_x189"],["half"]]}},"lembread":{"n":"The Elves Bake for Bear","fx":"+1 lembread.","line":"The elves give Bear a lembread the size of his paw. On anyone else it would be a loaf.","ops":{"1":[["give","lembread",1]]}},"_x189":{"n":"Gimli Argues with Bear","fx":"Also moves Explore the Mines (Gimli shows him the way). Your traits grow half as much.","line":"Gimli tells Bear the council is all talk. Bear tells Gimli the talk is the good part. They argue about it happily until supper.","ops":{"1":[["also","_x291"],["half"]]}},"_x190":{"n":"Bear Carries the Lantern","fx":"The first Explore the Mines today gets +25%.","line":"Bear carries the lantern high so the light goes further, and walks into the first cobweb so you don't.","ops":{"1":[["next","_x291",25]]}},"_x291":{"n":"Bear Scouts Ahead","fx":"Bar +25%. At knack 5: 🐻↩ errand, back at dusk with an elven lantern.","line":"Bear and Gimli argue about which tunnel is which. Gimli is right. Bear brings back a lantern anyway.","ops":{"1":[["boost",25]],"5":[["errand","lantern",1]]}},"_x97":{"n":"Bear Crosses First","fx":"The first step in Fangorn today gets +25%.","line":"Bear crosses the narrow bridge first, without looking down, and holds out both paws at the far end.","ops":{"1":[["next","z12",25]]}},"_x292":{"n":"Let Me Take It","fx":"Bar +40%. Bear tires twice as fast.","line":"Every step is heavier than the last. Bear carries the pack, then you, and then, for a little while, both.","ops":{"1":[["boost",40],["tire2"]]}}};
+const BEAR_NONE = new Set(["_x80","_x121","_x123","_x125","_x166","_x168","_x174","_x135","_x30","_x139","_x31","_x15","_x16","_x56","_x5","_x17","_x57","_x58","_x59","_x326","_x18","_x234","_x60","_x187","_x191","_x235","_x236","_x241","_x21","_x193"]);
 for (const [id, w] of Object.entries(BEAR_WAYS)) if (w.st) STICKERS.push({ id: 'bw_' + id, page: "Bear's Ways", icon: w.st[0], name: w.st[1], how: `Try "${A[id] ? A[id].name : id}" with Bear.`, caption: w.n + '.', kind: 'along', test: () => knack(id) >= 1 });
 for (const [id, w] of Object.entries(BEAR_WAYS)) {
   const ls = (ACTION_LORE_BEAR[id] || []).filter(([k]) => k !== 1);
@@ -2404,7 +2407,7 @@ for (const [id, w] of Object.entries(BEAR_WAYS)) {
 }
 
 const AFTER_LORE = { _x37: { 30: "You've watched the Moon rise from this blanket more times than anyone. Now you get to watch her stay." } };
-const loreText = (id, n, text) => (S.flags && S.flags._x294 && AFTER_LORE[id] && AFTER_LORE[id][n]) || text;
+const loreText = (id, n, text) => (S.flags && S.flags._x297 && AFTER_LORE[id] && AFTER_LORE[id][n]) || text;
 const bearDid = id => ((S.bearDone || {})[id] || 0);
 const bearTimesLabel = n => '🐻 with Bear, ' + timesLabel(n);
 function bwLoreRows(id) {
@@ -2437,12 +2440,12 @@ function masteryTip(id) {
   return `Mastery ${l}: done ${n} time${n === 1 ? '' : 's'}, so this step is ${faster}% faster for good. Next level at ${(l + 1) * (l + 1)}.`;
 }
 
-const ACT_GROUPS = [['explore', 'Exploring and friends'], ['_x246', 'Gathering'], ['spend', 'Crafting and Shopping'], ['project', 'Projects'], ['_x197', 'Special'], ['train', 'Training'], ['travel', 'Travel']];
+const ACT_GROUPS = [['explore', 'Exploring and friends'], ['_x248', 'Gathering'], ['spend', 'Crafting and Shopping'], ['project', 'Projects'], ['_x199', 'Special'], ['train', 'Training'], ['travel', 'Travel']];
 const KIND_OF = {
   spend: 'hedgehog bake moonwater spelljar coax cocoa nylabed bath readwin',
-  _x246: 'nutMeadow reachbook',
+  _x248: 'nutMeadow reachbook',
   project: 'weave',
-  _x197: 'oakdoor light picnic',
+  _x199: 'oakdoor light picnic',
 };
 const kindOf = a => {
   if (a.train) return 'train';
@@ -2450,8 +2453,8 @@ const kindOf = a => {
   if (a.travel) return 'travel';
   if (a.track) return 'explore';
   if (a.project || a.far) return 'project';
-  if (a.limited || a.good || a.gives || a.photo) return '_x246';
-  return '_x197';
+  if (a.limited || a.good || a.gives || a.photo) return '_x248';
+  return '_x199';
 };
 
 const isFinished = a => !!a.track && P(a.track) >= 100;
@@ -2468,7 +2471,7 @@ function renderActions() {
   let lastKind = null;
   const counts = {}; for (const id of ids) counts[kindOf(A[id])] = (counts[kindOf(A[id])] || 0) + 1;
 
-  const folded = k => !inPrologue() && (k in S.ui.groups ? S.ui.groups[k] : (k === 'travel' || k === '_x197' || k === 'train') && counts[k] > 3);
+  const folded = k => !inPrologue() && (k in S.ui.groups ? S.ui.groups[k] : (k === 'travel' || k === '_x199' || k === 'train') && counts[k] > 3);
   $('acts').innerHTML = ids.map(id => {
     const a = A[id], k = kindOf(a), f = folded(k);
     const head = k !== lastKind ? `<li class="grp"><button type="button" class="grp-tog" data-grp="${k}" aria-expanded="${!f}">${f ? '▸' : '▾'} ${esc(ACT_GROUPS.find(g => g[0] === k)[1])} <span class="when">${counts[k]}</span></button></li>` : '';
@@ -2499,7 +2502,7 @@ function bwIcon(a) {
   if (!w) return BEAR_NONE.has(a.id) ? '<span class="bw-ic" title="No Bear\'s way here">💤</span>' : '';
   const ops = bwOps(a), t = BEAR_TAGS[a.bear.tag];
   if (bwHas(ops, 'errand') || bwHas(ops, 'errandBar')) return '<span class="bw-ic" title="Bear goes off on an errand if nothing after this needs him, back at dusk">↩</span>';
-  if (L && !L.knacked[a.id] && k < 5 && bearLvl(t.skill) * (1 + 0.1 * ph('_x101')) >= k * 4) return `<span class="bw-ic" title="${k ? 'Bear\'s knack can grow today' : 'Bear\'s way: try it with him'}">${k ? '⬆' : '?'}</span>`;
+  if (L && !L.knacked[a.id] && k < 5 && bearLvl(t.skill) * (1 + 0.1 * ph('_x103')) >= k * 4) return `<span class="bw-ic" title="${k ? 'Bear\'s knack can grow today' : 'Bear\'s way: try it with him'}">${k ? '⬆' : '?'}</span>`;
   return '';
 }
 function bearNote(a) {
@@ -2510,7 +2513,7 @@ function bearNote(a) {
     return k < 1 ? `<span class="c-bear">🐻 ${req}??? Try it with Bear.</span>` : `<span class="c-bear">🐻 ${req}<b>${esc(w.n)}</b> · knack ${k}: ${esc(bwFx(w))}</span>`;
   }
   if (BEAR_NONE.has(a.id) && !a.bearOnly) return `<span class="c-bear">🐻💤 No Bear's way here: a once-ever step</span>`;
-  const note = a.bear && a.bear.note ? a.bear.note : BEAR_TAGS[a.bear && a.bear.tag || '_x316'].note;
+  const note = a.bear && a.bear.note ? a.bear.note : BEAR_TAGS[a.bear && a.bear.tag || '_x319'].note;
   const k = knack(a.id);
   return `<span class="c-bear">🐻 ${a.bearOnly ? 'Bear required. ' : ''}${esc(note)}${k ? ` · knack ${k}` : ''}</span>`;
 }
@@ -2535,22 +2538,22 @@ function actExtra(a) {
     const g = goodState(a);
     h += `<span>${g.checked} of ${g.total} ${a.good.noun} checked · ${g.known ? Math.max(0, g.known - g.usedGood) + ' of ' + g.known + ' ' + a.good.goodNoun + ' left today' : 'no ' + a.good.goodNoun + ' ones found yet'}</span>`;
   }
-  if (a._x330) {
-    const k = S._x330.known.map((v, i) => (v ? `round ${i + 1}: ${v}` : null)).filter(Boolean);
+  if (a._x333) {
+    const k = S._x333.known.map((v, i) => (v ? `round ${i + 1}: ${v}` : null)).filter(Boolean);
     h += `<span>${k.length ? 'You remember ' + esc(k.join(', ')) : 'You have no idea which cup is which. Yet.'}</span>`;
   }
-  if (a._x338) {
+  if (a._x341) {
     const k = CRY_GUESTS.map((g, i) => {
-      const t = S._x338.tried[i], right = S._x338.ans[i];
+      const t = S._x341.tried[i], right = S._x341.ans[i];
       if (t.includes(right)) return `${g}: ${CRY_KINDS[right]}`;
       if (t.length >= 2) return `${g}: ${CRY_KINDS[right]}`;
       return t.length ? `${g}: not ${t.map(x => CRY_KINDS[x]).join(' or ')}` : null;
     }).filter(Boolean);
-    h += `<span>${k.length ? 'You remember: ' + esc(k.join(' · ')) : 'You have no idea what makes a Ripple _x338. Yet.'}</span>`;
+    h += `<span>${k.length ? 'You remember: ' + esc(k.join(' · ')) : 'You have no idea what makes a Ripple _x341. Yet.'}</span>`;
   }
-  if (a.far && a.far.length) h += `<span class="far">✦ For later. Needs: ${a.far.map(([_x340, ok]) => (ok() ? '✓ ' : '✗ ') + esc(_x340)).join(' · ')}</span>`;
+  if (a.far && a.far.length) h += `<span class="far">✦ For later. Needs: ${a.far.map(([_x343, ok]) => (ok() ? '✓ ' : '✗ ') + esc(_x343)).join(' · ')}</span>`;
   if (a.timeGate) { const [k, n] = a.timeGate, long = cost(a) > dayLen(); h += `<span class="far">⏳ ${long ? 'Too long for one day yet. ' : ''}It gets shorter as your ${SKILL_NAME[k]} grows (it's made for ${SKILL_NAME[k]} ${n}; yours is ${skillLvl(k)}).</span>`; }
-  if (a._x291) h += a._x291();
+  if (a._x294) h += a._x294();
   if (a.mystery) {
     const n = Math.min(a.mystery[0], S.mastery[a.id] || 0);
     h += solved(a) ? `<span class="ok">🔎 Solved: about ${Math.round(1 / (a.mystery[1] * (loreTier(a) ? 0.6 : 1)))}× faster</span>` : `<span>🔎 Mystery: ${n} of ${a.mystery[0]} times to figure it out</span>`;
@@ -2735,7 +2738,7 @@ function renderStats() {
   if (focusOn()) {
     const opts = v => '<option value="">nothing</option>' + STAT_KEYS.map(k => `<option value="${k}"${v === k ? ' selected' : ''}>${STATS[k].name}</option>`).join('');
     if ($('focus1')._v !== (S.focus || '')) { $('focus1').innerHTML = opts(S.focus); $('focus1')._v = S.focus || ''; }
-    $('focus2').hidden = !farDone('_x176');
+    $('focus2').hidden = !farDone('_x178');
     if (!$('focus2').hidden && $('focus2')._v !== (S.focus2 || '')) { $('focus2').innerHTML = opts(S.focus2); $('focus2')._v = S.focus2 || ''; }
   }
   $('bearPanel').hidden = !S.bear.unlocked;
@@ -2752,7 +2755,7 @@ const times = n => { n = n || 0; return n === 1 ? 'once' : n + ' times'; };
 let burrowSig = '';
 function renderBurrow() {
   if ($('burrowPanel').hidden) return;
-  const sig = JSON.stringify([S.stickers, S.stickerNew, U('painting'), S.gallery, S.paint, fame(), U('outfits'), S.outfits, S.flags._x46, L.outfit, S.signs._x346, U('candles'), S.spellbook, S.flags._x10, S.album, S.mastery.moonwater, S.mastery.spelljar, U('_x74'), U('photowall'), U('_x45'), S.drift, moonIdx(), PHOTO_SPOTS.map(sp => sp.known())]);
+  const sig = JSON.stringify([S.stickers, S.stickerNew, U('painting'), S.gallery, S.paint, fame(), U('outfits'), S.outfits, S.flags._x46, L.outfit, S.signs._x349, U('candles'), S.spellbook, S.flags._x10, S.album, S.mastery.moonwater, S.mastery.spelljar, U('_x75'), U('photowall'), U('_x45'), S.drift, moonIdx(), PHOTO_SPOTS.map(sp => sp.known())]);
   if (sig === burrowSig) return;
   burrowSig = sig;
   let h = '';
@@ -2760,8 +2763,8 @@ function renderBurrow() {
     const n = Object.keys(S.stickers).length, nn = Object.keys(S.stickerNew || {}).length;
     h += `<div class="corner"><h3>📒 The Sticker Book</h3><p>${n} sticker${n === 1 ? '' : 's'} so far${nn ? ` · <b>${nn} new</b>` : ''}. One page for each world, and a few for everything in between.</p><button type="button" class="btn" data-stickers>Open the book</button></div>`;
   }
-  if (U('_x74')) {
-    h += `<div class="corner"><h3>🫙 The windowsill</h3><p>Today's moon water would add ${fmtDur(Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x146')) + (farDone('_x7') ? 20 : 0))} of daylight (the fuller the moon, the stronger). A spell jar doubles talent growth for the day.</p></div>`;
+  if (U('_x75')) {
+    h += `<div class="corner"><h3>🫙 The windowsill</h3><p>Today's moon water would add ${fmtDur(Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x148')) + (farDone('_x7') ? 20 : 0))} of daylight (the fuller the moon, the stronger). A spell jar doubles talent growth for the day.</p></div>`;
   }
   if (U('photowall')) {
     const spots = PHOTO_SPOTS.filter(sp => has(sp.id) || (ZONES[sp.zone].act <= S.act && sp.known()));
@@ -2871,7 +2874,7 @@ function loreLine(label, text, found, st) {
 }
 
 const LORE_BEATS = [
-  { t: 'A _x290 night', g: -1, have: () => true, html: () => PROLOGUE_INTRO },
+  { t: 'A _x293 night', g: -1, have: () => true, html: () => PROLOGUE_INTRO },
   { t: 'The strange light', g: -1, have: () => !!S.flags.held, html: () => beatHtml('The strange light') },
   { t: ACTS[0].name, g: 0, have: () => !!S.flags.held, html: () => ACTS[0].intro },
   { t: 'The first moonrise', g: 0, have: () => !!S.flags.firstMoonrise, html: () => beatHtml('The first moonrise') },
@@ -3007,7 +3010,7 @@ function openKeepsakesNow() {
   const pct = x => `+${Math.round((x - 1) * 100)}%`;
   const totals = STAT_KEYS.map(s => `${STATS[s].name} ${pct(mult(s))}`).join(' · ');
   const talent = (P('owl') >= 50 ? 1.5 : 1) * (farDone('farOwlBooks') ? 1.15 : 1) * (trophy('cup') ? 1.05 : 1);
-  const day = `Every day: ${fmtDur(BASE_DAY + HEALED_DAY * moonHealed() + dawnBonus() + (S.flags._x97 ? 40 : 0) + shrineDay())} (it started at ${fmtDur(BASE_DAY)})`;
+  const day = `Every day: ${fmtDur(BASE_DAY + HEALED_DAY * moonHealed() + dawnBonus() + (S.flags._x98 ? 40 : 0) + shrineDay())} (it started at ${fmtDur(BASE_DAY)})`;
   const groups = [['moon', 'The Moon']];
   for (let n = S.act; n >= 0; n--) groups.push([n, `Day ${n + 1} · ${worldName(n)}`]);
   for (const [k, side] of Object.entries(SIDES)) if (side.open()) groups.push([k, side.name + ' (side story)']);
@@ -3173,7 +3176,7 @@ const BEAT_HTML = {
   'The first moonrise': first => '<p>The Moon comes up over the pines, pale and broken, and tries to rise. She can\'t. For a moment everything goes very still, like a held breath.</p>' +
     '<p>Then it\'s dawn again. You\'re standing at the burrow door in your dry coat, lantern in your paw. Nyla\'s bed is empty. The pawprints are fresh in the clover, exactly where they were.</p>' +
     '<p>Everyone else has forgotten yesterday. You haven\'t. The light that touched your cheek last night is still there, and it remembers every step you took. So do you.</p>',
-  'Moonrise picnic': first => "<p>The Moon comes up over Honey Hollow, pale and cracked, the way she has every night. Bear is on the blanket with the honey pot, watching the path, watching the path. When he sees you, he jumps up so fast he knocks over the honey. \"There you are, Bunny. I was starting to think you weren't coming.\" Then Nyla trots out from behind you, and his whole face lights up. \"You found her!\"</p><p>You sit down beside him, and it all comes out at once: the night the Moon cracked, the pawprints, the same morning over and over, the fairies, Briar Rose and her godmothers, Nyla in the ferns. Bear listens to every word. He doesn't understand half of it. He believes all of it.</p><p>\"So every night,\" he says slowly, \"I was sitting here waiting, and you were out there looking for her.\"</p><p>\"Every night,\" you say. \"I could see the Moon come up over the Hollow, and I knew you'd be under it. I always meant to come and tell you. The Moon folded the day back first, every time.\"</p><p>Bear thinks about that. \"I'd have waited,\" he says. \"However many nights it took.\"</p><p>\"I know,\" you say. \"I dreamed about you long before I ever met you. You were waiting in those, too.\"</p><p>Bear is quiet for a moment. Then he rights the honey pot. \"Save me the last bit?\" you ask. \"As you wish,\" he says. Nyla gazes at it so politely that you give it to her anyway.</p><p>That's when Nyla stands, walks over to Bear, and sets the moon shard very carefully in his lap, as if she's been waiting all this time to give it to him. It glows, lifts out of his paws, and floats up and up until it clicks back into the Moon. She shines a little brighter.</p><p>\"Thank you,\" says the Moon, clearly now. \"When I broke, I fell into the stories I love best. You'll know them. I've been reading them over your shoulder for years. Find the rest of me. And find each other, every time.\"</p><p>\"Can you feel it? I can hold on a little longer now. Your days will be longer too.\"</p><p>\"I'm brighter, but I'm not whole. Until I am, I can't hold the night. Every piece you bring home gives the world one more day. Bring them all home, and I'll give you tomorrow.\"</p><p>Over Honey Hollow, the Crab you found star by star shines down on the blanket: <b>Cancer, your rising sign</b>. \"My own sign,\" says the Moon, \"rising over your home. I'm glad you found it first.\"</p><p>The shard's light hasn't quite left Bear's paws: a faint silver shimmer, like pollen from a moonflower. He turns them over and looks at them. \"Will I remember this?\" he asks. \"In the morning?\"</p><p>\"Nobody ever has,\" you say. \"But nobody's ever held a piece of the Moon before.\"</p><p>He walks you home through the clover, with Nyla trotting very properly between you. At your door, he stops. \"Same spot tomorrow? Just in case it comes.\"</p><p>\"Same spot,\" you say. And for the first time in a long time, you let yourself hope it will.</p>".replace('Briar Rose and her _x73', briarName() + ' and her _x73'),
+  'Moonrise picnic': first => "<p>The Moon comes up over Honey Hollow, pale and cracked, the way she has every night. Bear is on the blanket with the honey pot, watching the path, watching the path. When he sees you, he jumps up so fast he knocks over the honey. \"There you are, Bunny. I was starting to think you weren't coming.\" Then Nyla trots out from behind you, and his whole face lights up. \"You found her!\"</p><p>You sit down beside him, and it all comes out at once: the night the Moon cracked, the pawprints, the same morning over and over, the fairies, Briar Rose and her godmothers, Nyla in the ferns. Bear listens to every word. He doesn't understand half of it. He believes all of it.</p><p>\"So every night,\" he says slowly, \"I was sitting here waiting, and you were out there looking for her.\"</p><p>\"Every night,\" you say. \"I could see the Moon come up over the Hollow, and I knew you'd be under it. I always meant to come and tell you. The Moon folded the day back first, every time.\"</p><p>Bear thinks about that. \"I'd have waited,\" he says. \"However many nights it took.\"</p><p>\"I know,\" you say. \"I dreamed about you long before I ever met you. You were waiting in those, too.\"</p><p>Bear is quiet for a moment. Then he rights the honey pot. \"Save me the last bit?\" you ask. \"As you wish,\" he says. Nyla gazes at it so politely that you give it to her anyway.</p><p>That's when Nyla stands, walks over to Bear, and sets the moon shard very carefully in his lap, as if she's been waiting all this time to give it to him. It glows, lifts out of his paws, and floats up and up until it clicks back into the Moon. She shines a little brighter.</p><p>\"Thank you,\" says the Moon, clearly now. \"When I broke, I fell into the stories I love best. You'll know them. I've been reading them over your shoulder for years. Find the rest of me. And find each other, every time.\"</p><p>\"Can you feel it? I can hold on a little longer now. Your days will be longer too.\"</p><p>\"I'm brighter, but I'm not whole. Until I am, I can't hold the night. Every piece you bring home gives the world one more day. Bring them all home, and I'll give you tomorrow.\"</p><p>Over Honey Hollow, the Crab you found star by star shines down on the blanket: <b>Cancer, your rising sign</b>. \"My own sign,\" says the Moon, \"rising over your home. I'm glad you found it first.\"</p><p>The shard's light hasn't quite left Bear's paws: a faint silver shimmer, like pollen from a moonflower. He turns them over and looks at them. \"Will I remember this?\" he asks. \"In the morning?\"</p><p>\"Nobody ever has,\" you say. \"But nobody's ever held a piece of the Moon before.\"</p><p>He walks you home through the clover, with Nyla trotting very properly between you. At your door, he stops. \"Same spot tomorrow? Just in case it comes.\"</p><p>\"Same spot,\" you say. And for the first time in a long time, you let yourself hope it will.</p>".replace('Briar Rose and her _x74', briarName() + ' and her _x74'),
   'The strange light': first => '<p>You open the burrow door, and Nyla shoots past your ankles into the dark.</p>' +
     '<p>Up above, the Moon makes a sound like a tiny bell. A crack runs all the way across her face, and a sliver of silver light falls, turning over and over, into the Whispering Woods.</p>' +
     '<p>On its way down it passes right over you. For a moment the light rests on your cheek, warm, like a hand.</p>' +
@@ -3182,7 +3185,7 @@ const BEAT_HTML = {
 };
 const beatHtml = (title, first) => BEAT_HTML[title](!!first);
 
-const BEAT_TITLES = new Set(["A _x290 night","The strange light","The first moonrise","Found her!","Aurora","Moonrise picnic"]);
+const BEAT_TITLES = new Set(["A _x293 night","The strange light","The first moonrise","Found her!","Aurora","Moonrise picnic"]);
 const nowStamp = () => ({ a: inPrologue() ? -1 : S.act, m: morningNo(), side: !inPrologue() && L && ZONES[L.zone].side ? ZONES[L.zone].side : null });
 function recordBeat(title, html) {
   S.beats = S.beats || [];
@@ -3226,7 +3229,7 @@ function awayEnter(a) { S.away = a; dirty.all = true; }
 function awayShow(html) { const el = $('away'); el.innerHTML = html; el.hidden = false; const c = $('awayClose'); if (c) c.onclick = () => awayLeave(); }
 function awayLeave() {
   if (!S.away) return;
-  if (S.away.kind === '_x234') tandemLeaving();
+  if (S.away.kind === '_x236') tandemLeaving();
   S.away = null; $('away').hidden = true; $('away').innerHTML = '';
   dirty.all = true; saveLocal(); render();
 }
@@ -3241,19 +3244,21 @@ function openShelf() {
 }
 
 const BOOKS = {
-  _x238: { start: 4, done: () => !!S.flags._x238 },
-  floor: { start: 67, done: () => !!S.flags._x98 },
-  _x244: { start: 70, done: () => !!S.flags._x19, onOpen: () => { S.skyLast = S.loop; } },
-  _x300: { start: 76, done: () => !!S.flags._x34 },
+  _x240: { start: 4, done: () => !!S.flags._x240 },
+  _x247: { start: 73, done: () => !!S.flags._x100, onOpen: () => { S.marketLast = S.loop; S.flags._x64 = true; marketCrate(); },
+    intro: () => showModal('The Night Market', MARKET_INTRO, [['Onto the clouds', null]]), dawn: l => marketDawn(l) },
+  floor: { start: 67, done: () => !!S.flags._x99 },
+  _x246: { start: 70, done: () => !!S.flags._x19, onOpen: () => { S.skyLast = S.loop; } },
+  _x303: { start: 76, done: () => !!S.flags._x34 },
   painted: { start: 79, done: () => !!S.flags._x20 },
   isles: { start: 82, done: () => !!S.flags._x35 },
-  _x320: { start: 85, done: () => !!S.flags._x36 },
-  _x337: { start: 88, done: () => !!S.flags._x99 },
-  _x235: { start: 92, done: () => !!S.flags._x235 },
+  _x323: { start: 85, done: () => !!S.flags._x36 },
+  _x340: { start: 88, done: () => !!S.flags._x101 },
+  _x237: { start: 92, done: () => !!S.flags._x237 },
 };
 const BOOK_DAY = 3 * 60 * GAME_MIN_PER_SEC;
 
-const BOOK_TRIM = { _x238: 0.6, floor: 0.7, _x244: 1, _x300: 0.85, painted: 0.65, isles: 0.5, _x320: 0.9, _x337: 0.75, _x235: 0.6 };
+const BOOK_TRIM = { _x240: 0.6, floor: 0.7, _x246: 1, _x303: 0.85, painted: 0.65, isles: 0.5, _x323: 0.9, _x340: 0.75, _x237: 0.6, _x247: 1 };
 const inBook = () => !!(typeof S !== 'undefined' && S && S.away && S.away.kind === 'book');
 const bookOf = z => (ZONES[z] && ZONES[z].side && BOOKS[ZONES[z].side] ? ZONES[z].side : null);
 const bookDone = id => !!(BOOKS[id] && BOOKS[id].done());
@@ -3261,17 +3266,22 @@ let bookStash = null;
 const bookDays = {};
 function openBook(id) {
   const b = BOOKS[id];
-  if (!b || S.away || !SIDES[id].open() || inPrologue() || S.revisit) return;
+  if (!b || S.away || !SIDES[id] || !SIDES[id].open() || inPrologue() || S.revisit) return;
   S.books = S.books || {};
   const bk = S.books[id] = S.books[id] || { queue: [], cal: null };
   if (!bk.cal) bk.cal = Object.fromEntries(SKILLS.map(([k]) => [k, skillN(k)]));
-  S.reached[b.start] = true;
-  if (b.onOpen) b.onOpen();
+  const first = !bk.opens;
+  bk.opens = (bk.opens || 0) + 1;
+  S.reached[bookStart(id)] = true;
   bookStash = { L, view: viewZone };
+  if (b.onOpen) b.onOpen();
   S.mainQueue = S.queue; S.queue = bk.queue;
   awayEnter({ kind: 'book', id });
   L = bookDays[id] || freshLoop(); delete bookDays[id];
   viewZone = L.zone; tabsSig = ''; predDirty = true; noticeSig = null; setSpeed(0); dirty.all = true; saveLocal(); render();
+  if (first && b.intro) b.intro();
+  const lines = bookOpeningLines(id);
+  if (lines.length) story('📖 ' + lines[(bk.opens - 1) % lines.length], 'story');
 }
 function leaveBook() {
   if (!inBook()) return;
@@ -3281,10 +3291,15 @@ function leaveBook() {
   L = bookStash ? bookStash.L : freshLoop(); viewZone = bookStash ? bookStash.view : L.zone; bookStash = null;
   S.away = null; tabsSig = ''; predDirty = true; noticeSig = null; dirty.all = true; setSpeed(0); saveLocal(); render();
 }
+const bookStart = id => BOOKS[id].start ?? ZONES.findIndex(z => z.side === id);
 function bookDawn(l) {
-  const b = BOOKS[S.away.id];
-  l.zone = b.start; l.bear = true; l.bearStam = bearMax();
+  const id = S.away.id, b = BOOKS[id];
+  l.zone = bookStart(id); l.bear = true; l.bearStam = bearMax();
+  if (b.dawn) b.dawn(l);
 }
+
+const bookRoutes = id => ORDER.filter(r => { const a = A[r]; return a.travel && a.to != null && (bookOf(a.zone) === id) !== (bookOf(a.to) === id); });
+const bookOpeningLines = id => bookRoutes(id).flatMap(r => (ACTION_LORE[r] || []).map(([, t]) => t));
 
 const bookLeft = a => !!(a.travel || (a.far && !farDone(a.id)) || a.photo || loreFor(a).some(r => !r.seen));
 function bookVisible(a) {
@@ -3299,14 +3314,14 @@ function bookVisible(a) {
   return !bz || (!!a.anyZone && bookDone(bz));
 }
 function bookShelfRows() {
-  return Object.keys(BOOKS).filter(id => SIDES[id].open()).map(id => {
+  return Object.keys(BOOKS).filter(id => SIDES[id] && SIDES[id].open()).map(id => {
     const st = bookDone(id) ? 'Finished: only lore, stickers and photos are left to find.' : S.books && S.books[id] ? 'In progress.' : 'New.';
     return `<li><b>📖 ${esc(SIDES[id].name)}</b>: ${st} <button class="btn${bookDone(id) ? '' : ' primary'}" data-book="${id}">Open</button></li>`;
   });
 }
 
 { const done = new Set();
-  for (const id of ORDER) { const a = A[id], b = bookOf(a.zone); if (a.track && b && !done.has(a.track) && TRACKS[a.track]) { done.add(a.track); TRACKS[a.track].k *= BOOK_TRIM[b]; } } }
+  for (const id of ORDER) { const a = A[id], b = bookOf(a.zone); if (a.track && b && !done.has(a.track) && TRACKS[a.track]) { done.add(a.track); TRACKS[a.track].k *= BOOK_TRIM[b] ?? 1; } } }
 
 const planned = id => S.queue.filter(e => e.id === id).reduce((t, e) => t + e.n, 0);
 const did = id => S.mastery[id] || 0;
@@ -3370,7 +3385,7 @@ $('coachSkip').addEventListener('click', () => { S.tut = 99; saveSoon(); updateC
 const PROLOGUE_INTRO = '<p>It\'s a quiet night at the edge of Clover Meadow. Tomorrow is picnic night with Bear in Honey Hollow. Up above, the Moon looks pale and tired, thinner than you remember her. She\'s been getting dimmer for years. You stopped reading by her a long time ago.</p>' +
   '<p>Nyla is restless. You are not. It\'s time to get ready for bed.</p>';
 function intro() {
-  if (inPrologue()) recordBeat('A _x290 night', PROLOGUE_INTRO);
+  if (inPrologue()) recordBeat('A _x293 night', PROLOGUE_INTRO);
   showModal('Moonward', (inPrologue() ? PROLOGUE_INTRO : ACTS[S.act].intro) +
     (inPrologue()
       ? '<ul><li>Tap <b>+1</b> on a step under <b>Things to do</b> to add it to the plan.</li>' +
@@ -3433,7 +3448,7 @@ function testSave(stage) {
     case 'a1mid': act1mid(); break;
     case 'a1end': act1end(); break;
   }
-  if (t.act >= 3 || stage === 'a3end') t.flags._x100 = true;
+  if (t.act >= 3 || stage === 'a3end') t.flags._x102 = true;
 
   if (stage !== 'prologue') { const L0 = stage === 'a1start' ? 0 : Math.min(12, 2 + t.act); const FROM = { crafting: 1, riddles: 1, swordplay: 1, drifting: 1, creatures: 2, music: 4, aim: 5, painting: 5, science: 6 }; t.skills = Object.fromEntries(SKILLS.filter(([k]) => (FROM[k] || 0) <= t.act).map(([k]) => [k, SKILL_AT(L0)])); t.skills.balance = Math.max(SKILL_AT(1), t.skills.balance); t.skillsV = 1; t.flags.skillsIntro = true; }
   return t;
@@ -3460,7 +3475,7 @@ function testSaveCode(stage, label) {
 function retroTemplates() {
   if (S.flags.tplChecked) return;
   S.flags.tplChecked = true;
-  if (!S.flags._x100 && (S.act >= 3 || 0 >= 20)) S.flags._x100 = true;
+  if (!S.flags._x102 && (S.act >= 3 || 0 >= 20)) S.flags._x102 = true;
 }
 
 function demoCarryOver() {
@@ -3537,7 +3552,7 @@ $('burrow').addEventListener('click', ev => {
   if (add) { const box = add.closest('.candles'), v = k => box.querySelector(`[data-cpart="${k}"]`).value; addCandle({ c: v('c'), h: v('h'), l: v('l') }); return; }
   if (ev.target.matches && ev.target.matches('[data-paint-next]')) return;
   const w = ev.target.closest('[data-wear]');
-  if (w) { addToPlan('_x252' + w.dataset.wear, 1); toast('Added: Put On the ' + OUTFITS[w.dataset.wear].name); render(); return; }
+  if (w) { addToPlan('_x254' + w.dataset.wear, 1); toast('Added: Put On the ' + OUTFITS[w.dataset.wear].name); render(); return; }
   const k = ev.target.closest('[data-candle-key]');
   if (k) { const [c, h, l] = k.dataset.candleKey.split('|'); addCandle({ c, h, l }); }
 });
@@ -3599,21 +3614,21 @@ $('bearJob').addEventListener('change', ev => { S.bearJob = ev.target.value; sav
 $('tplBtn').addEventListener('click', () => { S.ui.tplOpen = !S.ui.tplOpen; tplSig = ''; saveSoon(); render(); });
 $('tplBox').addEventListener('click', ev => {
   const b = ev.target.closest('button[data-tpl]'); if (!b) return;
-  const op = b.dataset.tpl, i = +b.dataset.i, T = S._x100[i];
+  const op = b.dataset.tpl, i = +b.dataset.i, T = S._x102[i];
   if (op === 'save') {
     if (!S.queue.length) { notice('The plan is empty, so there is nothing to save.', 'plan'); return; }
-    const name = (prompt('Name this plan:', 'Plan ' + (S._x100.length + 1)) || '').trim().slice(0, 40);
+    const name = (prompt('Name this plan:', 'Plan ' + (S._x102.length + 1)) || '').trim().slice(0, 40);
     if (!name) return;
     const steps = S.queue.map(e => Object.assign({ id: e.id, n: e.n, bear: !!e.bear }, e.recipe ? { recipe: Object.assign({}, e.recipe) } : {}));
-    const old = S._x100.findIndex(x => x.name === name);
+    const old = S._x102.findIndex(x => x.name === name);
     if (old >= 0 && !confirm('Replace the saved plan "' + name + '"?')) return;
-    if (old >= 0) S._x100[old].steps = steps; else S._x100.push({ name, steps });
-    S.mastery._x33 = Math.max(S.mastery._x33 || 0, S._x100.length);
+    if (old >= 0) S._x102[old].steps = steps; else S._x102.push({ name, steps });
+    S.mastery._x33 = Math.max(S.mastery._x33 || 0, S._x102.length);
     notice('Saved the plan as "' + name + '".', 'plan');
   } else if (!T) return;
   else if (op === 'load' || op === 'add') loadTemplate(T, op === 'load');
   else if (op === 'ren') { const name = (prompt('Rename "' + T.name + '" to:', T.name) || '').trim().slice(0, 40); if (name) T.name = name; }
-  else if (op === 'del') { if (confirm('Delete the saved plan "' + T.name + '"?')) S._x100.splice(i, 1); }
+  else if (op === 'del') { if (confirm('Delete the saved plan "' + T.name + '"?')) S._x102.splice(i, 1); }
   tplSig = ''; saveSoon(); render();
 });
 $('usePlan').addEventListener('click', () => { applyPlanNow(); dismissNotice('plandone'); toast('Today now follows your plan. What\'s done stays done.'); render(); });
@@ -3654,12 +3669,12 @@ let lastT = 0, sinceSave = 0;
 function frame() {
   const now = performance.now(), dt = Math.min(1000, now - lastT); lastT = now;
   const running = speed > 0 && $('modal').hidden && L.begun && !L.waiting && !(S.away && S.away.kind !== 'book');
-  if (!running) S.bank = Math.min(maxBank(), S.bank + dt / 1000 * (L && L._x165 ? 1.5 : 1));
+  if (!running) S.bank = Math.min(maxBank(), S.bank + dt / 1000 * (L && L._x167 ? 1.5 : 1));
   else {
     let sp = speed;
     if (inBook()) { sp = 1; S.bank = Math.min(maxBank(), S.bank + dt / 1000); }
     if (sp > 1 && S.bank <= 0) sp = 1;
-    if (sp > 1) S.bank = Math.max(0, S.bank - (sp - 1) * dt / 1000 * (S.signs._x159 ? 0.75 : 1));
+    if (sp > 1) S.bank = Math.max(0, S.bank - (sp - 1) * dt / 1000 * (S.signs._x161 ? 0.75 : 1));
     step(dt / 1000 * GAME_MIN_PER_SEC * sp);
   }
   render();
