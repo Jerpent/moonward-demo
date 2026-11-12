@@ -1076,7 +1076,7 @@ def({ id: 'hedgehog', zone: 0, icon: '🦔', name: 'Trade with Hazel the Hedgeho
   desc: 'Four berries buys a picnic hamper, checkered blanket included. Bear will still want his picnic, once Nyla\'s home.' });
 def({ id: 'weave', zone: 0, icon: '🧺', name: 'Weave a Bigger Basket with Hazel', cost: 30, stats: { smarts: .5, grit: .3, charm: .2 },
   visible: () => P('meadow') >= 12 && (S.basketTier || 0) < BASKET_TIERS.length - 1,
-  can: needMat('reeds', () => (nutSeeds() < nutNeed() ? `Hazel needs ${nutNeed()} Korok seed${nutNeed() > 1 ? 's' : ''} for a basket this big. Koroks hide in every world` : null)),
+  can: needMat('reeds', () => (nutSeeds() < nutNeed() ? `Hazel needs ${nutNeed()} Korok seed${nutNeed() > 1 ? 's' : ''} for a basket this big. Koroks hide all over the place` : null)),
   effect: () => {
     addMat('reeds', -1);
     S.proj.weave = (S.proj.weave || 0) + 1;
@@ -2043,7 +2043,7 @@ const UNLOCKS = [
   ['_x35', () => (S.mastery.moonwater || 0) + (S.mastery.spelljar || 0) > 0, 'You set your first jar on the burrow windowsill. From now on, the burrow keeps your witchcraft: what today\'s moon water and a spell jar would do.'],
   ['photowall', () => lightOn(), null],
   ['predictor', () => 0 >= 25, null],
-  ['training', () => S.flags.metNyla && visible(A.train1_grit), 'Some days you just need practice. Each world has a training step for every trait: cheap, repeatable all day, and it builds only that trait and its talent (and a little of one skill).'],
+  ['training', () => S.flags.metNyla && visible(A.train1_grit), 'Some days you just need practice. There\'s a training step for every trait: cheap, repeatable all day, and it builds only that trait and its talent (and a little of one skill).'],
   ['mastery', () => !inPrologue() && Object.keys(S.mastery).some(id => A[id] && !A[id].pro && mLvl(id) >= 2), 'The Moon whispers: the more often you do something, the quicker your paws learn it. Every step you repeat builds mastery (★ on its card), and each level makes that step a little faster, for good. Hover the ★ to see how far along it is.'],
 ];
 const UNLOCK_TITLES = {
