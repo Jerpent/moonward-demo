@@ -950,7 +950,7 @@ function cost(a, withBear) {
   if (a.train && farDone('_x3')) c *= 0.9;
   if (a.travel && L.shoutReady) return MIN_COST;
   const back = behind(a), x = traitX(wl(a)) * masteryX(mLvl(a.id)) / c;
-  const first = paced(a) && !back && !(S.mastery[a.id] > 0) ? GAME_MIN_PER_SEC : MIN_COST;
+  const first = !a.pro && !(S.mastery[a.id] > 0) ? GAME_MIN_PER_SEC : MIN_COST;
   return Math.max(first, paceBase(a) / (back ? x * OLD_GROUND ** back : softSpeed(x)));
 }
 
