@@ -906,14 +906,24 @@ const mLvl = id => Math.floor(Math.sqrt(S.mastery[id] || 0));
 const baseCost = a => (typeof a.cost === 'function' ? a.cost() : a.cost);
 
 const PACE = { g: [3, 4], s: [3, 4], r: [3, 4], x: [2, 6], t: [2, 3], p: [2, 8] };
-const BAR_CUT = { 2: 1.3, 3: 0.65, 4: 0.45, 8: 0.65 };
-const OLD_GROUND = 1.25;
+const BAR_CUT = { 0: 2.1, 1: 1.35, 2: 1.3, 3: 0.65, 4: 0.45, 8: 0.5 };
+
+const PROG_C = 0.0508;
+const progX = n => Math.exp(PROG_C * Math.max(0, n) * Math.max(0, n));
+const skillN = k => Math.cbrt(Math.max(0, skillPts(k)) / 5);
+const arriveLvl = act => (act <= 0 ? 0 : Math.min(12, 2 + act));
+const mainTrait = a => Object.entries(a.stats || {}).sort((x, y) => y[1] - x[1])[0]?.[0];
+const skillFor = a => (a.timeGate ? a.timeGate[0] : skillOf(a) || TRAIN_SKILL[mainTrait(a)] || 'balance');
+
+const calLvl = act => (arriveLvl(act) + arriveLvl(act + 1)) / 2;
+const progOf = a => (a.pro ? 1 : progX(skillN(skillFor(a))) / progX(a.timeGate ? a.timeGate[1] : calLvl(actOf(a))));
 const MIN_COST = 0.1;
 const paceKind = a => (a.train ? 'r' : a.travel ? 't' : a.project ? 'p' : a.track ? 'x' : a.limited ? 'g' : 's');
 const paced = a => !(a.pro || a.photo || a._x183);
 function paceBase(a) {
   const b = baseCost(a);
   if (!paced(a) || typeof b !== 'number') return b;
+  if (a.timeGate) return Math.max(b * 3, 0.6 * (BASE_DAY + HEALED_DAY * actOf(a)));
   const k = paceKind(a), [m, min] = PACE[k];
   return Math.max(min * GAME_MIN_PER_SEC, b * m) * (k === 'x' && !ZONES[a.zone].side ? BAR_CUT[actOf(a)] || 1 : 1);
 }
@@ -1026,7 +1036,7 @@ function cost(a, withBear) {
   if (L.bwFree && L.bwFree[a.id] && S.mastery[a.id] > 0) return MIN_COST;
   const back = behind(a), x = traitX(wl(a)) * masteryX(mLvl(a.id)) / c;
   const first = !a.pro && !(S.mastery[a.id] > 0) ? GAME_MIN_PER_SEC : MIN_COST;
-  return Math.max(first, paceBase(a) / (back ? x * OLD_GROUND ** back : softSpeed(x)));
+  return Math.max(first, paceBase(a) / progOf(a) / (back ? x : softSpeed(x)));
 }
 
 const A = {}, ORDER = [], FAR_DEFS = [];
@@ -1067,7 +1077,7 @@ const lvlOfPts = p => { let n = 0; while (SKILL_AT(n + 1) <= p + 1e-9) n++; retu
 const skillLvl = k => lvlOfPts(skillPts(k));
 const skillFrac = k => { const p = skillPts(k), l = lvlOfPts(p); return (p - SKILL_AT(l)) / (SKILL_AT(l + 1) - SKILL_AT(l)); };
 const skillNeed = (k, n, where) => (skillLvl(k) >= n ? null : `Needs ${SKILL_NAME[k]} ${n}. ${where || 'It grows from ' + SKILL_GROWS[k]}.`);
-const sk = (k, n) => [`${SKILL_NAME[k]} ${n}`, () => skillLvl(k) >= n];
+const sk = (k, n) => Object.assign([`${SKILL_NAME[k]} ${n}`, () => skillLvl(k) >= n], { skill: [k, n] });
 
 const SKILL_GATE_LINES = { 'balance|2': 'Your Balance is 2 now. The log bridge doesn\'t wobble anymore.' };
 const basePts = a => { const c = baseCost(a); return (typeof c === 'number' && isFinite(c) ? c : 10) / 6 * 0.5 * (a.train ? 0.5 : 1); };
@@ -1331,6 +1341,9 @@ function farMult(s) {
   return (s === 'hop' && farDone('_x120') ? 1.15 : 1) * (s === 'charm' && farDone('_x195') ? 1.1 : 1) * (s === 'charm' && farDone('_x33') ? 1.1 : 1) * (s === 'charm' && farDone('_x59') ? 1.1 : 1) * (s === 'hop' && farDone('_x8') ? 1.15 : 1);
 }
 function farDef(o) {
+
+  const sks = (o.far || []).filter(r => r.skill).sort((x, y) => y.skill[1] - x.skill[1]);
+  if (sks.length) { o.timeGate = sks[0].skill; o.far = o.far.filter(r => r !== sks[0]); }
   FAR_DEFS.push(o);
   def(Object.assign({ once: true, icon: '✦', stats: o.stats || { grit: .5, smarts: .5 } }, o, {
     visible: () => !farDone(o.id) && (!o.visible || o.visible()),
@@ -2509,7 +2522,8 @@ function actExtra(a) {
     }).filter(Boolean);
     h += `<span>${k.length ? 'You remember: ' + esc(k.join(' · ')) : 'You have no idea what makes a Ripple _x328. Yet.'}</span>`;
   }
-  if (a.far) h += `<span class="far">✦ For later. Needs: ${a.far.map(([_x330, ok]) => (ok() ? '✓ ' : '✗ ') + esc(_x330)).join(' · ')}</span>`;
+  if (a.far && a.far.length) h += `<span class="far">✦ For later. Needs: ${a.far.map(([_x330, ok]) => (ok() ? '✓ ' : '✗ ') + esc(_x330)).join(' · ')}</span>`;
+  if (a.timeGate) { const [k, n] = a.timeGate, long = cost(a) > dayLen(); h += `<span class="far">⏳ ${long ? 'Too long for one day yet. ' : ''}It gets shorter as your ${SKILL_NAME[k]} grows (it's made for ${SKILL_NAME[k]} ${n}; yours is ${skillLvl(k)}).</span>`; }
   if (a._x282) h += a._x282();
   if (a.mystery) {
     const n = Math.min(a.mystery[0], S.mastery[a.id] || 0);
