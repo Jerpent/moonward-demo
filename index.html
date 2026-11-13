@@ -3292,7 +3292,9 @@ const bookOf = z => (ZONES[z] && ZONES[z].side && BOOKS[ZONES[z].side] ? ZONES[z
 const bookDone = id => !!(BOOKS[id] && BOOKS[id].done());
 let bookStash = null;
 const bookDays = {};
-function openBook(id) {
+
+const BOOK_INTRO = {};
+function openBook(id, fromIntro) {
   const b = BOOKS[id];
   if (!b || S.away || !SIDES[id] || !SIDES[id].open() || inPrologue() || S.revisit) return;
   S.books = S.books || {};
@@ -3309,6 +3311,7 @@ function openBook(id) {
   viewZone = L.zone; tabsSig = ''; predDirty = true; noticeSig = null; setSpeed(0); dirty.all = true; saveLocal(); render();
   for (const r of bookRoutes(id)) if (bookOf(A[r].to) === id && A[r].effect) A[r].effect();
   if (first && b.intro) b.intro();
+  else if (first && !fromIntro && BOOK_INTRO[id]) { markSeen(id + 'Page'); showModal(BOOK_INTRO[id][0], BOOK_INTRO[id][1](), [['Begin', null]]); }
   const lines = bookOpeningLines(id);
   if (lines.length) story('📖 ' + lines[(bk.opens - 1) % lines.length], 'story');
 }
