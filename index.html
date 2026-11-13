@@ -374,6 +374,7 @@ textarea { width: 100%; min-height: 70px; font-family: var(--font-mono); font-si
         <button data-speed="8" aria-pressed="false">8×</button>
       </div>
       <button class="btn primary" id="beginBtn">▶ Begin the day</button>
+      <button class="btn" id="musicBtn" hidden>🎵 <span class="long" id="musicName"></span></button>
       <button class="btn" id="shelfBtn" hidden>📚</button>
       <button class="btn" id="restart" title="Go to bed early: end today now. Bunny goes to sleep and wakes up at dawn."><span class="long">Go to bed early</span><span class="short">Bed early</span></button>
       <button class="btn menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" title="Menu">☰</button>
@@ -396,6 +397,9 @@ textarea { width: 100%; min-height: 70px; font-family: var(--font-mono); font-si
           <button class="btn danger" id="wipe">Erase all progress</button>
           <span id="wipeConfirm" hidden><button class="btn danger" id="wipeYes">Yes, erase everything</button> <button class="btn" id="wipeNo">Keep it</button></span>
         </div>
+        <p class="hint">Sound: a soft music box for each world, and little sounds for big moments (never for each step). Sound starts after your first tap.</p>
+        <div class="row snd"><label><input type="checkbox" id="sndMusic"> 🎼 Music box</label> <input type="range" id="sndMusicVol" min="0" max="100" aria-label="Music volume"></div>
+        <div class="row snd"><label><input type="checkbox" id="sndSfx"> 🔔 Sounds</label> <input type="range" id="sndSfxVol" min="0" max="100" aria-label="Sound volume"></div>
       </details>
   </div>
 </div>
@@ -509,7 +513,7 @@ const BASE_DAY = 6 * 60;
 const HEALED_DAY = 120;
 const DAWN = 6 * 60;
 const MAX_BANK_BASE = 14 * 24 * 3600;
-const maxBank = () => MAX_BANK_BASE * (S && S.flags && S.flags._xfar ? 1.5 : 1) * (S && (S._x171 || []).includes('light') ? 2 : 1);
+const maxBank = () => MAX_BANK_BASE * (S && S.flags && S.flags._xfar ? 1.5 : 1) * (S && (S._x173 || []).includes('light') ? 2 : 1);
 const MOON_PIECES = 12;
 
 const STAT_KEYS = ['hop', 'sniff', 'charm', 'smarts', 'grit'];
@@ -533,7 +537,7 @@ const BEAR_TAGS = {
   social: { mult: .9,  skill: 'heart',    note: 'A little faster with Bear: everyone likes Bear' },
   brave:  { mult: .85, skill: 'bravery',  note: 'A little faster with Bear: he goes first' },
   sneak:  { mult: 1.6, skill: 'heart',    note: 'Slower with Bear: he is not subtle' },
-  _x177:   { mult: 1,   skill: 'heart',    note: 'Good company: his way of it is a shared moment, not speed' },
+  _x179:   { mult: 1,   skill: 'heart',    note: 'Good company: his way of it is a shared moment, not speed' },
 };
 
 const MOON_PHASES = [
@@ -652,7 +656,7 @@ const FILM_TEXT = {
 const BRIAR_REVEAL = 75;
 const auroraKnown = () => P('briar') >= BRIAR_REVEAL;
 const briarName = () => (auroraKnown() ? 'Aurora' : 'Briar Rose');
-const auroraText = (text, afterReveal) => (text = typeof text === 'function' ? text() : text, text = String(text).includes('{_x199}') ? String(text).replace(/\{frog\}/g, frogName()) : text, afterReveal && auroraKnown() ? String(text).replace(/Briar Rose/g, 'Aurora') : text);
+const auroraText = (text, afterReveal) => (text = typeof text === 'function' ? text() : text, text = String(text).includes('{_x201}') ? String(text).replace(/\{frog\}/g, frogName()) : text, afterReveal && auroraKnown() ? String(text).replace(/Briar Rose/g, 'Aurora') : text);
 
 const lightOn = () => P('fairies') >= 25 && !!S.flags.film;
 const has = id => !!(S.album && S.album[id]);
@@ -764,7 +768,7 @@ const PROJECT_BEATS = {
   ],
 };
 
-const florinOn = () => !!S.flags._x193 && !S.flags._x138;
+const florinOn = () => !!S.flags._x195 && !S.flags._x139;
 const MOON_HINTS = [
   [() => S.act === 0 && S.loop <= 2, '...little one... can you hear me? ...a piece of me fell into the woods... your dog went after it... look for her trail...'],
   [() => S.act === 0 && P('meadow') < 6, 'Ask around the meadow first. Someone here saw which way she went.'],
@@ -781,7 +785,7 @@ const MOON_HINTS = [
   [() => S.act === 0 && P('hollow') >= 30, 'Bring a picnic hamper, some honey, and Nyla to Bear at moonrise. Nyla has something of mine. She knows who to give it to.'],
 ];
 
-const OPT_DEFAULTS = { addTop: false, repeatLast: false, pauseDay: false, pauseDone: false, showHidden: false };
+const OPT_DEFAULTS = { addTop: false, repeatLast: false, pauseDay: false, pauseDone: false, showHidden: false, music: false, musicVol: 0.5, sfx: true, sfxVol: 0.6 };
 
 const inPrologue = () => !S.flags.held;
 const blank = (keys, v = 0) => Object.fromEntries(keys.map(k => [k, v]));
@@ -793,8 +797,8 @@ function freshSave() {
     seen: {}, reached: { 0: true }, flags: { held: false }, signs: {},
     mastery: {}, proj: {},
     bear: { unlocked: false, skill: blank(BEAR_KEYS), knack: {} },
-    _x195: { ans: [0, 1, 2].map(() => (Math.random() < .5 ? 'left' : 'right')), known: [null, null, null] },
-    _x202: { ans: [0, 1].map(() => ['sweet', 'sad', 'true'][Math.floor(Math.random() * 3)]).concat(['true']), tried: [[], [], []] },
+    _x197: { ans: [0, 1, 2].map(() => (Math.random() < .5 ? 'left' : 'right')), known: [null, null, null] },
+    _x204: { ans: [0, 1].map(() => ['sweet', 'sad', 'true'][Math.floor(Math.random() * 3)]).concat(['true']), tried: [[], [], []] },
     queue: [],
     journal: [], speed: 1, wins: 0, savedAt: 0, lastSeen: Date.now(), bank: 0, introSeen: false,
     lastHint: '', lastHintLoop: 0, moonPieces: 0, unlocked: {}, album: {}, basketTier: 0, tut: 0, notices: [], noticeSeq: 1,
@@ -838,11 +842,11 @@ function normalize(s) {
   out.bear = Object.assign(f.bear, out.bear);
   out.bear.skill = Object.assign(blank(BEAR_KEYS), out.bear.skill);
   out.bear.knack = Object.assign({}, out.bear.knack);
-  if (!out._x195 || !Array.isArray(out._x195.ans)) out._x195 = f._x195;
-  if (!out._x202 || !Array.isArray(out._x202.ans) || !Array.isArray(out._x202.tried)) out._x202 = f._x202;
+  if (!out._x197 || !Array.isArray(out._x197.ans)) out._x197 = f._x197;
+  if (!out._x204 || !Array.isArray(out._x204.ans) || !Array.isArray(out._x204.tried)) out._x204 = f._x204;
   if ((s && s.v || 0) < 3 && s) {
     if (out.act >= 1) out.reached[14] = true;
-    if (out.flags._x193) out.flags._x138 = true;
+    if (out.flags._x195) out.flags._x139 = true;
     out.v = 3;
   }
   out.queue = (out.queue || []).filter(e => e && A[e.id] && e.n >= 0);
@@ -852,13 +856,13 @@ function normalize(s) {
 const snapPlan = () => (S.queue || []).map(e => Object.assign({}, e, e.recipe ? { recipe: Object.assign({}, e.recipe) } : {}));
 function freshLoop() {
   const l = {
-    time: 0, zone: 0, _x165: 0,
+    time: 0, zone: 0, _x167: 0,
     stat: blank(STAT_KEYS),
     inv: blank(Object.keys(ITEMS)),
-    used: {}, good: {}, nyla: !!(typeof S !== 'undefined' && S && S.flags && (S.flags._x167 || S.flags._xfar || (S._x171 || []).includes('protect'))), jar: false,  buffs: {}, fellow: {}, fed: false, lantern: false, begun: false, waiting: false,
+    used: {}, good: {}, nyla: !!(typeof S !== 'undefined' && S && S.flags && (S.flags._x169 || S.flags._xfar || (S._x173 || []).includes('protect'))), jar: false,  buffs: {}, fellow: {}, fed: false, lantern: false, begun: false, waiting: false,
     bear: false, bearStam: 0, bearAsleep: false, knacked: {},
-    witsRound: 0, _x181: false, sand: false, _x133: false, _x132: false, inside: false,
-    cryRound: 0, cryWon: false, wave: false, pass: false, candle: null, milk: 0, _x149: false, link: false, outfit: null,
+    witsRound: 0, _x183: false, sand: false, _x134: false, _x133: false, inside: false,
+    cryRound: 0, cryWon: false, wave: false, pass: false, candle: null, milk: 0, _x150: false, link: false, outfit: null,
     qi: 0, curUid: null, done: {}, skipped: {}, prog: 0, started: false, withBear: false,
     endNow: null,
     today: snapPlan(),
@@ -866,8 +870,8 @@ function freshLoop() {
   };
   if (S.flags._xfar) l.inv._x53 = 1;
   if (inBook()) bookDawn(l);
-  if (S.flags._x138) l.inv.pill = 1;
-  if (typeof S !== 'undefined' && S && (S._x171 || []).includes('wake') && S.bear && S.bear.unlocked) { l.bear = true; l.bearStam = bearMax(); }
+  if (S.flags._x139) l.inv.pill = 1;
+  if (typeof S !== 'undefined' && S && (S._x173 || []).includes('wake') && S.bear && S.bear.unlocked) { l.bear = true; l.bearStam = bearMax(); }
   return l;
 }
 
@@ -881,11 +885,11 @@ const pctOfExp = (exp, k) => Math.min(100, (-9 + Math.sqrt(81 + 4 * exp / k)) / 
 const pctRaw = id => pctOfExp(S.track[id], TRACKS[id].k);
 const P = id => Math.floor(id === 'burrow' && S.prologueTrack ? Math.max(pctRaw(id), pctOfExp(S.prologueTrack, TRACKS.burrow.k)) : pctRaw(id));
 
-const moonIdx = () => (inBook() && S.away.id === '_x145' ? 4 : inBook() && S.away.id === '_x201' ? 0 : (S.loop - 1 + (inBook() ? S.books[S.away.id].day || 0 : 0)) % 8);
+const moonIdx = () => (inBook() && S.away.id === '_x146' ? 4 : inBook() && S.away.id === '_x203' ? 0 : (S.loop - 1 + (inBook() ? S.books[S.away.id].day || 0 : 0)) % 8);
 const moonLight = () => (1 - Math.cos(2 * Math.PI * moonIdx() / 8)) / 2;
 const moonHealed = () => S.moonPieces || 0;
 
-const moonShine = () => Math.max(0, moonHealed() - (S.flags && S.flags._x194 && !S.flags._x166 ? 0.7 : 0)) / MOON_PIECES;
+const moonShine = () => Math.max(0, moonHealed() - (S.flags && S.flags._x196 && !S.flags._x168 ? 0.7 : 0)) / MOON_PIECES;
 const moonPower = () => (S.signs.cancer ? 2 : 1) * (P('briar') >= 80 ? 1.5 : 1) * (1 + 0.1 * moonHealed()) * (1 + 0.05 * ph('_x102'));
 const moonTalent = () => 1 + 0.3 * moonLight() * moonPower() * candleMoon();
 
@@ -897,21 +901,21 @@ const driftBonus = () => Math.min(0.3, driftLvl() * (farDone('_x16') ? 0.075 : 0
 const trophy = t => !!S.drift.trophies[t];
 const PROLOGUE_START = 20 * 60, PROLOGUE_LEN = Infinity;
 const dayStart = () => (inPrologue() ? PROLOGUE_START : DAWN - dawnBonus());
-const dayLen = () => inPrologue() ? PROLOGUE_LEN : inBook() ? BOOK_DAY : BASE_DAY + HEALED_DAY * moonHealed() + (S.flags && S.flags._xfar ? 20 : 0) + (S.flags && S.flags._xfar && moonIdx() === 4 ? 20 : 0) + dawnBonus() + (S.flags._x55 ? 40 : 0) + shrineDay() + L._x165;
+const dayLen = () => inPrologue() ? PROLOGUE_LEN : inBook() ? BOOK_DAY : BASE_DAY + HEALED_DAY * moonHealed() + (S.flags && S.flags._xfar ? 20 : 0) + (S.flags && S.flags._xfar && moonIdx() === 4 ? 20 : 0) + dawnBonus() + (S.flags._x55 ? 40 : 0) + shrineDay() + L._x167;
 
 const shrinesSolved = () => ((S.shrines || {}).plateau || 0) + ((S.shrines || {}).old || 0);
 const shrineDay = () => 6 * Math.floor(shrinesSolved() / 4);
 const talentRate = () => (farDone('_x82') ? 1.1 : 1) * (1 + 0.05 * ph('_x103')) * 0.15 * candleTalent() * (trophy('cup') ? 1.05 : 1) * (farDone('farOwlBooks') ? 1.15 : 1) * (P('owl') >= 50 ? 1.5 : 1) * (L.jar ? 2 : 1) * moonTalent();
 const fairyMult = s => (FAIRIES.some(([at, fs]) => fs === s && P('fairies') >= at) ? (farDone('_x9') ? 1.35 : 1.25) : 1);
 const signMult = s => Object.entries(SIGNS).reduce((m, [id, g]) => m * (S.signs[id] && g.stat === s ? 1.15 : 1), 1) * 1;
-const pb = () => (farDone('_x58') ? 1.15 : 1.1) + (S.album && S.album._x69 ? 0.05 : 0) + (farDone('_x128') && moonIdx() === 4 ? 0.05 : 0) + (S.album && S.album._x65 ? 0.05 : 0) + (farDone('_x130') ? 0.05 : 0);
+const pb = () => (farDone('_x58') ? 1.15 : 1.1) + (S.album && S.album._x69 ? 0.05 : 0) + (farDone('_x129') && moonIdx() === 4 ? 0.05 : 0) + (S.album && S.album._x65 ? 0.05 : 0) + (farDone('_x131') ? 0.05 : 0);
 const memoriesFound = () => PHOTO_SPOTS.filter(sp => sp.memory && has(sp.id)).length;
 const photoMult = s => (s === 'grit' ? phm('_x42') : 1) * (s === 'smarts' ? phm('_x44') : 1) * (s === 'sniff' ? phm('_x101') : 1) * (s === 'grit' ? phm('_x15') : 1) * (s === 'hop' ? phm('_x45') * phm('_x62') : 1) * (s === 'charm' ? phm('_x104') * phm('_x70') : 1) * (s === 'sniff' ? phm('_x23') : 1) * (s === 'hop' ? phm('_x12') : 1) * (s === 'charm' ? phm('_x22') : 1) * (s === 'grit' ? phm('_x60') : 1) * (s === 'sniff' ? phm('nylaZoom') : 1) * (s === 'charm' ? phm('_x40') : 1) * (s === 'charm' ? phm('_x59') : 1) * (s === 'grit' ? phm('_x115') : 1);
 
 const buff = n => !!(L.buffs && L.buffs[n] > L.time);
 const fellow = n => !!(L.fellow && L.fellow[n]);
 const fellowMax = () => (0 >= 100 ? 3 : 2);
-const buffMult = s => (s === 'hop' ? (trophy('silver') ? 1.05 : 1) * (trophy('gold') ? 1.05 : 1) : 1) * (buff('_x73') ? 1.25 : 1) * (s === 'grit' && buff('_x35') ? 1.5 : 1) * (s === 'sniff' && fellow('_x173') ? 1.5 : 1) * farMult(s);
+const buffMult = s => (s === 'hop' ? (trophy('silver') ? 1.05 : 1) * (trophy('gold') ? 1.05 : 1) : 1) * (buff('_x73') ? 1.25 : 1) * (s === 'grit' && buff('_x35') ? 1.5 : 1) * (s === 'sniff' && fellow('_x175') ? 1.5 : 1) * farMult(s);
 const expMult = s => focusMult(s) * buffMult(s) * candleMult(s) * (1 + 0.1 * lvl(S.talent[s])) * (L.nyla && s === 'sniff' ? 2 : 1) * fairyMult(s) * signMult(s) * photoMult(s);
 const wl = a => Object.entries(a.stats).reduce((t, [s, w]) => t + w * lvl(L.stat[s]), 0);
 const mLvl = id => Math.floor(Math.sqrt(S.mastery[id] || 0));
@@ -949,14 +953,14 @@ const bearLvl = k => lvl(S.bear.skill[k] * 0.4);
 const bearMax = () => (30 * ph('_x94')) + (30 * ph('_x61')) + (30 * ph('_x98')) + (farDone('_x2') && moonIdx() === 0 ? 30 : 0) + (30 * ph('_x100')) + (30 * ph('_x68')) + (farDone('_x83') ? 30 : 0) + (farDone('_x10') ? 30 : 0) + (30 * ph('_x14')) + (farDone('_x80') ? 60 : 0) + (farDone('_x108') ? 30 : 0) + (30 * ph('_x119')) + 240 + 25 * bearLvl('heart') + (30 * ph('_x71')) + (30 * ph('_x92')) + (30 * ph('_x24')) + (trophy('bronze') ? 15 : 0);
 const knack = id => S.bear.knack[id] || 0;
 function bearMult(a) {
-  const t = BEAR_TAGS[a.bear && a.bear.tag || '_x177'];
+  const t = BEAR_TAGS[a.bear && a.bear.tag || '_x179'];
   const skillBoost = t.mult < 1 ? 1 + bearLvl(t.skill) / 30 : 1;
   if (t === BEAR_TAGS.sneak && L.bwNoSneak && L.bwNoSneak[a.id]) return 1;
   return t.mult / skillBoost * (BW_TAGS.has(a.bear && a.bear.tag) ? 1 : 1 - 0.08 * knack(a.id));
 }
 
-const BW_TAGS = new Set(['heavy', 'social', 'brave', '_x177', 'sneak', 'drive']);
-const bwOf = a => (a && (BEAR_WAYS[a.id] || (/^door_/.test(a.id) ? BEAR_WAYS._x157 : null))) || null;
+const BW_TAGS = new Set(['heavy', 'social', 'brave', '_x179', 'sneak', 'drive']);
+const bwOf = a => (a && (BEAR_WAYS[a.id] || (/^door_/.test(a.id) ? BEAR_WAYS._x158 : null))) || null;
 const BW_CACHE = {};
 function bwOps(a) {
   const w = bwOf(a), k = knack(a.id);
@@ -1017,7 +1021,7 @@ function bwApply(a, ops) {
     else if (op === 'errand' || op === 'errandBar') { if (!L.bwErrand && !bearNeededLater(a)) L.bwErrand = { id: a.id, at: Math.max(L.time, dayLen() * 0.75), give: op === 'errand' ? [x, y] : null, bar: op === 'errandBar' ? [x, y] : null }; }
     else if (op === 'freePiece') { L.bwPiece = L.bwPiece || {}; if (!L.bwPiece[x]) { L.bwPiece[x] = true; projAdd(x, 1); } }
     else if (op === 'reveal') bwScout(a);
-    else if (op === 'talent') { const s = x === '_x176' ? OATH_TRAIT[(S._x171 || []).slice(-1)[0]] || mainTrait(a) : x; S.talent[s] = (S.talent[s] || 0) + 2 * (a.stats[s] || 0.5) * cost(a, true) * expMult(s) * talentRate() * 0.5; }
+    else if (op === 'talent') { const s = x === '_x178' ? OATH_TRAIT[(S._x173 || []).slice(-1)[0]] || mainTrait(a) : x; S.talent[s] = (S.talent[s] || 0) + 2 * (a.stats[s] || 0.5) * cost(a, true) * expMult(s) * talentRate() * 0.5; }
     else if (op === 'noSneak') (L.bwNoSneak = L.bwNoSneak || {})[x] = true;
     else if (op === 'nextTo') { if (a.to != null) (L.bwNext = L.bwNext || {})['z' + a.to] = x; }
     else if (op === 'tideStop') { if (lowTide()) bwGive('_x87', 1); else (L.bwNext = L.bwNext || {}).z106 = 20; }
@@ -1040,7 +1044,7 @@ function cost(a, withBear) {
   if (a.travel && L.nyla) c *= 0.5;
   c *= candleCost(a);
   if (a.travel && L.inv.dust > 0) c *= 0.4;
-  if (a.zone === 11 && fellow('_x148')) c *= 0.6;
+  if (a.zone === 11 && fellow('_x149')) c *= 0.6;
   if (a._x89) c *= a._x89();
   if (a.zone === 45 && !a.travel) c *= L.bwFogFree ? 1 : fogMult();
   if (a.id === '_x81' && L.bw_race) c *= 0.8;
@@ -1139,7 +1143,7 @@ const carried = () => Object.entries(L.inv).reduce((t, [k, v]) => t + (NOT_CARRI
 
 const FILLS_BASKET = new Set('hedgehog bake driftwood reeds'.split(' '));
 const weaveNeed = () => 16 * ((S.basketTier || 0) + 1);
-const capacity = () => BASKET_TIERS[Math.min(BASKET_TIERS.length - 1, S.basketTier || 0)] + (S.signs._x144 ? 4 : 0) + (S.flags && S.flags._xfar ? 4 : 0);
+const capacity = () => BASKET_TIERS[Math.min(BASKET_TIERS.length - 1, S.basketTier || 0)] + (S.signs._x145 ? 4 : 0) + (S.flags && S.flags._xfar ? 4 : 0);
 const actOf = a => ZONES[a.zone].act;
 
 const BURROW_FINDS = [[25, 'carrot'], [50, 'cocoatin'], [75, 'bubbles'], [100, 'bookspot']];
@@ -1194,7 +1198,7 @@ const matExtra = k => () => `<span>${MATERIALS[k].icon} ${MATERIALS[k].name} on 
 def({ id: 'wander', zone: 0, icon: '🌼', name: 'Search the Meadow for Nyla', cost: 30, stats: { hop: .4, sniff: .4, smarts: .2 }, track: 'meadow',
   desc: 'Call her name across the clover, and check every spot she likes to nap.' });
 def({ id: 'dew', zone: 0, icon: '💧', name: 'Sip Morning Dew', cost: 5, stats: { hop: .6, grit: .4 },
-  visible: () => P('meadow') >= 2, limited: () => Math.floor(P('meadow') / 4) + (1 * ph('meadowDawn')) + (farDone('_x139') ? 2 : 0), effect: () => { L._x165 += 20; },
+  visible: () => P('meadow') >= 2, limited: () => Math.floor(P('meadow') / 4) + (1 * ph('meadowDawn')) + (farDone('_x140') ? 2 : 0), effect: () => { L._x167 += 20; },
   lockNote: 'Not yet. Dew turns up once the meadow is 4% searched.',
   desc: 'No time for breakfast. A sip of dew keeps you going, and each one adds ' + fmtDur(20) + ' of daylight.' });
 def({ id: 'bushes', gives: 'berries', zone: 0, icon: '🍓', name: 'Check the Berry Bushes', cost: 12, stats: { sniff: .7, smarts: .3 },
@@ -1220,7 +1224,7 @@ def({ id: 'weave', zone: 0, icon: '🧺', name: 'Weave a Bigger Basket with Haze
       story(`Hazel ties off the last reed. Your new basket holds ${capacity()} things, and it stays yours even when the day starts over.` + (S.basketTier === 1 ? ' She squints at something above your head: a frayed silver thread running from you up to the Moon. "Somebody\'s been pulling on that one," she says. "Good. It means it\'s still tied."' : ''), 'big');
     }
   },
-  _x165: () => matExtra('reeds')() + (nutNeed() ? `<span>Korok seeds: ${nutSeeds()} of ${nutNeed()} needed for this one</span>` : '') + `<span class="track"><span class="label">Bigger basket</span><span class="bar"><i style="width:${((S.proj.weave || 0) / weaveNeed() * 100).toFixed(1)}%;background:var(--honey)"></i></span><span class="num">${S.proj.weave || 0}/${weaveNeed()}</span></span>`,
+  _x167: () => matExtra('reeds')() + (nutNeed() ? `<span>Korok seeds: ${nutSeeds()} of ${nutNeed()} needed for this one</span>` : '') + `<span class="track"><span class="label">Bigger basket</span><span class="bar"><i style="width:${((S.proj.weave || 0) / weaveNeed() * 100).toFixed(1)}%;background:var(--honey)"></i></span><span class="num">${S.proj.weave || 0}/${weaveNeed()}</span></span>`,
   desc: 'Hazel is a Weaver: she sees the loose threads between things and stitches them back together. "Things that are mended with care," she says, "stay mended." So a bigger basket, a little each day, stays woven.' });
 def({ id: 'reeds', zone: 0, icon: '🌾', name: 'Cut Moon-Silvered Reeds', cost: 10, stats: { hop: .5, sniff: .5 },
   visible: () => P('meadow') >= 12 && (S.basketTier || 0) < BASKET_TIERS.length - 1, limited: () => 1 + Math.floor(P('meadow') / 30), effect: () => addMat('reeds', 1),
@@ -1231,7 +1235,7 @@ def({ id: 'bake', zone: 0, icon: '🧁', name: 'Bake Nyla\'s Favorite Pupcakes',
   desc: 'Grandpa Tortoise\'s recipe. Two berries make one. Nyla has never once said no to one, though she always accepts it like a lady.' });
 def({ id: 'footbridge', zone: 0, icon: '🔨', name: 'Build a Footbridge', cost: 30, stats: { grit: .6, smarts: .4 },
   project: 'footbridge', visible: () => !!S.reached[1] && !S.flags.footbridge,
-  can: needMat('driftwood'), effect: () => addMat('driftwood', -1), _x165: matExtra('driftwood'),
+  can: needMat('driftwood'), effect: () => addMat('driftwood', -1), _x167: matExtra('driftwood'),
   desc: 'The brook is slowing you down. Each plank takes a piece of moonlit driftwood, and the planks you lay stay laid, even when the day starts over.' });
 def({ id: 'driftwood', zone: 0, icon: '🪵', name: 'Gather Moonlit Driftwood', cost: 10, stats: { sniff: .5, grit: .5 },
   visible: () => !!S.reached[1] && !S.flags.footbridge, limited: () => 1 + Math.floor(P('meadow') / 30), effect: () => addMat('driftwood', 1),
@@ -1242,7 +1246,7 @@ def({ id: 'brook', mystery: [8, .35, 'You know every stepping stone in the brook
 
 const nutSeeds = () => Object.keys(S.nuts || {}).length;
 
-const korokAt = n => (S.flags._x152 ? Math.floor(n / 2) : n);
+const korokAt = n => (S.flags._x153 ? Math.floor(n / 2) : n);
 const nutNeed = () => ((S.basketTier || 0) >= 1 ? S.basketTier : 0);
 const nutFind = key => () => {
   if (PRED) return;
@@ -1272,7 +1276,7 @@ const trainHint = st => {
 def({ id: 'woods', zone: 1, icon: '🌲', name: 'Search the Woods', cost: 35, stats: { sniff: .4, hop: .3, grit: .3 }, track: 'woods',
   desc: 'Pine needles, moss, and a hundred places a dog could hide. Keep calling.' });
 def({ id: 'glowcaps', zone: 1, icon: '🍄', name: 'Gather Glowcaps', cost: 10, stats: { sniff: .5, smarts: .5 },
-  visible: () => P('woods') >= 3, limited: () => Math.floor(P('woods') / 4), effect: () => { L._x165 += 25; },
+  visible: () => P('woods') >= 3, limited: () => Math.floor(P('woods') / 4), effect: () => { L._x167 += 25; },
   lockNote: 'Not yet. Glowcaps turn up once the woods are 4% searched.',
   desc: 'More light means more time to look. Each glowing mushroom holds off dusk for ' + fmtDur(25) + '.' });
 def({ id: 'logs', gives: 'acorns', zone: 1, icon: '🌰', name: 'Rummage Hollow Logs', cost: 15, stats: { grit: .5, sniff: .5 },
@@ -1325,7 +1329,7 @@ def({ id: 'petals', gives: 'petals', zone: 2, icon: '🌸', name: 'Pick Moonpeta
   desc: 'Silver flowers that only open in the moss here. Every hedge witch wants some.' });
 def({ id: 'moonwater', zone: 2, icon: '🫙', name: 'Make Moon Water', cost: 20, stats: { smarts: .6, grit: .4 },
   visible: () => P('glade') >= 15, can: () => (inv().petals < 2 ? 'Needs 2 moonpetals' : null),
-  effect: () => { inv().petals -= 2; L._x165 += Math.round((Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x93')) + (10 * ph('_x43')) + (10 * ph('_x116')) + (farDone('_x5') ? 20 : 0)) * (S.signs._x143 ? 1.25 : 1)); },
+  effect: () => { inv().petals -= 2; L._x167 += Math.round((Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x93')) + (10 * ph('_x43')) + (10 * ph('_x116')) + (farDone('_x5') ? 20 : 0)) * (S.signs._x144 ? 1.25 : 1)); },
   desc: 'Spring water and two moonpetals in a jar, left where last night\'s moonlight fell. Adds ' + fmtDur(30) + ' to ' + fmtDur(70) + ' of daylight. The fuller the moon, the stronger it is.' });
 def({ id: 'spelljar', zone: 2, icon: '🫙', name: 'Fill a Moonlit Spell Jar', cost: 25, stats: { smarts: .5, charm: .5 },
   visible: () => P('glade') >= 30,
@@ -1438,9 +1442,9 @@ function planShortLine(a) {
 
 for (const id of ORDER) {
   const a = A[id];
-  if (!a.limited || a.pro || ['_x34', '_x35', '_x136', '_x19', 'milk', '_x55'].includes(id)) continue;
+  if (!a.limited || a.pro || ['_x34', '_x35', '_x137', '_x19', 'milk', '_x55'].includes(id)) continue;
   const base = a.limited;
-  a.limBase = () => base() + (farDone('_x51') && kindOf(a) === '_x147' ? 1 : 0);
+  a.limBase = () => base() + (farDone('_x51') && kindOf(a) === '_x148' ? 1 : 0);
   a.limited = a.limBase;
 }
 
@@ -1461,16 +1465,16 @@ function spentForGood(a) {
   if (a.id === 'oakdoor') return !!S.flags.gladeFound;
   if (a.id === 'film') return !!S.flags.film;
   if (a.id === 'reachbook') return !!(L && L.inv.storybook);
-  if (a.id === '_x152') return !!S.flags._x152;
-  if (a.id === '_x153') return !!S.flags._x192;
+  if (a.id === '_x153') return !!S.flags._x153;
+  if (a.id === '_x154') return !!S.flags._x194;
   if (a.id === '_x124') return !!S.flags._x124;
   if (a.id === '_x18') return !!S.flags._x56;
-  if (a.id === '_x32') return !!S.flags._x137;
-  if (a.id === '_x31') return !!S.flags._x194;
+  if (a.id === '_x32') return !!S.flags._x138;
+  if (a.id === '_x31') return !!S.flags._x196;
   if (a.id === '_x30') return EXPERIMENTS.every(([k]) => tested(k));
   if (a.id === 'weave') return (S.basketTier || 0) >= BASKET_TIERS.length - 1;
-  if (a.id.startsWith('_x174')) return ownsOutfit(a.id.slice(4));
-  if (a.id.startsWith('_x203')) return outfitStars(a.id.slice(3)) >= 2;
+  if (a.id.startsWith('_x176')) return ownsOutfit(a.id.slice(4));
+  if (a.id.startsWith('_x205')) return outfitStars(a.id.slice(3)) >= 2;
   return false;
 }
 const sweepSpent = () => { for (const id of new Set(S.queue.map(e => e.id))) if (spentForGood(A[id])) clearSpent(id); };
@@ -1690,12 +1694,12 @@ function story(text, kind = 'story') {
   dirty.journal = true;
 }
 function bearSays(text) { story('🐻 ' + text, 'bearline'); }
-function findSign(id, text, _x164) {
+function findSign(id, text, _x166) {
   if (S.signs[id]) return;
 
   S.signs[id] = true;
   dirty.signs = true;
-  if (_x164) return;
+  if (_x166) return;
   story(text, 'big');
   const g = SIGNS[id];
   keepPop(`Constellation: ${g.glyph} ${g.name}`, text, g.bonus || STATS[g.stat].name + ' grows 15% faster');
@@ -1710,19 +1714,19 @@ const SIGN_STARS = {
   ] },
 };
 const starsOf = sign => (S.stars && S.stars[sign]) || [];
-function addStar(sign, key, _x164) {
+function addStar(sign, key, _x166) {
   if (PRED) return;
   S.stars = S.stars || {};
   const got = S.stars[sign] = starsOf(sign).slice(), def = SIGN_STARS[sign];
   if (got.includes(key)) return;
   got.push(key);
-  if (!_x164) {
+  if (!_x166) {
     markSeen('s:' + sign + key);
     { const st = def.stars.find(x => x[0] === key); story('⭐ ' + auroraText(st[2], st[1] != null && st[1] > BRIAR_REVEAL), 'big'); }
     if (got.length < def.stars.length) notice(`You found a star of ${SIGNS[sign].glyph} ${SIGNS[sign].name}: ${got.length} of ${def.stars.length}.`, 'moon');
   }
   dirty.signs = true;
-  if (got.length >= def.stars.length) findSign(sign, def.rise, _x164);
+  if (got.length >= def.stars.length) findSign(sign, def.rise, _x166);
 }
 
 function completeSign(sign) { for (const [key] of SIGN_STARS[sign].stars) addStar(sign, key, true); findSign(sign, SIGN_STARS[sign].rise); }
@@ -1731,7 +1735,7 @@ function syncStars() {
   for (const [sign, def] of Object.entries(SIGN_STARS)) {
     if (S.signs[sign]) { for (const [key] of def.stars) if (!starsOf(sign).includes(key)) addStar(sign, key, true); continue; }
     for (const [key, at, , trk] of def.stars) {
-      const earned = at != null ? P(trk || key) >= at : key === '_x202' ? !!S.flags.cryWin : key === '_x55' ? !!S.flags._x55 : false;
+      const earned = at != null ? P(trk || key) >= at : key === '_x204' ? !!S.flags.cryWin : key === '_x55' ? !!S.flags._x55 : false;
       if (earned && !starsOf(sign).includes(key)) addStar(sign, key, true);
     }
   }
@@ -1773,7 +1777,7 @@ function train(a, mins, withBear) {
     L.stat[s] += g; S.talent[s] += g * r * (farDone('_x88') && skillOf(a) === 'science' ? 1.1 : 1);
   }
   if (withBear) {
-    const t = BEAR_TAGS[a.bear && a.bear.tag || '_x177'];
+    const t = BEAR_TAGS[a.bear && a.bear.tag || '_x179'];
     const bg = 1 + 0.1 * ph('_x46'), hg = k => (k === 'heart' ? (1 + 0.1 * ph('_x118')) * (1 + 0.1 * ph('_x63')) : k === 'strength' && farDone('_x52') ? 1.15 : 1);
     S.bear.skill[t.skill] += 2 * mins * bg * hg(t.skill);
     for (const k of BEAR_KEYS) if (k !== t.skill) S.bear.skill[k] += 0.5 * mins * bg * hg(k);
@@ -1834,9 +1838,10 @@ function complete(a, e) {
   if (a.travel && L.shoutReady) L.shoutReady = false;
   if (withBear) { S.bearDone = S.bearDone || {}; S.bearDone[a.id] = (S.bearDone[a.id] || 0) + 1; }
   if (withBear && !L.knacked[a.id]) {
-    const k = knack(a.id), t = BEAR_TAGS[a.bear && a.bear.tag || '_x177'], w = bwOf(a);
+    const k = knack(a.id), t = BEAR_TAGS[a.bear && a.bear.tag || '_x179'], w = bwOf(a);
     if (k < 5 && bearLvl(t.skill) * (1 + 0.1 * ph('_x57')) >= k * 4) {
       S.bear.knack[a.id] = k + 1; L.knacked[a.id] = true;
+      if (!PRED && w) sfx('hmph', !!w.joke && k < 2);
       if (!PRED && w && k === 0) bearSays(`🆕 Bear's way: <b>${esc(w.n)}</b>. ${esc(bwFx(w))}`);
       else if (!PRED && w && k === 2 && w.joke) bearSays(w.joke);
       else if (!PRED && w && (k === 2 && w.ops[3] || k === 4 && w.ops[5])) bearSays(`Bear's way of "${esc(a.name)}" grew: knack ${k + 1}.`);
@@ -1847,7 +1852,7 @@ function complete(a, e) {
   if (bwHas(bw, 'secondHint') && L.starSense && !L.starSense2) { L.starSense = false; L.starSense2 = true; }
   if (L.bwFree && L.bwFree[a.id]) delete L.bwFree[a.id];
   if (a.zone === 45 && !a.travel && L.bwFogFree && a.id !== 'doors') L.bwFogFree = false;
-  if (a.mystery && S.mastery[a.id] === a.mystery[0]) { story((S.flags._x168 ? '🔎 Mystery solved: ' : '🎲 Natural 20! Mystery solved: ') + a.mystery[2], 'big'); if (!PRED) S.flags._x168 = true; }
+  if (a.mystery && S.mastery[a.id] === a.mystery[0]) { story((S.flags._x170 ? '🔎 Mystery solved: ' : '🎲 Natural 20! Mystery solved: ') + a.mystery[2], 'big'); if (!PRED) { sfx('dice', !S.flags._x170); S.flags._x170 = true; } }
   if (mLvl(a.id) > mBefore && mLvl(a.id) % 5 === 0) story(`You've done "${a.name}" so many times you could do it in your sleep. Mastery ${mLvl(a.id)}.`);
   { const g0 = 100 * (1 + wl(a) / 20);
     if (a.track) {
@@ -1875,7 +1880,7 @@ function complete(a, e) {
   if (a.food && !L.fed) { if (L.inv.lembread > 0) { L.inv.lembread--; L.fed = true; } else L.inv.seedcake -= a.food; }
   if (a.once) { S.flags['far_' + a.id] = true; }
   if (a.id === 'candle' && e.recipe) {
-    inv()._x150--; const salted = e.recipe.l === 'salt' && inv().salt > 0; if (salted) inv().salt--;
+    inv()._x151--; const salted = e.recipe.l === 'salt' && inv().salt > 0; if (salted) inv().salt--;
     L.candle = Object.assign({}, e.recipe, { salted }); L.candle.until = L.time + candleLen(L.candle);
     const k = candleKey(e.recipe);
     if (!PRED) { S.spellbook = S.spellbook || {}; if (!S.spellbook[k]) { S.spellbook[k] = true; story('🕯️ New in your spellbook: ' + candleText(e.recipe)); } }
@@ -1896,7 +1901,7 @@ function complete(a, e) {
     L.zone = a.to;
     if (!S.reached[a.to]) {
       S.reached[a.to] = true; if (!PRED) viewZone = a.to;
-      story('You made it to ' + ZONES[a.to].name + '. ' + ZONES[a.to].blurb, 'big');
+      story('You made it to ' + ZONES[a.to].name + '. ' + ZONES[a.to].blurb, 'big'); sfx('sparkle');
     }
     if (!PRED) dirty.actions = true;
   }
@@ -1921,7 +1926,7 @@ function step(mins) {
     }
     const a = A[e.id];
 
-    if (!L.started && !runnable(a)) { L.skipped[e.uid] = a.id === '_x136' ? 'No new moon tonight' : 'Not available today'; L.done[e.uid] = L.done[e.uid] || 0; dirty.plan = true; continue; }
+    if (!L.started && !runnable(a)) { L.skipped[e.uid] = a.id === '_x137' ? 'No new moon tonight' : 'Not available today'; L.done[e.uid] = L.done[e.uid] || 0; dirty.plan = true; continue; }
     if (!L.started && a._x114) {
       const t = a._x114();
       if (t != null && L.time < t - 1e-9) { const w = Math.min(mins, t - L.time, left); L.time += w; mins -= w; L.idleUntil = t; continue; }
@@ -1952,7 +1957,7 @@ const MOON_MUSINGS = [
   [0, "You're the only one who remembers. That's lonely. It won't always be."],
 ];
 function moonHint() {
-  if (S.flags._x167) return;
+  if (S.flags._x169) return;
   let h = MOON_HINTS.find(([cond]) => { try { return cond(); } catch (e) { return false; } });
   if (!h || (h[1] === S.lastHint && S.loop - S.lastHintLoop < 5)) {
 
@@ -1989,9 +1994,10 @@ function endDay(reason) {
   }
   const left = fmtDur(dayLen() - L.time);
   const nothing = reason === 'done' && L.time < 1;
+  if (reason === 'moonrise') sfx('_x182');
   if (reason === 'restart') story(dayLabel() + ': you went to bed early, with ' + left + ' of daylight left.' + (changes.length ? ' ' + changes.join(', ') + '.' : ''), 'loop');
   else if (reason === 'act') {  }
-  else if (!nothing) story(dayLabel() + (reason === 'moonrise' ? (S.flags._x167 ? ': the Moon rose and stayed up. A whole night, and then a new morning.' : ': the Moon tried to rise, and the day folded back to dawn.') : reason === 'asleep' ? ': you dozed off with ' + left + ' of daylight left, after the wrong cup.' : reason === 'rule' ? ': you broke a treaty rule and went straight to bed, with ' + left + ' of daylight left.' : ': plan finished with ' + left + ' of daylight left, so you curled up for a nap.') + (changes.length ? ' ' + changes.join(', ') + '.' : (S.flags._x167 ? '' : ' You wake at dawn, same as always.')), 'loop');
+  else if (!nothing) story(dayLabel() + (reason === 'moonrise' ? (S.flags._x169 ? ': the Moon rose and stayed up. A whole night, and then a new morning.' : ': the Moon tried to rise, and the day folded back to dawn.') : reason === 'asleep' ? ': you dozed off with ' + left + ' of daylight left, after the wrong cup.' : reason === 'rule' ? ': you broke a treaty rule and went straight to bed, with ' + left + ' of daylight left.' : ': plan finished with ' + left + ' of daylight left, so you curled up for a nap.') + (changes.length ? ' ' + changes.join(', ') + '.' : (S.flags._x169 ? '' : ' You wake at dawn, same as always.')), 'loop');
   const firstNight = !nothing && reason !== 'act' && !S.flags.firstMoonrise;
   if (firstNight) S.flags.firstMoonrise = true;
   if (!nothing && reason !== 'act' && !firstNight) {
@@ -2267,7 +2273,7 @@ const UNLOCKS = [
 const UNLOCK_TITLES = {
   restart: 'Going to bed early',
   signs: 'Constellations',
-  photowall: 'The photo _x179',
+  photowall: 'The photo _x181',
   predictor: 'The seeing stone',
   talent: 'Talent',
   amounts: 'Adding more at once',
@@ -2286,6 +2292,7 @@ function checkNewActions() {
   if (!fresh.length) return;
   for (const id of fresh) S.seenActs[id] = true;
   if (inPrologue() || (S.loop === 1 && fresh.every(id => id === 'wander'))) return;
+  sfx('sparkle');
   notice('New things to do: ' + fresh.map(id => `${A[id].name} (${ZONES[A[id].zone].name})`).join(', ') + '.');
 }
 function checkUnlocks() {
@@ -2431,11 +2438,11 @@ const BEAR_NONE = new Set([]);
 for (const [id, w] of Object.entries(BEAR_WAYS)) if (w.st) STICKERS.push({ id: 'bw_' + id, page: "Bear's Ways", icon: w.st[0], name: w.st[1], how: `Try "${A[id] ? A[id].name : id}" with Bear.`, caption: w.n + '.', kind: 'along', test: () => knack(id) >= 1 });
 for (const [id, w] of Object.entries(BEAR_WAYS)) {
   const ls = (ACTION_LORE_BEAR[id] || []).filter(([k]) => k !== 1);
-  ACTION_LORE_BEAR[id] = [[1, w.after ? () => (S.flags._x167 ? w.after : w.line) : w.line]].concat(ls);
+  ACTION_LORE_BEAR[id] = [[1, w.after ? () => (S.flags._x169 ? w.after : w.line) : w.line]].concat(ls);
 }
 
 const AFTER_LORE = { _x19: { 30: "You've watched the Moon rise from this blanket more times than anyone. Now you get to watch her stay." } };
-const loreText = (id, n, text) => (S.flags && S.flags._x167 && AFTER_LORE[id] && AFTER_LORE[id][n]) || text;
+const loreText = (id, n, text) => (S.flags && S.flags._x169 && AFTER_LORE[id] && AFTER_LORE[id][n]) || text;
 const bearDid = id => ((S.bearDone || {})[id] || 0);
 const bearTimesLabel = n => '🐻 with Bear, ' + timesLabel(n);
 function bwLoreRows(id) {
@@ -2468,10 +2475,10 @@ function masteryTip(id) {
   return `Mastery ${l}: done ${n} time${n === 1 ? '' : 's'}, so this step is ${faster}% faster for good. Next level at ${(l + 1) * (l + 1)}.`;
 }
 
-const ACT_GROUPS = [['explore', 'Exploring and friends'], ['_x147', 'Gathering'], ['spend', 'Crafting and Shopping'], ['project', 'Projects'], ['_x122', 'Special'], ['train', 'Training'], ['travel', 'Travel']];
+const ACT_GROUPS = [['explore', 'Exploring and friends'], ['_x148', 'Gathering'], ['spend', 'Crafting and Shopping'], ['project', 'Projects'], ['_x122', 'Special'], ['train', 'Training'], ['travel', 'Travel']];
 const KIND_OF = {
   spend: 'hedgehog bake moonwater spelljar coax cocoa nylabed bath readwin',
-  _x147: 'nutMeadow reachbook',
+  _x148: 'nutMeadow reachbook',
   project: 'weave',
   _x122: 'oakdoor light picnic',
 };
@@ -2481,7 +2488,7 @@ const kindOf = a => {
   if (a.travel) return 'travel';
   if (a.track) return 'explore';
   if (a.project || a.far) return 'project';
-  if (a.limited || a.good || a.gives || a.photo) return '_x147';
+  if (a.limited || a.good || a.gives || a.photo) return '_x148';
   return '_x122';
 };
 
@@ -2541,7 +2548,7 @@ function bearNote(a) {
     return k < 1 ? `<span class="c-bear">🐻 ${req}??? Try it with Bear.</span>` : `<span class="c-bear">🐻 ${req}<b>${esc(w.n)}</b> · knack ${k}: ${esc(bwFx(w))}</span>`;
   }
   if (BEAR_NONE.has(a.id) && !a.bearOnly) return `<span class="c-bear">🐻💤 No Bear's way here: a once-ever step</span>`;
-  const note = a.bear && a.bear.note ? a.bear.note : BEAR_TAGS[a.bear && a.bear.tag || '_x177'].note;
+  const note = a.bear && a.bear.note ? a.bear.note : BEAR_TAGS[a.bear && a.bear.tag || '_x179'].note;
   const k = knack(a.id);
   return `<span class="c-bear">🐻 ${a.bearOnly ? 'Bear required. ' : ''}${esc(note)}${k ? ` · knack ${k}` : ''}</span>`;
 }
@@ -2566,22 +2573,22 @@ function actExtra(a) {
     const g = goodState(a);
     h += `<span>${g.checked} of ${g.total} ${a.good.noun} checked · ${g.known ? Math.max(0, g.known - g.usedGood) + ' of ' + g.known + ' ' + a.good.goodNoun + ' left today' : 'no ' + a.good.goodNoun + ' ones found yet'}</span>`;
   }
-  if (a._x195) {
-    const k = S._x195.known.map((v, i) => (v ? `round ${i + 1}: ${v}` : null)).filter(Boolean);
+  if (a._x197) {
+    const k = S._x197.known.map((v, i) => (v ? `round ${i + 1}: ${v}` : null)).filter(Boolean);
     h += `<span>${k.length ? 'You remember ' + esc(k.join(', ')) : 'You have no idea which cup is which. Yet.'}</span>`;
   }
-  if (a._x202) {
+  if (a._x204) {
     const k = CRY_GUESTS.map((g, i) => {
-      const t = S._x202.tried[i], right = S._x202.ans[i];
+      const t = S._x204.tried[i], right = S._x204.ans[i];
       if (t.includes(right)) return `${g}: ${CRY_KINDS[right]}`;
       if (t.length >= 2) return `${g}: ${CRY_KINDS[right]}`;
       return t.length ? `${g}: not ${t.map(x => CRY_KINDS[x]).join(' or ')}` : null;
     }).filter(Boolean);
-    h += `<span>${k.length ? 'You remember: ' + esc(k.join(' · ')) : 'You have no idea what makes a Ripple _x202. Yet.'}</span>`;
+    h += `<span>${k.length ? 'You remember: ' + esc(k.join(' · ')) : 'You have no idea what makes a Ripple _x204. Yet.'}</span>`;
   }
-  if (a.far && a.far.length) h += `<span class="far">✦ For later. Needs: ${a.far.map(([_x204, ok]) => (ok() ? '✓ ' : '✗ ') + esc(_x204)).join(' · ')}</span>`;
+  if (a.far && a.far.length) h += `<span class="far">✦ For later. Needs: ${a.far.map(([_x206, ok]) => (ok() ? '✓ ' : '✗ ') + esc(_x206)).join(' · ')}</span>`;
   if (a.timeGate) { const [k, n] = a.timeGate, long = cost(a) > dayLen(); h += `<span class="far">⏳ ${long ? 'Too long for one day yet. ' : ''}It gets shorter as your ${SKILL_NAME[k]} grows (it's made for ${SKILL_NAME[k]} ${n}; yours is ${skillLvl(k)}).</span>`; }
-  if (a._x165) h += a._x165();
+  if (a._x167) h += a._x167();
   if (a.mystery) {
     const n = Math.min(a.mystery[0], S.mastery[a.id] || 0);
     h += solved(a) ? `<span class="ok">🔎 Solved: about ${Math.round(1 / (a.mystery[1] * (loreTier(a) ? 0.6 : 1)))}× faster</span>` : `<span>🔎 Mystery: ${n} of ${a.mystery[0]} times to figure it out</span>`;
@@ -2783,7 +2790,7 @@ const times = n => { n = n || 0; return n === 1 ? 'once' : n + ' times'; };
 let burrowSig = '';
 function renderBurrow() {
   if ($('burrowPanel').hidden) return;
-  const sig = JSON.stringify([S.stickers, S.stickerNew, U('painting'), S.gallery, S.paint, fame(), U('outfits'), S.outfits, S.flags._x28, L.outfit, S.signs._x207, U('candles'), S.spellbook, S.flags._x8, S.album, S.mastery.moonwater, S.mastery.spelljar, U('_x48'), U('photowall'), U('_x27'), S.drift, moonIdx(), PHOTO_SPOTS.map(sp => sp.known())]);
+  const sig = JSON.stringify([S.stickers, S.stickerNew, U('painting'), S.gallery, S.paint, fame(), U('outfits'), S.outfits, S.flags._x28, L.outfit, S.signs._x209, U('candles'), S.spellbook, S.flags._x8, S.album, S.mastery.moonwater, S.mastery.spelljar, U('_x48'), U('photowall'), U('_x27'), S.drift, moonIdx(), PHOTO_SPOTS.map(sp => sp.known())]);
   if (sig === burrowSig) return;
   burrowSig = sig;
   let h = '';
@@ -2902,7 +2909,7 @@ function loreLine(label, text, found, st) {
 }
 
 const LORE_BEATS = [
-  { t: 'A _x164 night', g: -1, have: () => true, html: () => PROLOGUE_INTRO },
+  { t: 'A _x166 night', g: -1, have: () => true, html: () => PROLOGUE_INTRO },
   { t: 'The strange light', g: -1, have: () => !!S.flags.held, html: () => beatHtml('The strange light') },
   { t: ACTS[0].name, g: 0, have: () => !!S.flags.held, html: () => ACTS[0].intro },
   { t: 'The first moonrise', g: 0, have: () => !!S.flags.firstMoonrise, html: () => beatHtml('The first moonrise') },
@@ -3061,6 +3068,7 @@ function openLoreBookNow() {
   showModal('Lore book', `<div class="lorebook"><p class="hint">Every moment and every line Bunny has found, newest day first. Tap a moment to read it again. ??? is still ahead.${S.bear.unlocked ? ` 🐻 Bear's ways found: ${bwFound()} of ${Object.keys(BEAR_WAYS).length}.` : ''}</p>${h}</div>`, [['Close', null]]);
 }
 function updateHeader() {
+  audioWatch();
   $('shelfBtn').hidden = !shelfOpen();
   const start = dayStart(), len = dayLen();
   $('clock').textContent = isFinite(len) ? fmtDur(len - L.time) : '';
@@ -3213,7 +3221,7 @@ const BEAT_HTML = {
 };
 const beatHtml = (title, first) => BEAT_HTML[title](!!first);
 
-const BEAT_TITLES = new Set(["A _x164 night","The strange light","The first moonrise","Found her!","Aurora","Moonrise picnic"]);
+const BEAT_TITLES = new Set(["A _x166 night","The strange light","The first moonrise","Found her!","Aurora","Moonrise picnic"]);
 const nowStamp = () => ({ a: inPrologue() ? -1 : S.act, m: morningNo(), side: !inPrologue() && L && ZONES[L.zone].side ? ZONES[L.zone].side : null });
 function recordBeat(title, html) {
   S.beats = S.beats || [];
@@ -3257,7 +3265,7 @@ function awayEnter(a) { S.away = a; dirty.all = true; }
 function awayShow(html) { const el = $('away'); el.innerHTML = html; el.hidden = false; const c = $('awayClose'); if (c) c.onclick = () => awayLeave(); }
 function awayLeave() {
   if (!S.away) return;
-  if (S.away.kind === '_x136') tandemLeaving();
+  if (S.away.kind === '_x137') tandemLeaving();
   S.away = null; $('away').hidden = true; $('away').innerHTML = '';
   dirty.all = true; saveLocal(); render();
 }
@@ -3285,7 +3293,7 @@ function openBook(id) {
   bookStash = { L, view: viewZone };
   if (b.onOpen) b.onOpen();
   S.mainQueue = S.queue; S.queue = bk.queue;
-  awayEnter({ kind: 'book', id });
+  awayEnter({ kind: 'book', id }); sfx('page');
   L = bookDays[id] || freshLoop(); delete bookDays[id];
   viewZone = L.zone; tabsSig = ''; predDirty = true; noticeSig = null; setSpeed(0); dirty.all = true; saveLocal(); render();
   for (const r of bookRoutes(id)) if (bookOf(A[r].to) === id && A[r].effect) A[r].effect();
@@ -3295,6 +3303,7 @@ function openBook(id) {
 }
 function leaveBook() {
   if (!inBook()) return;
+  sfx('page');
   const id = S.away.id;
   S.books[id].queue = S.queue; bookDays[id] = L;
   S.queue = S.mainQueue || []; delete S.mainQueue;
@@ -3327,6 +3336,163 @@ function bookShelfRows() { return []; }
 
 { const done = new Set();
   for (const id of ORDER) { const a = A[id], b = bookOf(a.zone); if (a.track && b && !done.has(a.track) && TRACKS[a.track]) { done.add(a.track); TRACKS[a.track].k *= BOOK_TRIM[b] ?? 1; } } }
+
+const MUSIC = { acts: [{ name: 'The Hollow', url: '' }], books: {} };
+
+let AC = null, musicBus = null, sfxBus = null, noiseBuf = null;
+const sndLast = {};
+const SND_GAP = { sparkle: 2500, _x182: 4000, shimmer: 6000, sticker: 1800, dice: 3000, page: 1200, hmph: 2500, cheer: 4000 };
+function audioStart() {
+  if (AC) { if (AC.state === 'suspended') AC.resume(); return; }
+  const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+  AC = new C();
+  musicBus = AC.createGain(); sfxBus = AC.createGain();
+  musicBus.connect(AC.destination); sfxBus.connect(AC.destination);
+  noiseBuf = AC.createBuffer(1, AC.sampleRate, AC.sampleRate);
+  const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  audioLevels(); musicTick();
+}
+function audioLevels() {
+  if (!AC || typeof S === 'undefined' || !S) return;
+  const o = S.opts, t = AC.currentTime;
+  musicBus.gain.setTargetAtTime(o.music ? 0.35 * (o.musicVol ?? 0.5) : 0, t, 0.2);
+  sfxBus.gain.setTargetAtTime(o.sfx !== false ? 0.6 * (o.sfxVol ?? 0.6) : 0, t, 0.05);
+}
+const sfxOn = () => !!(AC && AC.state === 'running' && typeof S !== 'undefined' && S && S.opts.sfx !== false && (S.opts.sfxVol ?? 0.6) > 0 && typeof PRED !== 'undefined' && !PRED);
+function sndOk(name) {
+  if (!sfxOn()) return false;
+  const now = performance.now();
+  if (now - (sndLast[name] || -1e9) < (SND_GAP[name] || 1500)) return false;
+  sndLast[name] = now; return true;
+}
+
+function voice(freq, t0, dur, { type = 'sine', gain = 0.3, attack = 0.01, bus = sfxBus, glide = null, detune = 0 } = {}) {
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t0); o.detune.value = detune;
+  if (glide) o.frequency.exponentialRampToValueAtTime(glide, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(gain, t0 + attack); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g); g.connect(bus); o.start(t0); o.stop(t0 + dur + 0.05);
+  return o;
+}
+function noise(t0, dur, { gain = 0.2, type = 'bandpass', f0 = 2000, f1 = null, q = 1, attack = 0.005, bus = sfxBus } = {}) {
+  const s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain();
+  s.buffer = noiseBuf; s.loop = true; f.type = type; f.Q.value = q; f.frequency.setValueAtTime(f0, t0);
+  if (f1) f.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(gain, t0 + attack); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  s.connect(f); f.connect(g); g.connect(bus); s.start(t0); s.stop(t0 + dur + 0.05);
+}
+const hz = midi => 440 * Math.pow(2, (midi - 69) / 12);
+
+const SFX = {
+  sparkle() { const t = AC.currentTime; [84, 88, 91, 96, 100].forEach((m, i) => voice(hz(m), t + i * 0.06, 0.35, { type: 'triangle', gain: 0.12 })); },
+  _x182() { const t = AC.currentTime; [[55, 0.35], [67, 0.16], [74, 0.08], [79, 0.05]].forEach(([m, g]) => voice(hz(m), t, 3.2, { gain: g, attack: 0.004 })); },
+  shimmer() { const t = AC.currentTime; for (let i = 0; i < 9; i++) voice(hz(72 + [0, 4, 7, 11, 12, 16, 19, 23, 24][i]), t + i * 0.13, 1.6, { gain: 0.09, attack: 0.08, detune: (i % 2 ? 6 : -6) }); voice(hz(48), t, 2.4, { gain: 0.12, attack: 0.4, glide: hz(60) }); },
+  sticker() { const t = AC.currentTime; noise(t, 0.16, { gain: 0.12, f0: 1800, f1: 5200, q: 2 }); voice(170, t + 0.2, 0.12, { gain: 0.3, glide: 110 }); voice(hz(88), t + 0.24, 0.25, { type: 'triangle', gain: 0.06 }); },
+  dice(first) {
+    const t = AC.currentTime; let k = 0;
+    for (let i = 0; i < 7; i++) { k += 0.05 + Math.random() * 0.07; noise(t + k, 0.04, { gain: 0.18, f0: 1400 + Math.random() * 1600, q: 6 }); }
+    const at = t + k + 0.15, _x161 = first ? [72, 76, 79, 84, 88] : [79, 84];
+    _x161.forEach((m, i) => voice(hz(m), at + i * 0.09, first ? 0.9 : 0.5, { type: 'triangle', gain: first ? 0.12 : 0.08 }));
+    if (first) voice(hz(96), at + _x161.length * 0.09, 1.4, { gain: 0.07, attack: 0.02 });
+  },
+  page() { const t = AC.currentTime; noise(t, 0.28, { gain: 0.14, f0: 900, f1: 3800, q: 0.8, attack: 0.04 }); noise(t + 0.22, 0.12, { gain: 0.08, type: 'lowpass', f0: 700 }); },
+  hmph(silly) {
+    const t = AC.currentTime;
+    if (!silly) { voice(150, t, 0.22, { type: 'triangle', gain: 0.22, glide: 105 }); voice(300, t + 0.02, 0.16, { gain: 0.05, glide: 210 }); return; }
+    const o = voice(260, t, 0.42, { type: 'triangle', gain: 0.2, glide: 140 });
+    const lfo = AC.createOscillator(), lg = AC.createGain(); lfo.frequency.value = 14; lg.gain.value = 30; lfo.connect(lg); lg.connect(o.frequency); lfo.start(t); lfo.stop(t + 0.45);
+    voice(hz(79), t + 0.32, 0.15, { type: 'triangle', gain: 0.06 });
+  },
+  cheer() { const t = AC.currentTime; noise(t, 1.4, { gain: 0.16, f0: 900, f1: 1500, q: 0.6, attack: 0.15 }); [72, 76, 79, 84].forEach((m, i) => voice(hz(m), t + 0.1 + i * 0.1, 0.5, { type: '_x128', gain: 0.04 })); },
+};
+function sfx(name, ...args) { if (!sndOk(name)) return; try { SFX[name](...args); } catch (e) {  } }
+
+let sndWatch = null;
+function audioWatch() {
+  if (typeof S === 'undefined' || !S) return;
+  const now = { moon: S.moonPieces || 0, stickers: Object.keys(S.stickers || {}).length };
+  if (sndWatch && now.moon > sndWatch.moon) sfx('shimmer');
+  else if (sndWatch && now.stickers > sndWatch.stickers) sfx('sticker');
+  sndWatch = now;
+  musicTick();
+  musicBtnShow();
+}
+
+let tdSnd = null;
+function tdAudio(r) {
+  if (!r || r.done || !sfxOn()) { tdAudioStop(); return; }
+  if (!tdSnd) {
+    const eng = AC.createOscillator(), ef = AC.createBiquadFilter(), eg = AC.createGain();
+    eng.type = 'sawtooth'; eng.frequency.value = 55; ef.type = 'lowpass'; ef.frequency.value = 400; eg.gain.value = 0.05;
+    eng.connect(ef); ef.connect(eg); eg.connect(sfxBus); eng.start();
+    const sq = AC.createBufferSource(), sf = AC.createBiquadFilter(), sg = AC.createGain();
+    sq.buffer = noiseBuf; sq.loop = true; sf.type = 'bandpass'; sf.frequency.value = 2600; sf.Q.value = 8; sg.gain.value = 0;
+    sq.connect(sf); sf.connect(sg); sg.connect(sfxBus); sq.start();
+    tdSnd = { eng, eg, sq, sg };
+  }
+  const t = AC.currentTime;
+  tdSnd.eng.frequency.setTargetAtTime(55 + 30 * Math.min(1, Math.abs(r.vx || 0) / 200) + (r.drift ? 12 : 0), t, 0.1);
+  tdSnd.sg.gain.setTargetAtTime(r.drift ? 0.07 : 0, t, 0.05);
+}
+function tdAudioStop() { if (!tdSnd) return; try { tdSnd.eng.stop(); tdSnd.sq.stop(); } catch (e) {  } tdSnd = null; }
+
+const MODES = { ionian: [0, 2, 4, 5, 7, 9, 11], lydian: [0, 2, 4, 6, 7, 9, 11], dorian: [0, 2, 3, 5, 7, 9, 10], mixolydian: [0, 2, 4, 5, 7, 9, 10], aeolian: [0, 2, 3, 5, 7, 8, 10], penta: [0, 2, 4, 7, 9], pentaMinor: [0, 3, 5, 7, 10] };
+const WORLD_MODE = ['lydian', 'mixolydian', 'dorian', 'ionian', 'mixolydian', 'ionian', 'lydian', 'aeolian', 'dorian', 'aeolian', 'mixolydian', 'lydian'];
+const BOOK_MODE = {};
+const worldKey = () => (typeof S === 'undefined' || !S ? null : inBook() ? 'b:' + S.away.id : inPrologue() ? 'a:0' : 'a:' + S.act);
+function melodyFor(key) {
+  let h = 2166136261; for (const c of key) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  const rnd = () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) ^ Math.imul(h ^ (h >>> 13), 3266489909)) >>> 0) / 4294967296;
+  const [kind, id] = key.split(':'), mode = MODES[kind === 'b' ? BOOK_MODE[id] || 'ionian' : WORLD_MODE[+id] || 'ionian'];
+  const root = 60 + Math.floor(rnd() * 7) - 3, _x161 = [];
+  let deg = 0;
+  for (let i = 0; i < 16; i++) {
+    deg = i === 15 ? 0 : Math.max(-2, Math.min(mode.length + 3, deg + [-2, -1, -1, 1, 1, 2, 0, 3][Math.floor(rnd() * 8)]));
+    const oct = Math.floor(deg / mode.length), m = root + mode[((deg % mode.length) + mode.length) % mode.length] + 12 * oct;
+    _x161.push([m, i % 4 === 3 ? 2 : 1]);
+  }
+  return { _x161, beat: 0.42 + rnd() * 0.12, bass: root - 24 };
+}
+let mus = null;
+function musicTick() {
+  if (!AC) return;
+  const on = typeof S !== 'undefined' && S && S.opts.music && (S.opts.musicVol ?? 0.5) > 0, key = on ? worldKey() : null;
+  if (!key) { mus = null; return; }
+  if (!mus || mus.key !== key) mus = { key, tune: melodyFor(key), i: 0, at: AC.currentTime + 0.3 };
+  const tune = mus.tune;
+  while (mus.at < AC.currentTime + 1.5) {
+    const [m, len] = tune._x161[mus.i % tune._x161.length], dur = tune.beat * len;
+    voice(hz(m + 12), mus.at, dur * 2.2, { gain: 0.09, attack: 0.005, bus: musicBus });
+    voice(hz(m + 24), mus.at, dur * 0.8, { gain: 0.025, attack: 0.003, bus: musicBus });
+    if (mus.i % 4 === 0) voice(hz(tune.bass + (mus.i % 8 === 0 ? 0 : 7)), mus.at, tune.beat * 4, { gain: 0.05, attack: 0.02, bus: musicBus });
+    mus.at += dur; mus.i++;
+    if (mus.i % tune._x161.length === 0) mus.at += tune.beat * 2;
+  }
+}
+setInterval(musicTick, 500);
+
+const musicEntry = () => { if (typeof S === 'undefined' || !S || inPrologue()) return null; const e = inBook() ? MUSIC.books[S.away.id] : MUSIC.acts[S.act]; return e && e.url ? e : null; };
+function musicBtnShow() {
+  const b = $('musicBtn'); if (!b) return;
+  const e = musicEntry(); b.hidden = !e;
+  if (e) { b.title = 'Playlist: ' + e.name + ' (opens in a new tab)'; $('musicName').textContent = e.name; }
+}
+
+function audioSettings() {
+  const o = S.opts;
+  $('sndMusic').checked = !!o.music; $('sndMusicVol').value = Math.round(100 * (o.musicVol ?? 0.5));
+  $('sndSfx').checked = o.sfx !== false; $('sndSfxVol').value = Math.round(100 * (o.sfxVol ?? 0.6));
+}
+document.addEventListener('pointerdown', audioStart, true);
+document.addEventListener('keydown', audioStart, true);
+$('settings').addEventListener('toggle', () => { if ($('settings').open) audioSettings(); });
+for (const id of ['sndMusic', 'sndMusicVol', 'sndSfx', 'sndSfxVol']) $(id).addEventListener('input', () => {
+  const o = S.opts;
+  o.music = $('sndMusic').checked; o.musicVol = $('sndMusicVol').value / 100;
+  o.sfx = $('sndSfx').checked; o.sfxVol = $('sndSfxVol').value / 100;
+  audioStart(); audioLevels(); musicTick(); saveSoon();
+});
+$('musicBtn').addEventListener('click', () => { const e = musicEntry(); if (e) window.open(e.url, '_blank', 'noopener'); });
 
 const planned = id => S.queue.filter(e => e.id === id).reduce((t, e) => t + e.n, 0);
 const did = id => S.mastery[id] || 0;
@@ -3390,7 +3556,7 @@ $('coachSkip').addEventListener('click', () => { S.tut = 99; saveSoon(); updateC
 const PROLOGUE_INTRO = '<p>It\'s a quiet night at the edge of Clover Meadow. Tomorrow is picnic night with Bear in Honey Hollow. Up above, the Moon looks pale and tired, thinner than you remember her. She\'s been getting dimmer for years. You stopped reading by her a long time ago.</p>' +
   '<p>Nyla is restless. You are not. It\'s time to get ready for bed.</p>';
 function intro() {
-  if (inPrologue()) recordBeat('A _x164 night', PROLOGUE_INTRO);
+  if (inPrologue()) recordBeat('A _x166 night', PROLOGUE_INTRO);
   showModal('Moonward', (inPrologue() ? PROLOGUE_INTRO : ACTS[S.act].intro) +
     (inPrologue()
       ? '<ul><li>Tap <b>+1</b> on a step under <b>Things to do</b> to add it to the plan.</li>' +
@@ -3429,12 +3595,12 @@ function testSave(stage) {
 
   if (/^(greene|unknown|deep)(end)?$/.test(stage)) {
     const end = stage.endsWith('end'), id = stage.replace(/end$/, '');
-    const d = testSave({ _x146: 'a10start', _x121: 'a5start', _x201: 'a11start' }[id]);
+    const d = testSave({ _x147: 'a10start', _x121: 'a5start', _x203: 'a11start' }[id]);
     const tr = o => { for (const [k, v] of Object.entries(o)) d.track[k] = expForPct(k, v); };
     d.bear.unlocked = true; d.flags[id + 'Open'] = true; d[id + 'Last'] = d.loop;
-    if (end && id === '_x146') { tr({ _x155: 50, _x134: 50, _x17: 40, _x110: 100, _x4: 100, _x38: 100, _x169: 40, _x160: 40 }); d.flags._x135 = true; d.proj._x135 = 60; d.reached[96] = d.reached[97] = d.reached[98] = true; }
-    if (end && id === '_x121') { tr({ _x84: 60, _x182: 100, _x183: 100, _x85: 100, _x186: 30, _x91: 100, _x161: 20 }); Object.assign(d.flags, { _x86: true, _x184: true }); d.proj._x86 = 60; for (const z of [99, 100, 101, 102]) d.reached[z] = true; }
-    if (end && id === '_x201') { tr({ _x187: 50, _x113: 50, _x162: 60, _x140: 100, _x188: 40, _x111: 30, _x189: 100, _x112: 100, _x190: 100, _x163: 45 }); Object.assign(d.flags, { _x33: true, _x54: true }); d.proj._x33 = 60; for (const z of [103, 104, 105, 106]) d.reached[z] = true; }
+    if (end && id === '_x147') { tr({ _x156: 50, _x135: 50, _x17: 40, _x110: 100, _x4: 100, _x38: 100, _x171: 40, _x162: 40 }); d.flags._x136 = true; d.proj._x136 = 60; d.reached[96] = d.reached[97] = d.reached[98] = true; }
+    if (end && id === '_x121') { tr({ _x84: 60, _x184: 100, _x185: 100, _x85: 100, _x188: 30, _x91: 100, _x163: 20 }); Object.assign(d.flags, { _x86: true, _x186: true }); d.proj._x86 = 60; for (const z of [99, 100, 101, 102]) d.reached[z] = true; }
+    if (end && id === '_x203') { tr({ _x189: 50, _x113: 50, _x164: 60, _x141: 100, _x190: 40, _x111: 30, _x191: 100, _x112: 100, _x192: 100, _x165: 45 }); Object.assign(d.flags, { _x33: true, _x54: true }); d.proj._x33 = 60; for (const z of [103, 104, 105, 106]) d.reached[z] = true; }
     return d;
   }
   const t = freshSave();
@@ -3567,7 +3733,7 @@ $('burrow').addEventListener('click', ev => {
   if (add) { const box = add.closest('.candles'), v = k => box.querySelector(`[data-cpart="${k}"]`).value; addCandle({ c: v('c'), h: v('h'), l: v('l') }); return; }
   if (ev.target.matches && ev.target.matches('[data-paint-next]')) return;
   const w = ev.target.closest('[data-wear]');
-  if (w) { addToPlan('_x151' + w.dataset.wear, 1); toast('Added: Put On the ' + OUTFITS[w.dataset.wear].name); render(); return; }
+  if (w) { addToPlan('_x152' + w.dataset.wear, 1); toast('Added: Put On the ' + OUTFITS[w.dataset.wear].name); render(); return; }
   const k = ev.target.closest('[data-candle-key]');
   if (k) { const [c, h, l] = k.dataset.candleKey.split('|'); addCandle({ c, h, l }); }
 });
