@@ -370,6 +370,10 @@ button.shelf-card:hover, button.shelf-card:focus-visible { border-color: var(--m
   .status-in .ctrls .seg { flex: 1 1 100%; } .status-in .ctrls .seg button { flex: 1 1 0; }
   .sec-h { flex-wrap: wrap; } .sec-h .label { flex-basis: 100%; }
 }
+
+/* A step's lore button glows while it has lore she hasn't opened yet. */
+.act .lore-tog.lore-new { color: var(--honey); text-shadow: 0 0 8px color-mix(in srgb, var(--honey) 55%, transparent); }
+@media (prefers-reduced-motion: no-preference) { .act .lore-tog.lore-new { animation: loreGlow 2.2s ease-in-out infinite; } @keyframes loreGlow { 50% { text-shadow: 0 0 2px transparent; opacity: .75; } } }
 </style>
 
 <header class="sky">
@@ -552,10 +556,10 @@ const BEAR_STATS = {
 };
 
 const BEAR_TAGS = {
-  drive:  { mult: .7,  skill: 'strength', note: 'Faster with Bear: he drives' },
-  heavy:  { mult: .8,  skill: 'strength', note: 'A little faster with Bear: he carries the heavy stuff' },
-  social: { mult: .9,  skill: 'heart',    note: 'A little faster with Bear: everyone likes Bear' },
-  brave:  { mult: .85, skill: 'bravery',  note: 'A little faster with Bear: he goes first' },
+  drive:  { mult: .7,  skill: 'strength', note: 'Faster with Bear once his knack grows: he drives' },
+  heavy:  { mult: .8,  skill: 'strength', note: 'A little faster with Bear once his knack grows: he carries the heavy stuff' },
+  social: { mult: .9,  skill: 'heart',    note: 'A little faster with Bear once his knack grows: everyone likes Bear' },
+  brave:  { mult: .85, skill: 'bravery',  note: 'A little faster with Bear once his knack grows: he goes first' },
   sneak:  { mult: 1.6, skill: 'heart',    note: 'Slower with Bear: he is not subtle' },
   _x156:   { mult: 1,   skill: 'heart',    note: 'Good company: his way of it is a shared moment, not speed' },
 };
@@ -976,6 +980,7 @@ function bearMult(a) {
   const t = BEAR_TAGS[a.bear && a.bear.tag || '_x156'];
   const skillBoost = t.mult < 1 ? 1 + bearLvl(t.skill) / 30 : 1;
   if (t === BEAR_TAGS.sneak && L.bwNoSneak && L.bwNoSneak[a.id]) return 1;
+  if (t.mult < 1 && knack(a.id) < 2) return 1;
   return t.mult / skillBoost * (BW_TAGS.has(a.bear && a.bear.tag) ? 1 : 1 - 0.08 * knack(a.id));
 }
 
@@ -984,12 +989,12 @@ const bwOf = a => (a && (BEAR_WAYS[a.id] || (/^door_/.test(a.id) ? BEAR_WAYS._x1
 const BW_CACHE = {};
 function bwOps(a) {
   const w = bwOf(a), k = knack(a.id);
-  if (!w || k < 1) return null;
+  if (!w || k < 2) return null;
   const key = a.id + k;
   if (BW_CACHE[key]) return BW_CACHE[key];
   let ops = [];
   for (const lv of [1, 3, 5]) {
-    if (k < lv || !w.ops[lv]) continue;
+    if (k < Math.max(2, lv) || !w.ops[lv]) continue;
     if (lv > 1) ops = ops.filter(o => o[0] !== 'joke');
     for (const o of w.ops[lv]) { if (o[0] === 'give') ops = ops.filter(p => !(p[0] === 'give' && p[1] === o[1])); ops.push(o); }
   }
@@ -1652,6 +1657,7 @@ function stickerBookHtml() {
 }
 function openStickerBook() { showModal('The Sticker Book', stickerBookHtml(), [['Close', null]]); saveSoon(); }
 
+for (const p of RIVALS) STICKERS.push({ id: 'rv_' + p.names.replace(/\W+/g, ''), page: 'Moonlit Tandem', icon: p.st[0], name: p.st[1], how: `Win a tandem battle against ${p.names}.`, caption: p.win, kind: 'plan', test: () => !!(stk().rivals || {})[p.names] });
 const _x219 = [];
 const _x218 = [];
 const _x220 = () => false;
@@ -1703,6 +1709,7 @@ const _x242 = () => false;
 const _x187 = () => null;
 const _x188 = () => 1;
 const _x246 = [];
+const RIVALS = [];
 const _x189 = () => {};
 
 let PRED = null;
@@ -1862,9 +1869,10 @@ function complete(a, e) {
     if (k < 5 && bearLvl(t.skill) * (1 + 0.1 * ph('_x52')) >= k * 4) {
       S.bear.knack[a.id] = k + 1; L.knacked[a.id] = true;
       if (!PRED && w) sfx('hmph', !!w.joke && k < 2);
-      if (!PRED && w && k === 0) bearSays(`🆕 Bear's way: <b>${esc(w.n)}</b>. ${esc(bwFx(w))}`);
+      if (!PRED && w && k === 0) bearSays(`🆕 Bear's way: <b>${esc(w.n)}</b>. It starts working once his knack grows.`);
+      else if (!PRED && w && k === 1) bearSays(`Bear's way of "${esc(a.name)}" works now: ${esc(bwFx(w, 2))}`);
       else if (!PRED && w && k === 2 && w.joke) bearSays(w.joke);
-      else if (!PRED && w && (k === 2 && w.ops[3] || k === 4 && w.ops[5])) bearSays(`Bear's way of "${esc(a.name)}" grew: knack ${k + 1}.`);
+      else if (!PRED && w && (k === 2 && w.ops[3] || k === 4 && w.ops[5])) bearSays(`Bear's way of "${esc(a.name)}" grew: knack ${k + 1}. ${esc(bwFx(w, k + 1))}`);
       else if (!PRED && !w && k === 0) bearSays(`Bear has a knack for "${a.name}" now. It gets better each day you do it together.`);
     }
   }
@@ -1981,7 +1989,7 @@ function moonHint() {
   let h = MOON_HINTS.find(([cond]) => { try { return cond(); } catch (e) { return false; } });
   if (!h || (h[1] === S.lastHint && S.loop - S.lastHintLoop < 5)) {
 
-    const mine = MOON_MUSINGS.filter(([a]) => a === S.act).map(([, t]) => t);
+    const mine = MOON_MUSINGS.filter(([a]) => a === S.act).map(([, t]) => t).filter(t => !(_x231() && /\bBear\b/.test(t)));
     if (!mine.length || S.loop % 3) return;
     h = [null, mine[Math.floor(S.loop / 3) % mine.length]];
   }
@@ -2467,12 +2475,15 @@ const bearDid = id => ((S.bearDone || {})[id] || 0);
 const bearTimesLabel = n => '🐻 with Bear, ' + timesLabel(n);
 function bwLoreRows(id) {
   const w = BEAR_WAYS[id]; if (!w) return [];
-  const k = knack(id), rows = [["🐻 Bear's way", w.n + '. ' + bwFx(w), k >= 1]];
+  const k = knack(id), rows = [["🐻 Bear's way", w.n + '. ' + bwFx(w, k), k >= 1]];
   if (w.joke) rows.push(['🐻 knack 3', w.joke, k >= 3]);
   if (bwHas(w.ops[1], 'memory') || bwHas(w.ops[3], 'memory')) rows.push(['📷 memory', 'A memory with Bear: ' + w.n + '.', !!(S.bwMem && S.bwMem[id])]);
   return rows;
 }
 const bwFound = () => Object.keys(BEAR_WAYS).filter(id => knack(id) >= 1).length;
+
+const loreSeenN = a => loreFor(a).filter(r => r.seen).length;
+const loreUnread = a => loreSeenN(a) > ((S.loreRead || {})[a.id] || 0);
 function loreFor(a) {
   const out = [];
   for (const [n, text] of ACTION_LORE[a.id] || []) out.push({ at: timesLabel(n), text: auroraText(loreText(a.id, n, text), S.flags.auroraAt != null && n > S.flags.auroraAt), seen: did(a.id) >= n && !heldBear(text) });
@@ -2537,7 +2548,7 @@ function renderActions() {
       <span><span class="nm">${esc(a.name)}</span><span class="lore-done" data-f="lore-done" title="Every lore line for this step is found"></span><span class="meta"><span class="num" data-f="cost"></span>${chips(a)}<span class="mast" data-f="mast"></span><span class="fin" data-f="fin"></span></span></span>
       <button type="button" class="plus" data-add="${id}" data-f="plus" aria-label="Add ${esc(a.name)} to the plan">+${addAmt}</button>
       <span class="desc" data-f="desc">${esc(descOf(a))}</span>
-      ${loreFor(a).length ? `<button type="button" class="lore-tog" data-lore="${id}" aria-pressed="${loreOpen.has(id)}">${loreOpen.has(id) ? '← About' : '📜 Lore'}</button>` : ''}
+      ${loreFor(a).length ? `<button type="button" class="lore-tog${loreUnread(a) ? ' lore-new' : ''}" data-lore="${id}" title="${loreUnread(a) ? 'New lore to read' : ''}" aria-pressed="${loreOpen.has(id)}">${loreOpen.has(id) ? '← About' : '📜 Lore'}</button>` : ''}
       <span class="xtra" data-f="x"></span>
       <button type="button" class="hide-tog" data-hide="${id}" title="${isHiddenAct(id) ? 'Show this step in Things to do again' : 'Hide this step from Things to do'}">${isHiddenAct(id) ? '👁 Unhide' : '🙈 Hide'}</button></div></li>`;
   }).join('');
@@ -2559,7 +2570,24 @@ function renderActions() {
   }
   updateActions();
 }
-const bwFx = w => w.fx;
+
+function bwFx(w, k = 5) {
+  if (k < 2) return 'Found. It starts working once his knack grows.';
+  const seg = { base: '', k1: '', k3: '', k5: '' }; let cur = 'base';
+  for (const part of w.fx.split(/(Knack 1: |At knack 3: |At knack 5: )/)) {
+    if (part === 'Knack 1: ') cur = 'k1'; else if (part === 'At knack 3: ') cur = 'k3'; else if (part === 'At knack 5: ') cur = 'k5'; else seg[cur] += part;
+  }
+  const up = t => (t = t.trim()) && t.charAt(0).toUpperCase() + t.slice(1).replace(/([^.!?])$/, '$1.');
+  let first = (seg.base + ' ' + seg.k1).trim(), soon = !!seg.k3 || !!seg.k5;
+  const paren = first.match(/\s*\(at knack 5: ([^)]*)\)/);
+  if (paren) { first = first.replace(paren[0], k >= 5 ? ' (now ' + paren[1] + ')' : ''); soon = soon || k < 5; }
+  const nothing = first.match(/^nothing\.?\s*(?:\(([^)]*)\))?\.?$/i);
+  if (nothing) first = nothing[1] ? up(nothing[1]) : (k >= 3 && seg.k3 ? '' : "Nothing useful yet, but it's very him.");
+  if (seg.k1 && !nothing && k >= 3 && seg.k3) first = '';
+  const parts = [up(first)].concat(k >= 3 && seg.k3 ? [up(seg.k3)] : [], k >= 5 && seg.k5 ? [up(seg.k5)] : []).filter(Boolean);
+  const more = (k < 3 && seg.k3) || (k < 5 && (seg.k5 || paren));
+  return parts.join(' ') + (more ? " He'll get better at this." : '');
+}
 function bwIcon(a) {
   const w = bwOf(a), k = knack(a.id);
   if (!w) return BEAR_NONE.has(a.id) ? '<span class="bw-ic" title="No Bear\'s way here">💤</span>' : '';
@@ -2573,7 +2601,7 @@ function bearNote(a) {
   const w = bwOf(a);
   if (w) {
     const k = knack(a.id), req = a.bearOnly ? 'Bear required. ' : '';
-    return k < 1 ? `<span class="c-bear">🐻 ${req}??? Try it with Bear.</span>` : `<span class="c-bear">🐻 ${req}<b>${esc(w.n)}</b> · knack ${k}: ${esc(bwFx(w))}</span>`;
+    return k < 1 ? `<span class="c-bear">🐻 ${req}??? Try it with Bear.</span>` : `<span class="c-bear">🐻 ${req}<b>${esc(w.n)}</b> · knack ${k}: ${esc(bwFx(w, k))}</span>`;
   }
   if (BEAR_NONE.has(a.id) && !a.bearOnly) return `<span class="c-bear">🐻💤 No Bear's way here: a once-ever step</span>`;
   const note = a.bear && a.bear.note ? a.bear.note : BEAR_TAGS[a.bear && a.bear.tag || '_x156'].note;
@@ -3240,7 +3268,7 @@ const BEAT_HTML = {
   'The first moonrise': first => '<p>The Moon comes up over the pines, pale and broken, and tries to rise. She can\'t. For a moment everything goes very still, like a held breath.</p>' +
     '<p>Then it\'s dawn again. You\'re standing at the burrow door in your dry coat, lantern in your paw. Nyla\'s bed is empty. The pawprints are fresh in the clover, exactly where they were.</p>' +
     '<p>Everyone else has forgotten yesterday. You haven\'t. The light that touched your cheek last night is still there, and it remembers every step you took. So do you.</p>',
-  'Moonrise picnic': first => "<p>The Moon comes up over Honey Hollow, pale and cracked, the way she has every night. Bear is on the blanket with the honey pot, watching the path, watching the path. When he sees you, he jumps up so fast he knocks over the honey. \"There you are, Bunny. I was starting to think you weren't coming.\" Then Nyla trots out from behind you, and his whole face lights up. \"You found her!\"</p><p>You sit down beside him, and it all comes out at once: the night the Moon cracked, the pawprints, the same morning over and over, the fairies, Briar Rose and her godmothers, Nyla in the ferns. Bear listens to every word. He doesn't understand half of it. He believes all of it.</p><p>\"So every night,\" he says slowly, \"I was sitting here waiting, and you were out there looking for her.\"</p><p>\"Every night,\" you say. \"I could see the Moon come up over the Hollow, and I knew you'd be under it. I always meant to come and tell you. The Moon folded the day back first, every time.\"</p><p>Bear thinks about that. \"I'd have waited,\" he says. \"However many nights it took.\"</p><p>\"I know,\" you say. \"I dreamed about you long before I ever met you. You were waiting in those, too.\"</p><p>Bear is quiet for a moment. Then he rights the honey pot. \"Save me the last bit?\" you ask. \"As you wish,\" he says. Nyla gazes at it so politely that you give it to her anyway.</p><p>That's when Nyla stands, walks over to Bear, and sets the moon shard very carefully in his lap, as if she's been waiting all this time to give it to him. It glows, lifts out of his paws, and floats up and up until it clicks back into the Moon. She shines a little brighter.</p><p>\"Thank you,\" says the Moon, clearly now. \"When I broke, I fell into the stories I love best. You'll know them. I've been reading them over your shoulder for years. Find the rest of me. And find each other, every time.\"</p><p>\"Can you feel it? I can hold on a little longer now. Your days will be longer too.\"</p><p>\"I'm brighter, but I'm not whole. Until I am, I can't hold the night. Every piece you bring home gives the world one more day. Bring them all home, and I'll give you tomorrow.\"</p><p>Over Honey Hollow, the Crab you found star by star shines down on the blanket: <b>Cancer, your rising sign</b>. \"My own sign,\" says the Moon, \"rising over your home. I'm glad you found it first.\"</p><p>The shard's light hasn't quite left Bear's paws: a faint silver shimmer, like pollen from a moonflower. He turns them over and looks at them. \"Will I remember this?\" he asks. \"In the morning?\"</p><p>\"Nobody ever has,\" you say. \"But nobody's ever held a piece of the Moon before.\"</p><p>He walks you home through the clover, with Nyla trotting very properly between you. At your door, he stops. \"Same spot tomorrow? Just in case it comes.\"</p><p>\"Same spot,\" you say. And for the first time in a long time, you let yourself hope it will.</p>".replace('Briar Rose and her _x43', briarName() + ' and her _x43'),
+  'Moonrise picnic': first => "<p>The Moon comes up over Honey Hollow, pale and cracked, the way she has every night. Bear is on the blanket with the honey pot, watching the path. When he sees you, he jumps up so fast he knocks over the honey. \"There you are, Bunny. I was starting to think you weren't coming.\" Then Nyla trots out from behind you, and his whole face lights up. \"You found her!\"</p><p>You sit down beside him, and it all comes out at once: the night the Moon cracked, the pawprints, the same morning over and over, the fairies, Briar Rose and her godmothers, Nyla in the ferns. Bear listens to every word. He doesn't understand half of it. He believes all of it.</p><p>\"So every night,\" he says slowly, \"I was sitting here waiting, and you were out there looking for her.\"</p><p>\"Every night,\" you say. \"I could see the Moon come up over the Hollow, and I knew you'd be under it. I always meant to come and tell you. The Moon folded the day back first, every time.\"</p><p>Bear thinks about that. \"I'd have waited,\" he says. \"However many nights it took.\"</p><p>\"I know,\" you say. \"I dreamed about you long before I ever met you. You were waiting in those, too.\"</p><p>Bear is quiet for a moment. Then he rights the honey pot. \"Save me the last bit?\" you ask. \"As you wish,\" he says. Nyla gazes at it so politely that you give it to her anyway.</p><p>That's when Nyla stands, walks over to Bear, and sets the moon shard very carefully in his lap, as if she's been waiting all this time to give it to him. It glows, lifts out of his paws, and floats up and up until it clicks back into the Moon. She shines a little brighter.</p><p>\"Thank you,\" says the Moon, clearly now. \"When I broke, I fell into the stories I love best. You'll know them. I've been reading them over your shoulder for years. Find the rest of me. And find each other, every time.\"</p><p>\"Can you feel it? I can hold on a little longer now. Your days will be longer too.\"</p><p>\"I'm brighter, but I'm not whole. Until I am, I can't hold the night. Every piece you bring home gives the world one more day. Bring them all home, and I'll give you tomorrow.\"</p><p>Over Honey Hollow, the Crab you found star by star shines down on the blanket: <b>Cancer, your rising sign</b>. \"My own sign,\" says the Moon, \"rising over your home. I'm glad you found it first.\"</p><p>The shard's light hasn't quite left Bear's paws: a faint silver shimmer, like pollen from a moonflower. He turns them over and looks at them. \"Will I remember this?\" he asks. \"In the morning?\"</p><p>\"Nobody ever has,\" you say. \"But nobody's ever held a piece of the Moon before.\"</p><p>He walks you home through the clover, with Nyla trotting very properly between you. At your door, he stops. \"Same spot tomorrow? Just in case it comes.\"</p><p>\"Same spot,\" you say. And for the first time in a long time, you let yourself hope it will.</p>".replace('Briar Rose and her _x43', briarName() + ' and her _x43'),
   'The strange light': first => '<p>You open the burrow door, and Nyla shoots past your ankles into the dark.</p>' +
     '<p>Up above, the Moon makes a sound like a tiny bell. A crack runs all the way across her face, and a sliver of silver light falls, turning over and over, into the Whispering Woods.</p>' +
     '<p>On its way down it passes right over you. For a moment the light rests on your cheek, warm, like a hand.</p>' +
@@ -3314,7 +3342,7 @@ const firstPage = html => String(html).replace(/<p><b>New:<\/b>(?:(?!<p>)[\s\S])
 const _x197 = {};
 function _x202(id, fromIntro) {
   const b = _x200[id];
-  if (!b || S.away || !SIDES[id] || !SIDES[id].open() || inPrologue() || S.revisit) return;
+  if (!b || S.away || !SIDES[id] || !SIDES[id].open() || inPrologue() || S.revisit || _x231()) return;
   S.books = S.books || {};
   const bk = S.books[id] = S.books[id] || { queue: [], cal: null };
   if (!bk.cal) bk.cal = Object.fromEntries(SKILLS.map(([k]) => [k, skillN(k)]));
@@ -3333,24 +3361,31 @@ function _x202(id, fromIntro) {
   const lines = _x213(id);
   if (lines.length) story('📖 ' + lines[(bk.opens - 1) % lines.length], 'story');
 }
+
+function settleAway() {
+  _x214 = null;
+  if (!S.loreRead) { S.loreRead = {}; for (const id of ORDER) { const n = loreSeenN(A[id]); if (n) S.loreRead[id] = n; } }
+  const inBk = !!(S.away && S.away.kind === 'book' && _x200[S.away.id] && SIDES[S.away.id] && SIDES[S.away.id].open() && S.books && S.books[S.away.id]);
+  if (!inBk) { if (S.mainQueue) { S.queue = S.mainQueue; delete S.mainQueue; } S.away = null; }
+}
 function _x203() {
   if (!_x204()) return;
   sfx('page');
   const id = S.away.id;
   S.books[id].queue = S.queue; _x215[id] = L;
   S.queue = S.mainQueue || []; delete S.mainQueue;
-  L = _x214 ? _x214.L : freshLoop(); viewZone = _x214 ? _x214.view : L.zone; _x214 = null;
-  S.away = null; tabsSig = ''; predDirty = true; noticeSig = null; dirty.all = true; setSpeed(0); saveLocal(); render();
+  S.away = null;
+  L = _x214 ? _x214.L : freshLoop(); viewZone = _x214 ? _x214.view : L.zone; _x214 = null; tabsSig = ''; predDirty = true; noticeSig = null; dirty.all = true; setSpeed(0); saveLocal(); render();
 }
 const _x207 = id => _x200[id].start ?? ZONES.findIndex(z => z.side === id);
 function _x208(l) {
   const id = S.away.id, b = _x200[id];
-  l.zone = _x207(id); l.bear = true; l.bearStam = bearMax();
+  l.zone = _x207(id); l.bear = !_x231(); l.bearStam = l.bear ? bearMax() : 0;
   if (b.dawn) b.dawn(l);
 }
 
 const _x212 = id => ORDER.filter(r => { const a = A[r]; return a.travel && a.to != null && (_x205(a.zone) === id) !== (_x205(a.to) === id); });
-const _x213 = id => _x212(id).flatMap(r => (ACTION_LORE[r] || []).map(([, t]) => t));
+const _x213 = id => _x212(id).filter(r => _x205(A[r].to) === id).flatMap(r => (ACTION_LORE[r] || []).map(([, t]) => t));
 
 const _x210 = a => !!(a.travel || (a.far && !farDone(a.id)) || a.photo || loreFor(a).some(r => !r.seen));
 function _x211(a) {
@@ -3374,6 +3409,8 @@ function _x195() { return []; }
 
 { const done = new Set();
   for (const id of ORDER) { const a = A[id], b = _x205(a.zone); if (a.track && b && !done.has(a.track) && TRACKS[a.track]) { done.add(a.track); TRACKS[a.track].k *= _x199[b] ?? 1; } } }
+
+for (const id of Object.keys(_x200)) for (const r of _x212(id)) if (BEAR_WAYS[r]) delete BEAR_WAYS[r];
 
 const MUSIC = { acts: [{ name: 'The Hollow', url: '' }], books: {} };
 
@@ -3692,7 +3729,7 @@ function demoCarryOver() {
   S.bear.unlocked = true; startAct(1); return true;
 }
 function adopt(save) {
-  S = normalize(save); retroTemplates(); migrateSkills(); const carried = demoCarryOver(); L = freshLoop(); viewZone = L.zone; checkStickers(true); dirty.all = true; saveLocal();
+  S = normalize(save); settleAway(); retroTemplates(); migrateSkills(); const carried = demoCarryOver(); L = freshLoop(); viewZone = L.zone; checkStickers(true); dirty.all = true; saveLocal();
   if (carried) showModal(ACTS[1].name, ACTS[1].intro, [['Wake up', null]]);
 }
 
@@ -3701,7 +3738,7 @@ $('acts').addEventListener('click', ev => {
   if (gt) { const k = gt.dataset.grp; S.ui.groups[k] = gt.getAttribute('aria-expanded') === 'true'; saveSoon(); dirty.actions = true; render(); return; }
   const hd = ev.target.closest('[data-hide]'), lt = ev.target.closest('[data-lore]');
   if (hd) { const id = hd.dataset.hide; S.hiddenActs = S.hiddenActs || {}; if (S.hiddenActs[id]) delete S.hiddenActs[id]; else S.hiddenActs[id] = true; saveSoon(); dirty.actions = true; render(); return; }
-  if (lt) { const id = lt.dataset.lore; if (loreOpen.has(id)) loreOpen.delete(id); else loreOpen.add(id); lt.textContent = loreOpen.has(id) ? '← About' : '📜 Lore'; lt.setAttribute('aria-pressed', String(loreOpen.has(id))); updateActions(); return; }
+  if (lt) { const id = lt.dataset.lore; if (loreOpen.has(id)) loreOpen.delete(id); else { loreOpen.add(id); (S.loreRead = S.loreRead || {})[id] = loreSeenN(A[id]); lt.classList.remove('lore-new'); saveSoon(); } lt.textContent = loreOpen.has(id) ? '← About' : '📜 Lore'; lt.setAttribute('aria-pressed', String(loreOpen.has(id))); updateActions(); return; }
   const b = ev.target.closest('button[data-add]'); if (!b || b.disabled) return;
   addToPlan(b.dataset.add, addAmt);
   const lastRun = placeRuns(S.queue).pop(), fk = lastRun && ('P:' + lastRun.key);
@@ -3893,8 +3930,8 @@ function frame() {
 function start(data) {
   S = normalize((data && data.save) || loadLocal() || freshSave());
   if (S.revisit) { S = normalize(mergeLore(S.revisit, S)); delete S.revisit; }
-  if (S.mainQueue) { S.queue = S.mainQueue; delete S.mainQueue; }
-  S.away = null;
+
+  settleAway();
   retroTemplates(); migrateSkills();
   const away = Math.max(0, (Date.now() - (S.lastSeen || Date.now())) / 1000);
   if (away > 60 && !(data && data.save)) {
