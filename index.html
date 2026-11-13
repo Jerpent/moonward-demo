@@ -2265,6 +2265,10 @@ const UNLOCKS = [
   ['mastery', () => !inPrologue() && Object.keys(S.mastery).some(id => A[id] && !A[id].pro && mLvl(id) >= 2), 'The Moon whispers: the more often you do something, the quicker your paws learn it. Every step you repeat builds mastery (★ on its card), and each level makes that step a little faster, for good. Hover the ★ to see how far along it is.'],
 ];
 const UNLOCK_TITLES = {
+  restart: 'Going to bed early',
+  signs: 'Constellations',
+  photowall: 'The photo _x179',
+  predictor: 'The seeing stone',
   talent: 'Talent',
   amounts: 'Adding more at once',
   basket: 'The basket',
@@ -2293,7 +2297,7 @@ function checkUnlocks() {
     let ok = false; try { ok = when(); } catch (e) { ok = false; }
     if (!ok) continue;
     S.unlocked[key] = true;
-    if (text) { story(text, 'moon'); keepPop('New: ' + (UNLOCK_TITLES[key] || key), text); }
+    if (text) { story(text, 'moon'); keepPop(UNLOCK_TITLES[key] ? 'New: ' + UNLOCK_TITLES[key] : 'Something new', text); }
   }
 }
 function applyUnlocks() {
