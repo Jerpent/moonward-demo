@@ -667,7 +667,7 @@ const FILM_TEXT = {
 const BRIAR_REVEAL = 75;
 const auroraKnown = () => P('briar') >= BRIAR_REVEAL;
 const briarName = () => (auroraKnown() ? 'Aurora' : 'Briar Rose');
-const auroraText = (text, afterReveal) => (text = typeof text === 'function' ? text() : text, text = String(text).includes('{_x171}') ? String(text).replace(/\{frog\}/g, frogName()) : text, afterReveal && auroraKnown() ? String(text).replace(/Briar Rose/g, 'Aurora') : text);
+const auroraText = (text, afterReveal) => (text = typeof text === 'function' ? text() : text, text = String(text).includes('{_x171}') ? String(text).replace(/\{frog\}/g, _x183()) : text, afterReveal && auroraKnown() ? String(text).replace(/Briar Rose/g, 'Aurora') : text);
 
 const lightOn = () => P('fairies') >= 25 && !!S.flags.film;
 const has = id => !!(S.album && S.album[id]);
@@ -872,15 +872,15 @@ function freshLoop() {
     inv: blank(Object.keys(ITEMS)),
     used: {}, good: {}, nyla: !!(typeof S !== 'undefined' && S && S.flags && (S.flags._x147 || S.flags._xfar || (S._x150 || []).includes('protect'))), jar: false,  buffs: {}, fellow: {}, fed: false, lantern: false, begun: false, waiting: false,
     bear: false, bearStam: 0, bearAsleep: false, knacked: {},
-    witsRound: 0, _x160: false, sand: false, _x121: false, _x120: false, inside: false,
-    cryRound: 0, cryWon: false, wave: false, pass: false, candle: null, milk: 0, _x133: false, link: false, outfit: null,
+    _x241: 0, _x160: false, sand: false, _x121: false, _x120: false, inside: false,
+    _x221: 0, _x222: false, wave: false, pass: false, candle: null, milk: 0, _x133: false, link: false, outfit: null,
     qi: 0, curUid: null, done: {}, skipped: {}, prog: 0, started: false, withBear: false,
     endNow: null,
     today: snapPlan(),
     trackAtDawn: Object.assign({}, S.track),
   };
   if (S.flags._xfar) l.inv._x49 = 1;
-  if (inBook()) bookDawn(l);
+  if (_x204()) _x208(l);
   if (S.flags._x124) l.inv.pill = 1;
   if (typeof S !== 'undefined' && S && (S._x150 || []).includes('wake') && S.bear && S.bear.unlocked) { l.bear = true; l.bearStam = bearMax(); }
   return l;
@@ -896,7 +896,7 @@ const pctOfExp = (exp, k) => Math.min(100, (-9 + Math.sqrt(81 + 4 * exp / k)) / 
 const pctRaw = id => pctOfExp(S.track[id], TRACKS[id].k);
 const P = id => Math.floor(id === 'burrow' && S.prologueTrack ? Math.max(pctRaw(id), pctOfExp(S.prologueTrack, TRACKS.burrow.k)) : pctRaw(id));
 
-const moonIdx = () => (inBook() && S.away.id === '_x130' ? 4 : inBook() && S.away.id === '_x173' ? 0 : (S.loop - 1 + (inBook() ? S.books[S.away.id].day || 0 : 0)) % 8);
+const moonIdx = () => (_x204() && S.away.id === '_x130' ? 4 : _x204() && S.away.id === '_x173' ? 0 : (S.loop - 1 + (_x204() ? S.books[S.away.id].day || 0 : 0)) % 8);
 const moonLight = () => (1 - Math.cos(2 * Math.PI * moonIdx() / 8)) / 2;
 const moonHealed = () => S.moonPieces || 0;
 
@@ -912,10 +912,10 @@ const driftBonus = () => Math.min(0.3, driftLvl() * (farDone('_x15') ? 0.075 : 0
 const trophy = t => !!S.drift.trophies[t];
 const PROLOGUE_START = 20 * 60, PROLOGUE_LEN = Infinity;
 const dayStart = () => (inPrologue() ? PROLOGUE_START : DAWN - dawnBonus());
-const dayLen = () => inPrologue() ? PROLOGUE_LEN : inBook() ? BOOK_DAY : BASE_DAY + HEALED_DAY * moonHealed() + (S.flags && S.flags._xfar ? 20 : 0) + (S.flags && S.flags._xfar && moonIdx() === 4 ? 20 : 0) + dawnBonus() + (S.flags._x50 ? 40 : 0) + shrineDay() + L._x145;
+const dayLen = () => inPrologue() ? PROLOGUE_LEN : _x204() ? _x201 : BASE_DAY + HEALED_DAY * moonHealed() + (S.flags && S.flags._xfar ? 20 : 0) + (S.flags && S.flags._xfar && moonIdx() === 4 ? 20 : 0) + dawnBonus() + (S.flags._x50 ? 40 : 0) + _x240() + L._x145;
 
-const shrinesSolved = () => ((S.shrines || {}).plateau || 0) + ((S.shrines || {}).old || 0);
-const shrineDay = () => 6 * Math.floor(shrinesSolved() / 4);
+const _x239 = () => ((S.shrines || {}).plateau || 0) + ((S.shrines || {}).old || 0);
+const _x240 = () => 6 * Math.floor(_x239() / 4);
 const talentRate = () => (farDone('_x77') ? 1.1 : 1) * (1 + 0.05 * ph('_x94')) * 0.15 * candleTalent() * (trophy('cup') ? 1.05 : 1) * (farDone('farOwlBooks') ? 1.15 : 1) * (P('owl') >= 50 ? 1.5 : 1) * (L.jar ? 2 : 1) * moonTalent();
 const fairyMult = s => (FAIRIES.some(([at, fs]) => fs === s && P('fairies') >= at) ? (farDone('_x8') ? 1.35 : 1.25) : 1);
 const signMult = s => Object.entries(SIGNS).reduce((m, [id, g]) => m * (S.signs[id] && g.stat === s ? 1.15 : 1), 1) * 1;
@@ -943,15 +943,15 @@ const mainTrait = a => Object.entries(a.stats || {}).sort((x, y) => y[1] - x[1])
 const skillFor = a => (a.timeGate ? a.timeGate[0] : skillOf(a) || TRAIN_SKILL[mainTrait(a)] || 'balance');
 
 const calLvl = act => (arriveLvl(act) + arriveLvl(act + 1)) / 2;
-const bookCal = a => { const sd = ZONES[a.zone].side, bk = sd && BOOKS[sd] && S.books && S.books[sd]; return bk && bk.cal ? bk.cal[skillFor(a)] : null; };
-const progOf = a => (a.pro ? 1 : progX(skillN(skillFor(a))) / progX(a.timeGate ? a.timeGate[1] : bookCal(a) ?? calLvl(actOf(a))));
+const _x209 = a => { const sd = ZONES[a.zone].side, bk = sd && _x200[sd] && S.books && S.books[sd]; return bk && bk.cal ? bk.cal[skillFor(a)] : null; };
+const progOf = a => (a.pro ? 1 : progX(skillN(skillFor(a))) / progX(a.timeGate ? a.timeGate[1] : _x209(a) ?? calLvl(actOf(a))));
 const MIN_COST = 0.1;
 const paceKind = a => (a.train ? 'r' : a.travel ? 't' : a.project ? 'p' : a.track ? 'x' : a.limited ? 'g' : 's');
 const paced = a => !(a.pro || a.photo || a._x101);
 function paceBase(a) {
   const b = baseCost(a);
   if (!paced(a) || typeof b !== 'number') return b;
-  if (a.timeGate) return Math.max(b * 3, 0.6 * (bookOf(a.zone) ? BOOK_DAY : BASE_DAY + HEALED_DAY * actOf(a)));
+  if (a.timeGate) return Math.max(b * 3, 0.6 * (_x205(a.zone) ? _x201 : BASE_DAY + HEALED_DAY * actOf(a)));
   const k = paceKind(a), [m, min] = PACE[k];
   return Math.max(min * GAME_MIN_PER_SEC, b * m) * (k === 'x' && !ZONES[a.zone].side ? BAR_CUT[actOf(a)] || 1 : 1);
 }
@@ -990,11 +990,10 @@ const bwHas = (ops, op) => !!ops && ops.some(o => o[0] === op);
 const bwGet = (ops, op) => (ops ? ops.find(o => o[0] === op) : null);
 const bwAway = () => !!(L.bwErrand && L.time < L.bwErrand.at);
 function bwGive(k, n) {
-  if (k === 'seed') { const cs = seasonCrops(); if (!cs.length) return; k = 'seed_' + cs[0]; }
-  if (k === 'straggler') { L.home = (L.home || 0) + n; return; }
+  if (k === 'seed') { const cs = _x237(); if (!cs.length) return; k = 'seed_' + cs[0]; }
   if (MATERIALS[k]) addMat(k, n); else inv()[k] = (inv()[k] || 0) + n;
 }
-const bwGoodLabel = k => { const g = k === 'seed' ? { icon: '🌰', name: 'Seed packets' } : k === 'straggler' ? { icon: '🫱', name: 'Stragglers home' } : MATERIALS[k] || ITEMS[k]; return g ? g.icon + ' ' + g.name : k; };
+const bwGoodLabel = k => { const g = k === 'seed' ? { icon: '🌰', name: 'Seed packets' } : MATERIALS[k] || ITEMS[k]; return g ? g.icon + ' ' + g.name : k; };
 function bwErrandTick() {
   const r = L.bwErrand;
   if (!r || L.time < r.at - 1e-9) return;
@@ -1032,18 +1031,18 @@ function bwApply(a, ops) {
     else if (op === 'errand' || op === 'errandBar') { if (!L.bwErrand && !bearNeededLater(a)) L.bwErrand = { id: a.id, at: Math.max(L.time, dayLen() * 0.75), give: op === 'errand' ? [x, y] : null, bar: op === 'errandBar' ? [x, y] : null }; }
     else if (op === 'freePiece') { L.bwPiece = L.bwPiece || {}; if (!L.bwPiece[x]) { L.bwPiece[x] = true; projAdd(x, 1); } }
     else if (op === 'reveal') bwScout(a);
-    else if (op === 'talent') { const s = x === '_x155' ? OATH_TRAIT[(S._x150 || []).slice(-1)[0]] || mainTrait(a) : x; S.talent[s] = (S.talent[s] || 0) + 2 * (a.stats[s] || 0.5) * cost(a, true) * expMult(s) * talentRate() * 0.5; }
-    else if (op === 'noSneak') (L.bwNoSneak = L.bwNoSneak || {})[x] = true;
+    else if (op === 'talent') { const s = x === '_x155' ? _x216[(S._x150 || []).slice(-1)[0]] || mainTrait(a) : x; S.talent[s] = (S.talent[s] || 0) + 2 * (a.stats[s] || 0.5) * cost(a, true) * expMult(s) * talentRate() * 0.5; }
+    else if (op === '_x245') (L.bwNoSneak = L.bwNoSneak || {})[x] = true;
     else if (op === 'nextTo') { if (a.to != null) (L.bwNext = L.bwNext || {})['z' + a.to] = x; }
-    else if (op === 'tideStop') { if (lowTide()) bwGive('_x79', 1); else (L.bwNext = L.bwNext || {}).z106 = 20; }
-    else if (op === 'growRow') { if (!L.bwGrew) { const r = farm().rows.find(r => !r.ripe); if (r) { L.bwGrew = true; r.stage++; if (r.stage >= CROPS[r.crop].days) r.ripe = true; } } }
+    else if (op === '_x244') { if (_x242()) bwGive('_x79', 1); else (L.bwNext = L.bwNext || {}).z106 = 20; }
+    else if (op === '_x243') { if (!L.bwGrew) { const r = farm().rows.find(r => !r.ripe); if (r) { L.bwGrew = true; r.stage++; if (r.stage >= CROPS[r.crop].days) r.ripe = true; } } }
     else if (op === 'sticker') { S.bwFlags = S.bwFlags || {}; S.bwFlags[x] = true; }
     else if (op === 'memory') {
       S.bwMem = S.bwMem || {};
       if (!S.bwMem[a.id]) { S.bwMem[a.id] = S.loop; if (!PRED) story('📷 A memory with Bear: ' + (x || w.n) + '. It\'s in the Lore book now, under Bear\'s ways.', 'big'); }
       if (L.bear) L.bearStam = Math.min(bearMax(), L.bearStam + 60);
     } else if (op === 'forecast') {
-      if (!PRED) { let d = 1; while (d <= 8 && weatherAt(S.loop + d) !== 'storm') d++; bearSays(d <= 8 ? `Alice says the next storm is ${d === 1 ? 'tomorrow' : 'in ' + d + ' days'}. Thunderstorm Baseball, then.` : 'Alice says no storm this week.'); }
+      if (!PRED) { let d = 1; while (d <= 8 && _x234(S.loop + d) !== 'storm') d++; bearSays(d <= 8 ? `Alice says the next storm is ${d === 1 ? 'tomorrow' : 'in ' + d + ' days'}. Thunderstorm Baseball, then.` : 'Alice says no storm this week.'); }
     }
   }
 }
@@ -1059,15 +1058,15 @@ function cost(a, withBear) {
   if (a._x81) c *= a._x81();
   if (a.zone === 45 && !a.travel) c *= L.bwFogFree ? 1 : fogMult();
   if (a.id === '_x76' && L.bw_race) c *= 0.8;
-  c *= weatherCost(a) * focusCost(a);
+  c *= _x235(a) * focusCost(a);
   if (a.drives) c *= 1 - driftBonus();
-  c *= outfitCost(a);
-  if (a.downhill && glideOn()) c *= 0.3;
+  c *= _x225(a);
+  if (a.downhill && _x228()) c *= 0.3;
   if (/^gate\d$/.test(a.id) && farDone('_x27')) c *= 0.5;
   if (withBear) c *= bearMult(a) * (farDone('_x71') && a.bear && a.bear.tag === 'brave' ? 0.85 : 1);
   if (a.travel && actOf(a) === 4 && a.zone !== 0 && farDone('_x72')) c *= 0.5;
   if (withBear && a.travel) c *= (farDone('_x10') ? 0.9 : 1) / phm('_x104');
-  c *= groupMult(a);
+  c *= _x186(a);
   if (a.train && farDone('_x3')) c *= 0.9;
   if (a.travel && L.shoutReady) return MIN_COST;
   if (L.bwFree && L.bwFree[a.id] && S.mastery[a.id] > 0) return MIN_COST;
@@ -1126,7 +1125,7 @@ function gainSkill(a, units) {
   const k = skillOf(a); if (!k) return;
   S.skills = S.skills || {};
   const before = skillLvl(k);
-  S.skills[k] = (S.skills[k] || 0) + units / 6 * (a.train ? 0.5 : 1) * (k === 'music' ? phm('_x62') : 1) * (k === 'moonmagic' ? phm('_x61') : 1) * (k === 'creatures' ? phm('_x90') : 1) * (k === 'painting' ? phm('_x88') : 1) * (k === 'photography' ? phm('_x12') : 1) * (k === 'creatures' ? phm('_x87') : 1) * (k === 'reading' ? phm('_x59') : 1) * (k === 'moonmagic' ? phm('_x86') : 1) * (k === 'painting' ? phm('_x37') : 1) * (k === 'aim' && farDone('_x1') ? 1.1 : 1) * bookSkillMult(k) * (L && L.bwSkill === k ? 1.1 : 1);
+  S.skills[k] = (S.skills[k] || 0) + units / 6 * (a.train ? 0.5 : 1) * (k === 'music' ? phm('_x62') : 1) * (k === 'moonmagic' ? phm('_x61') : 1) * (k === 'creatures' ? phm('_x90') : 1) * (k === 'painting' ? phm('_x88') : 1) * (k === 'photography' ? phm('_x12') : 1) * (k === 'creatures' ? phm('_x87') : 1) * (k === 'reading' ? phm('_x59') : 1) * (k === 'moonmagic' ? phm('_x86') : 1) * (k === 'painting' ? phm('_x37') : 1) * (k === 'aim' && farDone('_x1') ? 1.1 : 1) * _x188(k) * (L && L.bwSkill === k ? 1.1 : 1);
   const after = skillLvl(k);
   dirty.stats = true;
   if (!S.flags.skillsIntro) {
@@ -1482,10 +1481,10 @@ function spentForGood(a) {
   if (a.id === '_x16') return !!S.flags._x51;
   if (a.id === '_x30') return !!S.flags._x123;
   if (a.id === '_x29') return !!S.flags._x166;
-  if (a.id === '_x28') return EXPERIMENTS.every(([k]) => tested(k));
+  if (a.id === '_x28') return _x223.every(([k]) => tested(k));
   if (a.id === 'weave') return (S.basketTier || 0) >= BASKET_TIERS.length - 1;
-  if (a.id.startsWith('_x153')) return ownsOutfit(a.id.slice(4));
-  if (a.id.startsWith('_x175')) return outfitStars(a.id.slice(3)) >= 2;
+  if (a.id.startsWith('_x153')) return _x227(a.id.slice(4));
+  if (a.id.startsWith('_x175')) return _x226(a.id.slice(3)) >= 2;
   return false;
 }
 const sweepSpent = () => { for (const id of new Set(S.queue.map(e => e.id))) if (spentForGood(A[id])) clearSpent(id); };
@@ -1498,7 +1497,7 @@ function clearSpent(id) {
   dirty.plan = true; predDirty = true; saveSoon();
 }
 function listJoin(a) { return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; }
-const visible = a => !a.pro === !inPrologue() && actOf(a) <= S.act && zoneOpen(a.zone) && bookVisible(a) && (!a.visible || a.visible());
+const visible = a => !a.pro === !inPrologue() && actOf(a) <= S.act && zoneOpen(a.zone) && _x211(a) && (!a.visible || a.visible());
 
 const runnable = a => visible(a) || (!!a.planOnly && a.planOnly());
 
@@ -1530,7 +1529,7 @@ function capWhy(a) {
   if (m == null || m <= 0) return null;
   return planTotal(a.id) >= m ? `All ${m} planned (the most in a day)` : null;
 }
-const bearAvail = () => L.bear && !L.bearAsleep && L.bearStam > 0 && !bearSplit() && !bwAway();
+const bearAvail = () => L.bear && !L.bearAsleep && L.bearStam > 0 && !_x230() && !bwAway();
 const canBear = a => S.bear.unlocked && !a.nobear;
 function goodState(a) {
   const g = a.good, total = g.total(), checked = Math.min(S.checked[g.key], total);
@@ -1643,9 +1642,9 @@ function stickerBookHtml() {
 }
 function openStickerBook() { showModal('The Sticker Book', stickerBookHtml(), [['Close', null]]); saveSoon(); }
 
-const CRY_KINDS = [];
-const CRY_GUESTS = [];
-const cryWin = () => false;
+const _x219 = [];
+const _x218 = [];
+const _x220 = () => false;
 const candleKey = () => "";
 const candleLen = () => 0;
 const candleText = () => "";
@@ -1653,48 +1652,48 @@ const candleMult = s => 1;
 const candleTalent = () => 1;
 const candleMoon = () => 1;
 const candleCost = a => 1;
-const OUTFITS = {};
-const ownsOutfit = () => false;
-const outfitStars = () => 0;
-const outfitCost = a => 1;
-const glideOn = () => false;
+const _x224 = {};
+const _x227 = () => false;
+const _x226 = () => 0;
+const _x225 = a => 1;
+const _x228 = () => false;
 const fame = () => 0;
-const EXPERIMENTS = [];
+const _x223 = [];
 const tested = () => false;
-const bearLostNow = () => false;
-const lostMorning = () => 0;
+const _x231 = () => false;
+const _x232 = () => 0;
 const loreTier = () => false;
-const bearSplit = () => false;
+const _x230 = () => false;
 const fogMult = () => 1;
 const supplies = () => 0;
-const splitTick = () => {};
-const WEATHER_ICON = {};
-const weatherAt = () => "";
+const _x229 = () => {};
+const _x233 = {};
+const _x234 = () => "";
 const weather = () => "";
-const isForks = () => false;
-const weatherCost = a => 1;
-const weatherNote = () => "";
+const _x182 = () => false;
+const _x235 = a => 1;
+const _x236 = () => "";
 const focusOn = () => false;
 const focusSet = () => [];
 const focusMult = s => 1;
 const focusCost = a => 1;
-const OATH_TRAIT = {};
-const hasOath = () => false;
+const _x216 = {};
+const _x217 = () => false;
 const CROPS = {};
 const farm = () => ({ rows: [] });
-const seasonCrops = () => [];
-const dewNote = () => "";
-const openGreene = () => {};
-const groupMult = a => 1;
-const groupJoin = () => {};
-const openUnknown = () => {};
-const frogName = () => "";
-const frogCroak = () => {};
-const lowTide = () => false;
-const driftOps = () => null;
-const bookSkillMult = () => 1;
-const TROPHIES = [];
-const tandemLeaving = () => {};
+const _x237 = () => [];
+const _x238 = () => "";
+const _x180 = () => {};
+const _x186 = a => 1;
+const _x185 = () => {};
+const _x181 = () => {};
+const _x183 = () => "";
+const _x184 = () => {};
+const _x242 = () => false;
+const _x187 = () => null;
+const _x188 = () => 1;
+const _x246 = [];
+const _x189 = () => {};
 
 let PRED = null;
 function story(text, kind = 'story') {
@@ -1746,7 +1745,7 @@ function syncStars() {
   for (const [sign, def] of Object.entries(SIGN_STARS)) {
     if (S.signs[sign]) { for (const [key] of def.stars) if (!starsOf(sign).includes(key)) addStar(sign, key, true); continue; }
     for (const [key, at, , trk] of def.stars) {
-      const earned = at != null ? P(trk || key) >= at : key === '_x174' ? !!S.flags.cryWin : key === '_x50' ? !!S.flags._x50 : false;
+      const earned = at != null ? P(trk || key) >= at : key === '_x174' ? !!S.flags._x220 : key === '_x50' ? !!S.flags._x50 : false;
       if (earned && !starsOf(sign).includes(key)) addStar(sign, key, true);
     }
   }
@@ -1755,9 +1754,9 @@ function syncStars() {
 const KEEP_MILESTONES = Object.assign({ owl50: "Owl's wisdom", tortoise100: "Grandpa Tortoise's early mornings", get briar80() { return briarName() + "'s moonstone"; } },
   Object.fromEntries(FAIRIES.map(([at, , nm]) => ['fairies' + at, 'Friends with ' + nm])));
 
-const heldBear = text => !!(S && S.flags && S.flags._x33) && bearLostNow() && /\bBear\b/.test(typeof text === 'function' ? text() : text);
+const heldBear = text => !!(S && S.flags && S.flags._x33) && _x231() && /\bBear\b/.test(typeof text === 'function' ? text() : text);
 function releaseHeldLore() {
-  if (PRED || bearLostNow() || !(S.heldLore || []).length) return;
+  if (PRED || _x231() || !(S.heldLore || []).length) return;
   for (const [id, at] of S.heldLore) {
     const m = (MILESTONES[id] || []).find(x => x[0] === at), key = id + at;
     if (m && !S.seen[key] && P(id) >= at) { S.seen[key] = true; markSeen(key); story(auroraText(m[1], at > BRIAR_REVEAL)); }
@@ -1784,7 +1783,7 @@ function train(a, mins, withBear) {
   gainSkill(a, mins * (typeof b0 === 'number' && pb0 > 0 ? b0 / pb0 : 1));
   const bwo = withBear ? bwOps(a) : null, half = bwHas(bwo, 'half') ? 0.5 : 1;
   for (const [s, w] of Object.entries(a.stats)) {
-    const g = 2 * w * mins * expMult(s) * (a.travel && hasOath('journey') ? 1.5 : 1) * half;
+    const g = 2 * w * mins * expMult(s) * (a.travel && _x217('journey') ? 1.5 : 1) * half;
     L.stat[s] += g; S.talent[s] += g * r * (farDone('_x80') && skillOf(a) === 'science' ? 1.1 : 1);
   }
   if (withBear) {
@@ -1859,7 +1858,7 @@ function complete(a, e) {
       else if (!PRED && !w && k === 0) bearSays(`Bear has a knack for "${a.name}" now. It gets better each day you do it together.`);
     }
   }
-  const bw = withBear ? bwOps(a) : driftOps(a);
+  const bw = withBear ? bwOps(a) : _x187(a);
   if (bwHas(bw, 'secondHint') && L.starSense && !L.starSense2) { L.starSense = false; L.starSense2 = true; }
   if (L.bwFree && L.bwFree[a.id]) delete L.bwFree[a.id];
   if (a.zone === 45 && !a.travel && L.bwFogFree && a.id !== 'doors') L.bwFogFree = false;
@@ -1886,7 +1885,7 @@ function complete(a, e) {
     if (L.bwTwice && L.bwTwice[a.project]) { n++; delete L.bwTwice[a.project]; }
     projAdd(a.project, n);
   }
-  groupJoin(a); frogCroak(a);
+  _x185(a); _x184(a);
   if (a.travel && L.inv.dust > 0) L.inv.dust--;
   if (a.food && !L.fed) { if (L.inv.lembread > 0) { L.inv.lembread--; L.fed = true; } else L.inv.seedcake -= a.food; }
   if (a.once) { S.flags['far_' + a.id] = true; }
@@ -1924,7 +1923,7 @@ function complete(a, e) {
 function step(mins) {
   let guard = 500;
   while (mins > 1e-9 && guard-- > 0) {
-    splitTick();
+    _x229();
     bwErrandTick();
     if (L.bwErrand) mins = Math.min(mins, Math.max(1e-6, L.bwErrand.at - L.time));
     const left = dayLen() - L.time;
@@ -1988,7 +1987,7 @@ function afterDawn() {}
 function endDay(reason) {
   if (L.bwErrand && L.bwErrand.bar) { L.time = Math.max(L.time, L.bwErrand.at); bwErrandTick(); }
   if (PRED) { PRED.end = reason; return; }
-  if (inBook()) {
+  if (_x204()) {
     checkStickers(true);
     S.books[S.away.id].day = (S.books[S.away.id].day || 0) + 1;
     if (reason !== 'restart') story(`📖 The day in ${SIDES[S.away.id].name} ends, and starts again from its own dawn.`, 'loop');
@@ -2021,12 +2020,12 @@ function endDay(reason) {
   }
   S.loop++;
   stickerDawn();
-  openGreene();
-  openUnknown();
+  _x180();
+  _x181();
   releaseHeldLore();
   afterDawn();
   if (focusOn() && S.focus) { S.focusDays = S.focusDays || {}; for (const k of focusSet()) S.focusDays[k] = (S.focusDays[k] || 0) + 1; }
-  if (bearLostNow() && lostMorning() > 1) story('🐻 The doormat is empty again. Nyla waits by the door, then comes along when you ask.', 'loop');
+  if (_x231() && _x232() > 1) story('🐻 The doormat is empty again. Nyla waits by the door, then comes along when you ask.', 'loop');
   sweepSpent();
   L = freshLoop();
   L.begun = (reason === 'moonrise' || reason === 'asleep' || reason === 'rule') && !S.opts.pauseDay;
@@ -2341,8 +2340,8 @@ function applyUnlocks() {
   $('bagPanel').hidden = !(U('basket') || (inPrologue() && Object.values(L.inv).some(v => v > 0)));
   $('signPanel').hidden = !U('signs');
   $('revisitBar').hidden = !S.revisit;
-  $('bookBar').hidden = !inBook();
-  if (inBook()) $('bookBarText').textContent = `📖 ${SIDES[S.away.id].name} · its own day, at 1× · the day at home waits and the Moon keeps your moonlight` + (bookDone(S.away.id) ? ' · finished: only lore, stickers and photos are left' : '');
+  $('bookBar').hidden = !_x204();
+  if (_x204()) $('bookBarText').textContent = `📖 ${SIDES[S.away.id].name} · its own day, at 1× · the day at home waits and the Moon keeps your moonlight` + (_x206(S.away.id) ? ' · finished: only lore, stickers and photos are left' : '');
   $('revisitBtn').hidden = !!S.revisit || inPrologue();
   $('burrowPanel').hidden = !(Object.keys(S.stickers || {}).length || U('_x44') || U('photowall') || U('_x25') || U('candles') || U('outfits') || U('painting'));
 }
@@ -2356,14 +2355,14 @@ function sideZones(k) { return ZONES.map((z, i) => i).filter(i => ZONES[i].side 
 const groupOfZone = z => (ZONES[z].side ? 's:' + ZONES[z].side : 'a:' + ZONES[z].act);
 const zonesOfGroup = g => (g.startsWith('s:') ? sideZones(g.slice(2)) : actZones(+g.slice(2))).filter(z => S.reached[z]);
 function navGroups() {
-  if (inBook()) { const k = S.away.id; return zonesOfGroup('s:' + k).length ? [['s:' + k, SIDES[k].name]] : []; }
+  if (_x204()) { const k = S.away.id; return zonesOfGroup('s:' + k).length ? [['s:' + k, SIDES[k].name]] : []; }
   const out = [];
   ACTS.forEach((act, n) => { if (n <= S.act && zonesOfGroup('a:' + n).length) out.push(['a:' + n, act.name]); });
-  for (const [k, side] of Object.entries(SIDES)) if (!BOOKS[k] && side.open() && zonesOfGroup('s:' + k).length) out.push(['s:' + k, side.name + ' (side story)']);
+  for (const [k, side] of Object.entries(SIDES)) if (!_x200[k] && side.open() && zonesOfGroup('s:' + k).length) out.push(['s:' + k, side.name + ' (side story)']);
   return out;
 }
 function renderTabs() {
-  if (!S.reached[viewZone] || ZONES[viewZone].act > S.act || !zoneOpen(viewZone) || (inBook() ? bookOf(viewZone) !== S.away.id : !!bookOf(viewZone))) viewZone = L.zone;
+  if (!S.reached[viewZone] || ZONES[viewZone].act > S.act || !zoneOpen(viewZone) || (_x204() ? _x205(viewZone) !== S.away.id : !!_x205(viewZone))) viewZone = L.zone;
   const sig = JSON.stringify(S.reached) + viewZone + L.zone + S.act + (S.away ? S.away.id : '');
   if (sig === tabsSig) return;
   tabsSig = sig;
@@ -2376,7 +2375,7 @@ function renderTabs() {
     <span class="place"><b>${esc(ZONES[viewZone].name)}</b> <span class="when">${idx + 1} of ${zs.length}</span></span>
     <button class="btn nav-arrow" data-nav="1" aria-label="Next place"${zs.length < 2 ? ' disabled' : ''}>▶</button></div></div>`;
   $('tabs').hidden = inPrologue() || (groups.length < 2 && zs.length < 2);
-  $('zoneBlurb').textContent = inPrologue() ? 'Your burrow at the edge of Clover Meadow. It\'s late, and the Moon is pale and thin tonight.' : ZONES[viewZone].blurb + (isForks(viewZone) && isForks(L.zone) && 0 >= 15 ? ` Today: ${WEATHER_ICON[weather()]} ${weather()}.` : '');
+  $('zoneBlurb').textContent = inPrologue() ? 'Your burrow at the edge of Clover Meadow. It\'s late, and the Moon is pale and thin tonight.' : ZONES[viewZone].blurb + (_x182(viewZone) && _x182(L.zone) && 0 >= 15 ? ` Today: ${_x233[weather()]} ${weather()}.` : '');
   $('here').textContent = 'Bunny is in ' + ZONES[L.zone].name;
   $('actName').textContent = ACTS[S.act].name;
 }
@@ -2385,7 +2384,7 @@ function chips(a) {
 }
 
 const isHiddenAct = id => !!(S.hiddenActs && S.hiddenActs[id]);
-function visibleHere() { return ORDER.filter(id => (A[id].zone === viewZone || (!inBook() && A[id].anyZone && bookOf(A[id].zone) && A[id].zone !== viewZone)) && visible(A[id]) && (S.opts.showHidden || !isHiddenAct(id))); }
+function visibleHere() { return ORDER.filter(id => (A[id].zone === viewZone || (!_x204() && A[id].anyZone && _x205(A[id].zone) && A[id].zone !== viewZone)) && visible(A[id]) && (S.opts.showHidden || !isHiddenAct(id))); }
 const hiddenHere = () => ORDER.filter(id => A[id].zone === viewZone && visible(A[id]) && isHiddenAct(id)).length;
 
 const hiddenWithLore = () => Object.keys(S.hiddenActs || {}).filter(id => S.hiddenActs[id] && A[id] && visible(A[id]) && loreFor(A[id]).length > 0 && !loreComplete(A[id]));
@@ -2589,11 +2588,11 @@ function actExtra(a) {
     h += `<span>${k.length ? 'You remember ' + esc(k.join(', ')) : 'You have no idea which cup is which. Yet.'}</span>`;
   }
   if (a._x174) {
-    const k = CRY_GUESTS.map((g, i) => {
+    const k = _x218.map((g, i) => {
       const t = S._x174.tried[i], right = S._x174.ans[i];
-      if (t.includes(right)) return `${g}: ${CRY_KINDS[right]}`;
-      if (t.length >= 2) return `${g}: ${CRY_KINDS[right]}`;
-      return t.length ? `${g}: not ${t.map(x => CRY_KINDS[x]).join(' or ')}` : null;
+      if (t.includes(right)) return `${g}: ${_x219[right]}`;
+      if (t.length >= 2) return `${g}: ${_x219[right]}`;
+      return t.length ? `${g}: not ${t.map(x => _x219[x]).join(' or ')}` : null;
     }).filter(Boolean);
     h += `<span>${k.length ? 'You remember: ' + esc(k.join(' · ')) : 'You have no idea what makes a Ripple _x174. Yet.'}</span>`;
   }
@@ -2642,7 +2641,7 @@ function renderPlan() {
   $('plan').innerHTML = Q.map(e => {
     const a = A[e.id];
     const bwIc = canBear(a) && (e.bear || a.bearOnly) ? bwIcon(a) : '';
-    const bearBtn = canBear(a) ? `<button data-op="bear" aria-pressed="${!!(e.bear || a.bearOnly)}" aria-label="Do this with Bear" title="${bearLostNow() ? 'Bear isn\'t here' : a.bearOnly ? 'Bear required' : 'Do this with Bear'}"${bearLostNow() ? ' disabled' : ''}>🐻</button>` : '';
+    const bearBtn = canBear(a) ? `<button data-op="bear" aria-pressed="${!!(e.bear || a.bearOnly)}" aria-label="Do this with Bear" title="${_x231() ? 'Bear isn\'t here' : a.bearOnly ? 'Bear required' : 'Do this with Bear'}"${_x231() ? ' disabled' : ''}>🐻</button>` : '';
     return `<li class="step" data-uid="${e.uid}" title="Drag to move it in the plan">
       <span class="ico" aria-hidden="true">${a.icon}</span>
       <span class="nm"><span class="nmt">${esc(stepName(e, a))}</span> <span class="cnt" data-f="cnt"></span></span>
@@ -2794,7 +2793,7 @@ function renderStats() {
     $('bearStam').style.width = (L.bear ? (L.bearStam / max * 100) : 0) + '%';
     $('bearStamN').textContent = L.bear ? fmtDur(L.bearStam) + ' left' : 'asleep';
     $('bearJobRow').hidden = !S.flags.split; if ($('bearJob').value !== (S.bearJob || 'doors')) $('bearJob').value = S.bearJob || 'doors';
-    $('bearState').textContent = bearSplit() ? 'In the passenger cars' : bwAway() ? 'On an errand until dusk' : !L.bear ? 'Still asleep' : L.bearAsleep ? 'Napping' : L.bearStam <= 0 ? 'Worn out' : 'With you today';
+    $('bearState').textContent = _x230() ? 'In the passenger cars' : bwAway() ? 'On an errand until dusk' : !L.bear ? 'Still asleep' : L.bearAsleep ? 'Napping' : L.bearStam <= 0 ? 'Worn out' : 'With you today';
   }
 }
 const times = n => { n = n || 0; return n === 1 ? 'once' : n + ' times'; };
@@ -3010,7 +3009,7 @@ function keepsakes() {
   add(0, 'Korok seeds', `${nutSeeds()} found; Hazel weaves them into the biggest baskets`, nutSeeds());
   for (const sp of PHOTO_SPOTS) add(grp(sp.zone), (painted(sp.id) ? '🖼️ ' : '📸 ') + sp.name, sp.bonus + (painted(sp.id) ? ', twice over (painted)' : ''), has(sp.id));
   for (const o of FAR_DEFS) add(grp(o.zone), '✦ ' + o.name, FAR[o.key].text, farDone(o.id));
-  for (const [, key, nm, perk] of TROPHIES) add('burrow', '🏆 ' + nm, perk, trophy(key));
+  for (const [, key, nm, perk] of _x246) add('burrow', '🏆 ' + nm, perk, trophy(key));
   return K;
 }
 
@@ -3056,7 +3055,7 @@ function openKeepsakesNow() {
   const pct = x => `+${Math.round((x - 1) * 100)}%`;
   const totals = STAT_KEYS.map(s => `${STATS[s].name} ${pct(mult(s))}`).join(' · ');
   const talent = (P('owl') >= 50 ? 1.5 : 1) * (farDone('farOwlBooks') ? 1.15 : 1) * (trophy('cup') ? 1.05 : 1);
-  const day = `Every day: ${fmtDur(BASE_DAY + HEALED_DAY * moonHealed() + dawnBonus() + (S.flags._x50 ? 40 : 0) + shrineDay())} (it started at ${fmtDur(BASE_DAY)})`;
+  const day = `Every day: ${fmtDur(BASE_DAY + HEALED_DAY * moonHealed() + dawnBonus() + (S.flags._x50 ? 40 : 0) + _x240())} (it started at ${fmtDur(BASE_DAY)})`;
   const groups = [['moon', 'The Moon']];
   for (let n = S.act; n >= 0; n--) groups.push([n, `Day ${n + 1} · ${worldName(n)}`]);
   for (const [k, side] of Object.entries(SIDES)) if (side.open()) groups.push([k, side.name + ' (side story)']);
@@ -3080,7 +3079,7 @@ function openLoreBookNow() {
 }
 function updateHeader() {
   audioWatch();
-  $('shelfBtn').hidden = !shelfOpen();
+  $('shelfBtn').hidden = !_x194();
   const start = dayStart(), len = dayLen();
   $('clock').textContent = isFinite(len) ? fmtDur(len - L.time) : '';
   $('dayno').textContent = (inPrologue() ? 'The night before' : dayLabel()) + (!L.begun ? ' · ready to begin' : L.waiting ? ' · paused, plan finished' : '');
@@ -3110,14 +3109,14 @@ function render() {
   $('plan').classList.toggle('nopred', !U('predictor'));
   if (dirty.all) { applyPanels(); dirty.actions = dirty.plan = dirty.journal = dirty.signs = true; dirty.all = false; tabsSig = ''; }
   renderTabs();
-  $('addBear').hidden = !S.bear.unlocked; $('addBear').disabled = bearLostNow(); $('addBear').title = bearLostNow() ? 'Bear isn\'t here' : '';
+  $('addBear').hidden = !S.bear.unlocked; $('addBear').disabled = _x231(); $('addBear').title = _x231() ? 'Bear isn\'t here' : '';
   if (dirty.actions || actSig !== cardSig(cardOrder())) { renderActions(); dirty.actions = false; } else updateActions();
   if (dirty.plan) { renderPlan(); dirty.plan = false; } else updatePlan();
   const nowT = performance.now();
   $('predSum').hidden = !U('predictor');
   if (U('predictor') && (predDirty || nowT - predAt > 3000)) {
     prediction = predict(); predDirty = false; predAt = nowT;
-    const ps = predSummary(prediction).replace('🔮', '🔮 The seeing stone:') + weatherNote() + dewNote();
+    const ps = predSummary(prediction).replace('🔮', '🔮 The seeing stone:') + _x236() + _x238();
     if ($('predSum').textContent !== ps) $('predSum').textContent = ps;
     S.queue.forEach((e, i) => {
       const li = $('plan').querySelector(`[data-uid="${e.uid}"] [data-f="pred"]`);
@@ -3276,86 +3275,86 @@ function awayEnter(a) { S.away = a; dirty.all = true; }
 function awayShow(html) { const el = $('away'); el.innerHTML = html; el.hidden = false; const c = $('awayClose'); if (c) c.onclick = () => awayLeave(); }
 function awayLeave() {
   if (!S.away) return;
-  if (S.away.kind === '_x122') tandemLeaving();
+  if (S.away.kind === '_x122') _x189();
   S.away = null; $('away').hidden = true; $('away').innerHTML = '';
   dirty.all = true; saveLocal(); render();
 }
-const shelfOpen = () => false;
-function openShelf() {}
+const _x194 = () => false;
+function _x192() {}
 
-const BOOKS = {};
-const BOOK_DAY = 3 * 60 * GAME_MIN_PER_SEC;
+const _x200 = {};
+const _x201 = 3 * 60 * GAME_MIN_PER_SEC;
 
-const BOOK_TRIM = {};
-const inBook = () => !!(typeof S !== 'undefined' && S && S.away && S.away.kind === 'book');
-const bookOf = z => (ZONES[z] && ZONES[z].side && BOOKS[ZONES[z].side] ? ZONES[z].side : null);
-const bookDone = id => !!(BOOKS[id] && BOOKS[id].done());
-let bookStash = null;
-const bookDays = {};
+const _x199 = {};
+const _x204 = () => !!(typeof S !== 'undefined' && S && S.away && S.away.kind === 'book');
+const _x205 = z => (ZONES[z] && ZONES[z].side && _x200[ZONES[z].side] ? ZONES[z].side : null);
+const _x206 = id => !!(_x200[id] && _x200[id].done());
+let _x214 = null;
+const _x215 = {};
 
-const BOOK_INTRO = {};
-function openBook(id, fromIntro) {
-  const b = BOOKS[id];
+const _x197 = {};
+function _x202(id, fromIntro) {
+  const b = _x200[id];
   if (!b || S.away || !SIDES[id] || !SIDES[id].open() || inPrologue() || S.revisit) return;
   S.books = S.books || {};
   const bk = S.books[id] = S.books[id] || { queue: [], cal: null };
   if (!bk.cal) bk.cal = Object.fromEntries(SKILLS.map(([k]) => [k, skillN(k)]));
   const first = !bk.opens;
   bk.opens = (bk.opens || 0) + 1;
-  S.reached[bookStart(id)] = true;
-  bookStash = { L, view: viewZone };
+  S.reached[_x207(id)] = true;
+  _x214 = { L, view: viewZone };
   if (b.onOpen) b.onOpen();
   S.mainQueue = S.queue; S.queue = bk.queue;
   awayEnter({ kind: 'book', id }); sfx('page');
-  L = bookDays[id] || freshLoop(); delete bookDays[id];
+  L = _x215[id] || freshLoop(); delete _x215[id];
   viewZone = L.zone; tabsSig = ''; predDirty = true; noticeSig = null; setSpeed(0); dirty.all = true; saveLocal(); render();
-  for (const r of bookRoutes(id)) if (bookOf(A[r].to) === id && A[r].effect) A[r].effect();
+  for (const r of _x212(id)) if (_x205(A[r].to) === id && A[r].effect) A[r].effect();
   if (first && b.intro) b.intro();
-  else if (first && !fromIntro && BOOK_INTRO[id]) { markSeen(id + 'Page'); showModal(BOOK_INTRO[id][0], BOOK_INTRO[id][1](), [['Begin', null]]); }
-  const lines = bookOpeningLines(id);
+  else if (first && !fromIntro && _x197[id]) { markSeen(id + 'Page'); showModal(_x197[id][0], _x197[id][1](), [['Begin', null]]); }
+  const lines = _x213(id);
   if (lines.length) story('📖 ' + lines[(bk.opens - 1) % lines.length], 'story');
 }
-function leaveBook() {
-  if (!inBook()) return;
+function _x203() {
+  if (!_x204()) return;
   sfx('page');
   const id = S.away.id;
-  S.books[id].queue = S.queue; bookDays[id] = L;
+  S.books[id].queue = S.queue; _x215[id] = L;
   S.queue = S.mainQueue || []; delete S.mainQueue;
-  L = bookStash ? bookStash.L : freshLoop(); viewZone = bookStash ? bookStash.view : L.zone; bookStash = null;
+  L = _x214 ? _x214.L : freshLoop(); viewZone = _x214 ? _x214.view : L.zone; _x214 = null;
   S.away = null; tabsSig = ''; predDirty = true; noticeSig = null; dirty.all = true; setSpeed(0); saveLocal(); render();
 }
-const bookStart = id => BOOKS[id].start ?? ZONES.findIndex(z => z.side === id);
-function bookDawn(l) {
-  const id = S.away.id, b = BOOKS[id];
-  l.zone = bookStart(id); l.bear = true; l.bearStam = bearMax();
+const _x207 = id => _x200[id].start ?? ZONES.findIndex(z => z.side === id);
+function _x208(l) {
+  const id = S.away.id, b = _x200[id];
+  l.zone = _x207(id); l.bear = true; l.bearStam = bearMax();
   if (b.dawn) b.dawn(l);
 }
 
-const bookRoutes = id => ORDER.filter(r => { const a = A[r]; return a.travel && a.to != null && (bookOf(a.zone) === id) !== (bookOf(a.to) === id); });
-const bookOpeningLines = id => bookRoutes(id).flatMap(r => (ACTION_LORE[r] || []).map(([, t]) => t));
+const _x212 = id => ORDER.filter(r => { const a = A[r]; return a.travel && a.to != null && (_x205(a.zone) === id) !== (_x205(a.to) === id); });
+const _x213 = id => _x212(id).flatMap(r => (ACTION_LORE[r] || []).map(([, t]) => t));
 
-const bookLeft = a => !!(a.travel || (a.far && !farDone(a.id)) || a.photo || loreFor(a).some(r => !r.seen));
-function bookVisible(a) {
-  const bz = bookOf(a.zone);
-  if (inBook()) {
+const _x210 = a => !!(a.travel || (a.far && !farDone(a.id)) || a.photo || loreFor(a).some(r => !r.seen));
+function _x211(a) {
+  const bz = _x205(a.zone);
+  if (_x204()) {
     const id = S.away.id;
     if (bz !== id) return false;
-    if (a.travel && a.to != null && bookOf(a.to) !== id) return false;
-    return !bookDone(id) || bookLeft(a);
+    if (a.travel && a.to != null && _x205(a.to) !== id) return false;
+    return !_x206(id) || _x210(a);
   }
-  if (a.travel && a.to != null && bookOf(a.to)) return false;
-  return !bz || (!!a.anyZone && bookDone(bz));
+  if (a.travel && a.to != null && _x205(a.to)) return false;
+  return !bz || (!!a.anyZone && _x206(bz));
 }
-const BOOK_COVER = {};
+const _x196 = {};
 
-function shelfCard({ cover, title, line, state, label, done, attr, off }) {
+function _x193({ cover, title, line, state, label, done, attr, off }) {
   const inner = `<span class="sc-cover" aria-hidden="true">${cover}</span><span class="sc-text"><b>${esc(title)}</b><span class="sc-line">${esc(line)}</span><span class="sc-state${done ? ' done' : ''}">${state}</span></span>${label ? `<span class="sc-go${done ? '' : ' primary'}">${label}</span>` : ''}`;
   return `<li>${off ? `<div class="shelf-card off">${inner}</div>` : `<button class="shelf-card" ${attr}>${inner}</button>`}</li>`;
 }
-function bookShelfRows() { return []; }
+function _x195() { return []; }
 
 { const done = new Set();
-  for (const id of ORDER) { const a = A[id], b = bookOf(a.zone); if (a.track && b && !done.has(a.track) && TRACKS[a.track]) { done.add(a.track); TRACKS[a.track].k *= BOOK_TRIM[b] ?? 1; } } }
+  for (const id of ORDER) { const a = A[id], b = _x205(a.zone); if (a.track && b && !done.has(a.track) && TRACKS[a.track]) { done.add(a.track); TRACKS[a.track].k *= _x199[b] ?? 1; } } }
 
 const MUSIC = { acts: [{ name: 'The Hollow', url: '' }], books: {} };
 
@@ -3439,8 +3438,8 @@ function audioWatch() {
 }
 
 let tdSnd = null;
-function tdAudio(r) {
-  if (!r || r.done || !sfxOn()) { tdAudioStop(); return; }
+function _x190(r) {
+  if (!r || r.done || !sfxOn()) { _x191(); return; }
   if (!tdSnd) {
     const eng = AC.createOscillator(), ef = AC.createBiquadFilter(), eg = AC.createGain();
     eng.type = 'sawtooth'; eng.frequency.value = 55; ef.type = 'lowpass'; ef.frequency.value = 400; eg.gain.value = 0.05;
@@ -3454,16 +3453,16 @@ function tdAudio(r) {
   tdSnd.eng.frequency.setTargetAtTime(55 + 30 * Math.min(1, Math.abs(r.vx || 0) / 200) + (r.drift ? 12 : 0), t, 0.1);
   tdSnd.sg.gain.setTargetAtTime(r.drift ? 0.07 : 0, t, 0.05);
 }
-function tdAudioStop() { if (!tdSnd) return; try { tdSnd.eng.stop(); tdSnd.sq.stop(); } catch (e) {  } tdSnd = null; }
+function _x191() { if (!tdSnd) return; try { tdSnd.eng.stop(); tdSnd.sq.stop(); } catch (e) {  } tdSnd = null; }
 
 const MODES = { ionian: [0, 2, 4, 5, 7, 9, 11], lydian: [0, 2, 4, 6, 7, 9, 11], dorian: [0, 2, 3, 5, 7, 9, 10], mixolydian: [0, 2, 4, 5, 7, 9, 10], aeolian: [0, 2, 3, 5, 7, 8, 10], penta: [0, 2, 4, 7, 9], pentaMinor: [0, 3, 5, 7, 10] };
 const WORLD_MODE = ['lydian', 'mixolydian', 'dorian', 'ionian', 'mixolydian', 'ionian', 'lydian', 'aeolian', 'dorian', 'aeolian', 'mixolydian', 'lydian'];
-const BOOK_MODE = {};
-const worldKey = () => (typeof S === 'undefined' || !S ? null : inBook() ? 'b:' + S.away.id : inPrologue() ? 'a:0' : 'a:' + S.act);
+const _x198 = {};
+const worldKey = () => (typeof S === 'undefined' || !S ? null : _x204() ? 'b:' + S.away.id : inPrologue() ? 'a:0' : 'a:' + S.act);
 function melodyFor(key) {
   let h = 2166136261; for (const c of key) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
   const rnd = () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) ^ Math.imul(h ^ (h >>> 13), 3266489909)) >>> 0) / 4294967296;
-  const [kind, id] = key.split(':'), mode = MODES[kind === 'b' ? BOOK_MODE[id] || 'ionian' : WORLD_MODE[+id] || 'ionian'];
+  const [kind, id] = key.split(':'), mode = MODES[kind === 'b' ? _x198[id] || 'ionian' : WORLD_MODE[+id] || 'ionian'];
   const root = 60 + Math.floor(rnd() * 7) - 3, _x143 = [];
   let deg = 0;
   for (let i = 0; i < 16; i++) {
@@ -3491,7 +3490,7 @@ function musicTick() {
 }
 setInterval(musicTick, 500);
 
-const musicEntry = () => { if (typeof S === 'undefined' || !S || inPrologue()) return null; const e = inBook() ? MUSIC.books[S.away.id] : MUSIC.acts[S.act]; return e && e.url ? e : null; };
+const musicEntry = () => { if (typeof S === 'undefined' || !S || inPrologue()) return null; const e = _x204() ? MUSIC.books[S.away.id] : MUSIC.acts[S.act]; return e && e.url ? e : null; };
 function musicBtnShow() {
   const b = $('musicBtn'); if (!b) return;
   const e = musicEntry(); b.hidden = !e;
@@ -3591,8 +3590,8 @@ function intro() {
 let speed = 1;
 function setSpeed(v) {
   if (PRED) return;
-  if (inBook() && v > 1) v = 1;
-  speed = v; if (v && !inBook()) S.speed = v;
+  if (_x204() && v > 1) v = 1;
+  speed = v; if (v && !_x204()) S.speed = v;
   for (const b of $('speed').children) b.setAttribute('aria-pressed', String(+b.dataset.speed === v));
 }
 
@@ -3743,7 +3742,7 @@ $('burrow').addEventListener('click', ev => {
   if (add) { const box = add.closest('.candles'), v = k => box.querySelector(`[data-cpart="${k}"]`).value; addCandle({ c: v('c'), h: v('h'), l: v('l') }); return; }
   if (ev.target.matches && ev.target.matches('[data-paint-next]')) return;
   const w = ev.target.closest('[data-wear]');
-  if (w) { addToPlan('_x135' + w.dataset.wear, 1); toast('Added: Put On the ' + OUTFITS[w.dataset.wear].name); render(); return; }
+  if (w) { addToPlan('_x135' + w.dataset.wear, 1); toast('Added: Put On the ' + _x224[w.dataset.wear].name); render(); return; }
   const k = ev.target.closest('[data-candle-key]');
   if (k) { const [c, h, l] = k.dataset.candleKey.split('|'); addCandle({ c, h, l }); }
 });
@@ -3826,9 +3825,9 @@ $('usePlan').addEventListener('click', () => { applyPlanNow(); dismissNotice('pl
 $('midTabs').addEventListener('click', ev => { const b = ev.target.closest('[data-mid]'); if (!b) return; $('mid').dataset.show = b.dataset.mid; for (const x of $('midTabs').children) x.setAttribute('aria-selected', String(x === b)); });
 $('beginBtn2').addEventListener('click', beginDay);
 $('restart').addEventListener('click', () => { endDay('restart'); render(); });
-$('shelfBtn').addEventListener('click', openShelf);
-$('bookLeave').addEventListener('click', leaveBook);
-document.addEventListener('click', ev => { const t = ev.target.closest && ev.target.closest('[data-book]'); if (!t) return; $('modal').hidden = true; openBook(t.dataset.book); });
+$('shelfBtn').addEventListener('click', _x192);
+$('bookLeave').addEventListener('click', _x203);
+document.addEventListener('click', ev => { const t = ev.target.closest && ev.target.closest('[data-book]'); if (!t) return; $('modal').hidden = true; _x202(t.dataset.book); });
 $('clearPlan').addEventListener('click', () => {
   if (!S.queue.length) return;
   S.queue = []; planEdited();
@@ -3863,7 +3862,7 @@ function frame() {
   if (!running) S.bank = Math.min(maxBank(), S.bank + dt / 1000 * (L && L._x98 ? 1.5 : 1));
   else {
     let sp = speed;
-    if (inBook()) { sp = 1; S.bank = Math.min(maxBank(), S.bank + dt / 1000); }
+    if (_x204()) { sp = 1; S.bank = Math.min(maxBank(), S.bank + dt / 1000); }
     if (sp > 1 && S.bank <= 0) sp = 1;
     if (sp > 1) S.bank = Math.max(0, S.bank - (sp - 1) * dt / 1000 * (S.signs._x97 ? 0.75 : 1));
     step(dt / 1000 * GAME_MIN_PER_SEC * sp);
