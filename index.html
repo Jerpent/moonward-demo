@@ -374,7 +374,7 @@ textarea { width: 100%; min-height: 70px; font-family: var(--font-mono); font-si
         <button data-speed="8" aria-pressed="false">8×</button>
       </div>
       <button class="btn primary" id="beginBtn">▶ Begin the day</button>
-      <button class="btn" id="shelfBtn" hidden title="The shelf: the Moonlit Tandem and storybooks. The day waits while you're in one.">📚</button>
+      <button class="btn" id="shelfBtn" hidden>📚</button>
       <button class="btn" id="restart" title="Go to bed early: end today now. Bunny goes to sleep and wakes up at dawn."><span class="long">Go to bed early</span><span class="short">Bed early</span></button>
       <button class="btn menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" title="Menu">☰</button>
     </div>
@@ -400,7 +400,7 @@ textarea { width: 100%; min-height: 70px; font-family: var(--font-mono); font-si
   </div>
 </div>
 
-<div class="revisit gutter" id="bookBar" hidden><span id="bookBarText"></span> <button class="btn" id="bookLeave">Close the book</button></div>
+<div class="revisit gutter" id="bookBar" hidden><span id="bookBarText"></span> <button class="btn" id="bookLeave"></button></div>
 <div class="revisit gutter" id="revisitBar" hidden><span>🌙 Revisiting the night before · Leave whenever you like. Nothing here changes your real game, except the lore you find.</span><button class="btn" id="revisitLeave">Leave</button></div>
 <div class="notices gutter" id="notices" aria-live="polite"></div>
 
@@ -509,7 +509,7 @@ const BASE_DAY = 6 * 60;
 const HEALED_DAY = 120;
 const DAWN = 6 * 60;
 const MAX_BANK_BASE = 14 * 24 * 3600;
-const maxBank = () => MAX_BANK_BASE * (S && S.flags && S.flags._xfar ? 1.5 : 1) * (S && (S._x182 || []).includes('light') ? 2 : 1);
+const maxBank = () => MAX_BANK_BASE * (S && S.flags && S.flags._xfar ? 1.5 : 1) * (S && (S._x171 || []).includes('light') ? 2 : 1);
 const MOON_PIECES = 12;
 
 const STAT_KEYS = ['hop', 'sniff', 'charm', 'smarts', 'grit'];
@@ -522,9 +522,9 @@ const STATS = {
 };
 const BEAR_KEYS = ['strength', 'heart', 'bravery'];
 const BEAR_STATS = {
-  strength: { name: 'Strength', like: 'lifting', tip: 'Strength: lifting, carrying and climbing. Speeds up heavy steps' },
-  heart:    { name: 'Heart',    like: 'kindness', tip: 'Kindness and stamina: speeds up friendly steps and gives Bear more energy each day' },
-  bravery:  { name: 'Bravery',  like: 'courage', tip: 'Courage: facing scary things first. Speeds up brave steps' },
+  strength: { name: 'Strength', like: 'lifting', tip: 'Strength, like Athletics: lifting, carrying and climbing. Speeds up heavy steps' },
+  heart:    { name: 'Heart',    like: 'kindness', tip: "Heart, like a paladin's Lay on Hands: kindness and stamina. Speeds up friendly steps and gives Bear more energy each day" },
+  bravery:  { name: 'Bravery',  like: 'courage', tip: "Bravery, like a paladin's Aura of Courage: facing scary things first. Speeds up brave steps" },
 };
 
 const BEAR_TAGS = {
@@ -533,7 +533,7 @@ const BEAR_TAGS = {
   social: { mult: .9,  skill: 'heart',    note: 'A little faster with Bear: everyone likes Bear' },
   brave:  { mult: .85, skill: 'bravery',  note: 'A little faster with Bear: he goes first' },
   sneak:  { mult: 1.6, skill: 'heart',    note: 'Slower with Bear: he is not subtle' },
-  _x189:   { mult: 1,   skill: 'heart',    note: 'Good company: his way of it is a shared moment, not speed' },
+  _x177:   { mult: 1,   skill: 'heart',    note: 'Good company: his way of it is a shared moment, not speed' },
 };
 
 const MOON_PHASES = [
@@ -610,7 +610,7 @@ const GOODS = [
   'petals',
   'dust',
 ];
-const TOOLS = ['hamper', 'rope', 'lantern', '_x58', 'rose', 'stones', 'carrot', 'cocoatin', 'bubbles', 'bookspot', 'storybook'];
+const TOOLS = ['hamper', 'rope', 'lantern', '_x50', 'rose', 'stones', 'carrot', 'cocoatin', 'bubbles', 'bookspot', 'storybook'];
 const BASKET_TIERS = [12, 16, 20, 26];
 
 const PHOTO_SPOTS = [
@@ -626,7 +626,7 @@ const PHOTO_SPOTS = [
     known: () => P('hollow') >= 15, bonus: 'One more hive shares honey each day' },
 ];
 
-const spotMark = sp => (S.signs._x32 ? (sp.left[0] === 'less' ? Math.min(1, sp.left[1] * 1.25) : sp.left[1] * 0.8) : sp.left[1]) * dayLen();
+const spotMark = sp => (S.signs._x25 ? (sp.left[0] === 'less' ? Math.min(1, sp.left[1] * 1.25) : sp.left[1] * 0.8) : sp.left[1]) * dayLen();
 const spotWindowText = sp => (sp.left ? `${sp.left[0] === 'more' ? 'More' : 'Less'} than ${fmtDur(spotMark(sp))} left before moonrise` : '');
 const spotWhen = sp => { const w = spotWindowText(sp); return sp.needText ? sp.needText + (w ? '; ' + w.toLowerCase() : '') : w; };
 for (const sp of PHOTO_SPOTS) {
@@ -638,7 +638,7 @@ for (const sp of PHOTO_SPOTS) {
     const left = dayLen() - L.time, k = sp.left[0], x = spotMark(sp);
     return (k === 'more' ? left > x : left <= x) ? null : 'Only with ' + spotWindowText(sp).toLowerCase();
   };
-  if (sp.left && sp.left[0] === 'less') sp._x124 = () => (!sp.onlyIf || sp.onlyIf() ? dayLen() - spotMark(sp) : null);
+  if (sp.left && sp.left[0] === 'less') sp._x114 = () => (!sp.onlyIf || sp.onlyIf() ? dayLen() - spotMark(sp) : null);
 }
 
 const FILM_TEXT = {
@@ -652,7 +652,7 @@ const FILM_TEXT = {
 const BRIAR_REVEAL = 75;
 const auroraKnown = () => P('briar') >= BRIAR_REVEAL;
 const briarName = () => (auroraKnown() ? 'Aurora' : 'Briar Rose');
-const auroraText = (text, afterReveal) => (text = typeof text === 'function' ? text() : text, text = String(text).includes('{_x211}') ? String(text).replace(/\{frog\}/g, frogName()) : text, afterReveal && auroraKnown() ? String(text).replace(/Briar Rose/g, 'Aurora') : text);
+const auroraText = (text, afterReveal) => (text = typeof text === 'function' ? text() : text, text = String(text).includes('{_x199}') ? String(text).replace(/\{frog\}/g, frogName()) : text, afterReveal && auroraKnown() ? String(text).replace(/Briar Rose/g, 'Aurora') : text);
 
 const lightOn = () => P('fairies') >= 25 && !!S.flags.film;
 const has = id => !!(S.album && S.album[id]);
@@ -764,11 +764,11 @@ const PROJECT_BEATS = {
   ],
 };
 
-const florinOn = () => !!S.flags._x205 && !S.flags._x149;
+const florinOn = () => !!S.flags._x193 && !S.flags._x138;
 const MOON_HINTS = [
   [() => S.act === 0 && S.loop <= 2, '...little one... can you hear me? ...a piece of me fell into the woods... your dog went after it... look for her trail...'],
   [() => S.act === 0 && P('meadow') < 6, 'Ask around the meadow first. Someone here saw which way she went.'],
-  [() => P('fairies') >= 25 && !S.flags.film && (P('fairies') >= 40 || (S.flags._x115 != null && S.loop - S.flags._x115 >= 5)), FILM_TEXT.hint],
+  [() => P('fairies') >= 25 && !S.flags.film && (P('fairies') >= 40 || (S.flags._x105 != null && S.loop - S.flags._x105 >= 5)), FILM_TEXT.hint],
   [() => lightOn() && !Object.keys(S.album || {}).length, 'Catch the light where it is prettiest. Some places only shine at certain times. Watch the light.'],
   [() => S.act === 0 && P('tortoise') > 0 && P('tortoise') < 10, 'Grandpa Tortoise knows a way across the brook. He is only slow to say it.'],
   [() => S.act === 0 && P('tortoise') >= 10 && !S.reached[1], 'The brook is shallow by the willow. Cross it, little one.'],
@@ -793,8 +793,8 @@ function freshSave() {
     seen: {}, reached: { 0: true }, flags: { held: false }, signs: {},
     mastery: {}, proj: {},
     bear: { unlocked: false, skill: blank(BEAR_KEYS), knack: {} },
-    _x207: { ans: [0, 1, 2].map(() => (Math.random() < .5 ? 'left' : 'right')), known: [null, null, null] },
-    _x214: { ans: [0, 1].map(() => ['sweet', 'sad', 'true'][Math.floor(Math.random() * 3)]).concat(['true']), tried: [[], [], []] },
+    _x195: { ans: [0, 1, 2].map(() => (Math.random() < .5 ? 'left' : 'right')), known: [null, null, null] },
+    _x202: { ans: [0, 1].map(() => ['sweet', 'sad', 'true'][Math.floor(Math.random() * 3)]).concat(['true']), tried: [[], [], []] },
     queue: [],
     journal: [], speed: 1, wins: 0, savedAt: 0, lastSeen: Date.now(), bank: 0, introSeen: false,
     lastHint: '', lastHintLoop: 0, moonPieces: 0, unlocked: {}, album: {}, basketTier: 0, tut: 0, notices: [], noticeSeq: 1,
@@ -817,7 +817,7 @@ function normalize(s) {
   out.album = Object.assign({}, out.album);
   if (Object.keys(out.album).length) out.flags = Object.assign({}, out.flags, { film: true });
   out.ui = Object.assign({ panels: {}, groups: {}, planOpts: false }, out.ui);
-  out._x67 = Array.isArray(out._x67) ? out._x67 : [];
+  out._x56 = Array.isArray(out._x56) ? out._x56 : [];
   out.skills = Object.assign({}, out.skills);
   out.bearDone = Object.assign({}, out.bearDone);
   out.stickers = Object.assign({}, out.stickers);
@@ -838,11 +838,11 @@ function normalize(s) {
   out.bear = Object.assign(f.bear, out.bear);
   out.bear.skill = Object.assign(blank(BEAR_KEYS), out.bear.skill);
   out.bear.knack = Object.assign({}, out.bear.knack);
-  if (!out._x207 || !Array.isArray(out._x207.ans)) out._x207 = f._x207;
-  if (!out._x214 || !Array.isArray(out._x214.ans) || !Array.isArray(out._x214.tried)) out._x214 = f._x214;
+  if (!out._x195 || !Array.isArray(out._x195.ans)) out._x195 = f._x195;
+  if (!out._x202 || !Array.isArray(out._x202.ans) || !Array.isArray(out._x202.tried)) out._x202 = f._x202;
   if ((s && s.v || 0) < 3 && s) {
     if (out.act >= 1) out.reached[14] = true;
-    if (out.flags._x205) out.flags._x149 = true;
+    if (out.flags._x193) out.flags._x138 = true;
     out.v = 3;
   }
   out.queue = (out.queue || []).filter(e => e && A[e.id] && e.n >= 0);
@@ -852,22 +852,22 @@ function normalize(s) {
 const snapPlan = () => (S.queue || []).map(e => Object.assign({}, e, e.recipe ? { recipe: Object.assign({}, e.recipe) } : {}));
 function freshLoop() {
   const l = {
-    time: 0, zone: 0, _x177: 0,
+    time: 0, zone: 0, _x165: 0,
     stat: blank(STAT_KEYS),
     inv: blank(Object.keys(ITEMS)),
-    used: {}, good: {}, nyla: !!(typeof S !== 'undefined' && S && S.flags && (S.flags._x179 || S.flags._xfar || (S._x182 || []).includes('protect'))), jar: false,  buffs: {}, fellow: {}, fed: false, lantern: false, begun: false, waiting: false,
+    used: {}, good: {}, nyla: !!(typeof S !== 'undefined' && S && S.flags && (S.flags._x167 || S.flags._xfar || (S._x171 || []).includes('protect'))), jar: false,  buffs: {}, fellow: {}, fed: false, lantern: false, begun: false, waiting: false,
     bear: false, bearStam: 0, bearAsleep: false, knacked: {},
-    witsRound: 0, _x193: false, sand: false, _x143: false, _x142: false, inside: false,
-    cryRound: 0, cryWon: false, wave: false, pass: false, candle: null, milk: 0, _x161: false, link: false, outfit: null,
+    witsRound: 0, _x181: false, sand: false, _x133: false, _x132: false, inside: false,
+    cryRound: 0, cryWon: false, wave: false, pass: false, candle: null, milk: 0, _x149: false, link: false, outfit: null,
     qi: 0, curUid: null, done: {}, skipped: {}, prog: 0, started: false, withBear: false,
     endNow: null,
     today: snapPlan(),
     trackAtDawn: Object.assign({}, S.track),
   };
-  if (S.flags._xfar) l.inv._x61 = 1;
+  if (S.flags._xfar) l.inv._x53 = 1;
   if (inBook()) bookDawn(l);
-  if (S.flags._x149) l.inv.pill = 1;
-  if (typeof S !== 'undefined' && S && (S._x182 || []).includes('wake') && S.bear && S.bear.unlocked) { l.bear = true; l.bearStam = bearMax(); }
+  if (S.flags._x138) l.inv.pill = 1;
+  if (typeof S !== 'undefined' && S && (S._x171 || []).includes('wake') && S.bear && S.bear.unlocked) { l.bear = true; l.bearStam = bearMax(); }
   return l;
 }
 
@@ -881,37 +881,37 @@ const pctOfExp = (exp, k) => Math.min(100, (-9 + Math.sqrt(81 + 4 * exp / k)) / 
 const pctRaw = id => pctOfExp(S.track[id], TRACKS[id].k);
 const P = id => Math.floor(id === 'burrow' && S.prologueTrack ? Math.max(pctRaw(id), pctOfExp(S.prologueTrack, TRACKS.burrow.k)) : pctRaw(id));
 
-const moonIdx = () => (inBook() && S.away.id === '_x157' ? 4 : inBook() && S.away.id === '_x213' ? 0 : (S.loop - 1 + (inBook() ? S.books[S.away.id].day || 0 : 0)) % 8);
+const moonIdx = () => (inBook() && S.away.id === '_x145' ? 4 : inBook() && S.away.id === '_x201' ? 0 : (S.loop - 1 + (inBook() ? S.books[S.away.id].day || 0 : 0)) % 8);
 const moonLight = () => (1 - Math.cos(2 * Math.PI * moonIdx() / 8)) / 2;
 const moonHealed = () => S.moonPieces || 0;
 
-const moonShine = () => Math.max(0, moonHealed() - (S.flags && S.flags._x206 && !S.flags._x178 ? 0.7 : 0)) / MOON_PIECES;
-const moonPower = () => (S.signs.cancer ? 2 : 1) * (P('briar') >= 80 ? 1.5 : 1) * (1 + 0.1 * moonHealed()) * (1 + 0.05 * ph('_x112'));
+const moonShine = () => Math.max(0, moonHealed() - (S.flags && S.flags._x194 && !S.flags._x166 ? 0.7 : 0)) / MOON_PIECES;
+const moonPower = () => (S.signs.cancer ? 2 : 1) * (P('briar') >= 80 ? 1.5 : 1) * (1 + 0.1 * moonHealed()) * (1 + 0.05 * ph('_x102'));
 const moonTalent = () => 1 + 0.3 * moonLight() * moonPower() * candleMoon();
 
 const dawnBonus = () => (P('tortoise') >= 100 ? 30 : 0);
 
 const newMoonNight = () => S.bear.unlocked && moonIdx() === 0;
 const driftLvl = () => skillLvl('drifting');
-const driftBonus = () => Math.min(0.3, driftLvl() * (farDone('_x19') ? 0.075 : 0.05));
+const driftBonus = () => Math.min(0.3, driftLvl() * (farDone('_x16') ? 0.075 : 0.05));
 const trophy = t => !!S.drift.trophies[t];
 const PROLOGUE_START = 20 * 60, PROLOGUE_LEN = Infinity;
 const dayStart = () => (inPrologue() ? PROLOGUE_START : DAWN - dawnBonus());
-const dayLen = () => inPrologue() ? PROLOGUE_LEN : inBook() ? BOOK_DAY : BASE_DAY + HEALED_DAY * moonHealed() + (S.flags && S.flags._xfar ? 20 : 0) + (S.flags && S.flags._xfar && moonIdx() === 4 ? 20 : 0) + dawnBonus() + (S.flags._x63 ? 40 : 0) + shrineDay() + L._x177;
+const dayLen = () => inPrologue() ? PROLOGUE_LEN : inBook() ? BOOK_DAY : BASE_DAY + HEALED_DAY * moonHealed() + (S.flags && S.flags._xfar ? 20 : 0) + (S.flags && S.flags._xfar && moonIdx() === 4 ? 20 : 0) + dawnBonus() + (S.flags._x55 ? 40 : 0) + shrineDay() + L._x165;
 
 const shrinesSolved = () => ((S.shrines || {}).plateau || 0) + ((S.shrines || {}).old || 0);
 const shrineDay = () => 6 * Math.floor(shrinesSolved() / 4);
-const talentRate = () => (farDone('_x93') ? 1.1 : 1) * (1 + 0.05 * ph('_x113')) * 0.15 * candleTalent() * (trophy('cup') ? 1.05 : 1) * (farDone('farOwlBooks') ? 1.15 : 1) * (P('owl') >= 50 ? 1.5 : 1) * (L.jar ? 2 : 1) * moonTalent();
-const fairyMult = s => (FAIRIES.some(([at, fs]) => fs === s && P('fairies') >= at) ? (farDone('_x10') ? 1.35 : 1.25) : 1);
+const talentRate = () => (farDone('_x82') ? 1.1 : 1) * (1 + 0.05 * ph('_x103')) * 0.15 * candleTalent() * (trophy('cup') ? 1.05 : 1) * (farDone('farOwlBooks') ? 1.15 : 1) * (P('owl') >= 50 ? 1.5 : 1) * (L.jar ? 2 : 1) * moonTalent();
+const fairyMult = s => (FAIRIES.some(([at, fs]) => fs === s && P('fairies') >= at) ? (farDone('_x9') ? 1.35 : 1.25) : 1);
 const signMult = s => Object.entries(SIGNS).reduce((m, [id, g]) => m * (S.signs[id] && g.stat === s ? 1.15 : 1), 1) * 1;
-const pb = () => (farDone('_x69') ? 1.15 : 1.1) + (S.album && S.album._x80 ? 0.05 : 0) + (farDone('_x138') && moonIdx() === 4 ? 0.05 : 0) + (S.album && S.album._x76 ? 0.05 : 0) + (farDone('_x140') ? 0.05 : 0);
+const pb = () => (farDone('_x58') ? 1.15 : 1.1) + (S.album && S.album._x69 ? 0.05 : 0) + (farDone('_x128') && moonIdx() === 4 ? 0.05 : 0) + (S.album && S.album._x65 ? 0.05 : 0) + (farDone('_x130') ? 0.05 : 0);
 const memoriesFound = () => PHOTO_SPOTS.filter(sp => sp.memory && has(sp.id)).length;
-const photoMult = s => (s === 'grit' ? phm('_x50') : 1) * (s === 'smarts' ? phm('_x52') : 1) * (s === 'sniff' ? phm('_x111') : 1) * (s === 'grit' ? phm('_x18') : 1) * (s === 'hop' ? phm('_x53') * phm('_x73') : 1) * (s === 'charm' ? phm('_x114') * phm('_x81') : 1) * (s === 'sniff' ? phm('_x30') : 1) * (s === 'hop' ? phm('_x15') : 1) * (s === 'charm' ? phm('_x29') : 1) * (s === 'grit' ? phm('_x71') : 1) * (s === 'sniff' ? phm('nylaZoom') : 1) * (s === 'charm' ? phm('_x48') : 1) * (s === 'charm' ? phm('_x70') : 1) * (s === 'grit' ? phm('_x125') : 1);
+const photoMult = s => (s === 'grit' ? phm('_x42') : 1) * (s === 'smarts' ? phm('_x44') : 1) * (s === 'sniff' ? phm('_x101') : 1) * (s === 'grit' ? phm('_x15') : 1) * (s === 'hop' ? phm('_x45') * phm('_x62') : 1) * (s === 'charm' ? phm('_x104') * phm('_x70') : 1) * (s === 'sniff' ? phm('_x23') : 1) * (s === 'hop' ? phm('_x12') : 1) * (s === 'charm' ? phm('_x22') : 1) * (s === 'grit' ? phm('_x60') : 1) * (s === 'sniff' ? phm('nylaZoom') : 1) * (s === 'charm' ? phm('_x40') : 1) * (s === 'charm' ? phm('_x59') : 1) * (s === 'grit' ? phm('_x115') : 1);
 
 const buff = n => !!(L.buffs && L.buffs[n] > L.time);
 const fellow = n => !!(L.fellow && L.fellow[n]);
 const fellowMax = () => (0 >= 100 ? 3 : 2);
-const buffMult = s => (s === 'hop' ? (trophy('silver') ? 1.05 : 1) * (trophy('gold') ? 1.05 : 1) : 1) * (buff('_x84') ? 1.25 : 1) * (s === 'grit' && buff('_x42') ? 1.5 : 1) * (s === 'sniff' && fellow('_x185') ? 1.5 : 1) * farMult(s);
+const buffMult = s => (s === 'hop' ? (trophy('silver') ? 1.05 : 1) * (trophy('gold') ? 1.05 : 1) : 1) * (buff('_x73') ? 1.25 : 1) * (s === 'grit' && buff('_x35') ? 1.5 : 1) * (s === 'sniff' && fellow('_x173') ? 1.5 : 1) * farMult(s);
 const expMult = s => focusMult(s) * buffMult(s) * candleMult(s) * (1 + 0.1 * lvl(S.talent[s])) * (L.nyla && s === 'sniff' ? 2 : 1) * fairyMult(s) * signMult(s) * photoMult(s);
 const wl = a => Object.entries(a.stats).reduce((t, [s, w]) => t + w * lvl(L.stat[s]), 0);
 const mLvl = id => Math.floor(Math.sqrt(S.mastery[id] || 0));
@@ -932,11 +932,11 @@ const bookCal = a => { const sd = ZONES[a.zone].side, bk = sd && BOOKS[sd] && S.
 const progOf = a => (a.pro ? 1 : progX(skillN(skillFor(a))) / progX(a.timeGate ? a.timeGate[1] : bookCal(a) ?? calLvl(actOf(a))));
 const MIN_COST = 0.1;
 const paceKind = a => (a.train ? 'r' : a.travel ? 't' : a.project ? 'p' : a.track ? 'x' : a.limited ? 'g' : 's');
-const paced = a => !(a.pro || a.photo || a._x124);
+const paced = a => !(a.pro || a.photo || a._x114);
 function paceBase(a) {
   const b = baseCost(a);
   if (!paced(a) || typeof b !== 'number') return b;
-  if (a.timeGate) return Math.max(b * 3, 0.6 * (BASE_DAY + HEALED_DAY * actOf(a)));
+  if (a.timeGate) return Math.max(b * 3, 0.6 * (bookOf(a.zone) ? BOOK_DAY : BASE_DAY + HEALED_DAY * actOf(a)));
   const k = paceKind(a), [m, min] = PACE[k];
   return Math.max(min * GAME_MIN_PER_SEC, b * m) * (k === 'x' && !ZONES[a.zone].side ? BAR_CUT[actOf(a)] || 1 : 1);
 }
@@ -946,17 +946,17 @@ const actNow = () => { let n = 0; while (n < 12 && S.flags['act' + (n + 1)]) n++
 const behind = a => (ZONES[a.zone].side ? 0 : Math.max(0, actNow() - actOf(a)));
 const softSpeed = x => (x <= 4 ? x : 4 * Math.sqrt(x / 4));
 const bearLvl = k => lvl(S.bear.skill[k] * 0.4);
-const bearMax = () => (30 * ph('_x104')) + (30 * ph('_x72')) + (30 * ph('_x108')) + (farDone('_x3') && moonIdx() === 0 ? 30 : 0) + (30 * ph('_x110')) + (30 * ph('_x79')) + (farDone('_x94') ? 30 : 0) + (farDone('_x11') ? 30 : 0) + (30 * ph('_x17')) + (farDone('_x91') ? 60 : 0) + (farDone('_x118') ? 30 : 0) + (30 * ph('_x129')) + 240 + 25 * bearLvl('heart') + (30 * ph('_x82')) + (30 * ph('_x102')) + (30 * ph('_x31')) + (trophy('bronze') ? 15 : 0);
+const bearMax = () => (30 * ph('_x94')) + (30 * ph('_x61')) + (30 * ph('_x98')) + (farDone('_x2') && moonIdx() === 0 ? 30 : 0) + (30 * ph('_x100')) + (30 * ph('_x68')) + (farDone('_x83') ? 30 : 0) + (farDone('_x10') ? 30 : 0) + (30 * ph('_x14')) + (farDone('_x80') ? 60 : 0) + (farDone('_x108') ? 30 : 0) + (30 * ph('_x119')) + 240 + 25 * bearLvl('heart') + (30 * ph('_x71')) + (30 * ph('_x92')) + (30 * ph('_x24')) + (trophy('bronze') ? 15 : 0);
 const knack = id => S.bear.knack[id] || 0;
 function bearMult(a) {
-  const t = BEAR_TAGS[a.bear && a.bear.tag || '_x189'];
+  const t = BEAR_TAGS[a.bear && a.bear.tag || '_x177'];
   const skillBoost = t.mult < 1 ? 1 + bearLvl(t.skill) / 30 : 1;
   if (t === BEAR_TAGS.sneak && L.bwNoSneak && L.bwNoSneak[a.id]) return 1;
   return t.mult / skillBoost * (BW_TAGS.has(a.bear && a.bear.tag) ? 1 : 1 - 0.08 * knack(a.id));
 }
 
-const BW_TAGS = new Set(['heavy', 'social', 'brave', '_x189', 'sneak', 'drive']);
-const bwOf = a => (a && (BEAR_WAYS[a.id] || (/^door_/.test(a.id) ? BEAR_WAYS._x169 : null))) || null;
+const BW_TAGS = new Set(['heavy', 'social', 'brave', '_x177', 'sneak', 'drive']);
+const bwOf = a => (a && (BEAR_WAYS[a.id] || (/^door_/.test(a.id) ? BEAR_WAYS._x157 : null))) || null;
 const BW_CACHE = {};
 function bwOps(a) {
   const w = bwOf(a), k = knack(a.id);
@@ -1017,10 +1017,10 @@ function bwApply(a, ops) {
     else if (op === 'errand' || op === 'errandBar') { if (!L.bwErrand && !bearNeededLater(a)) L.bwErrand = { id: a.id, at: Math.max(L.time, dayLen() * 0.75), give: op === 'errand' ? [x, y] : null, bar: op === 'errandBar' ? [x, y] : null }; }
     else if (op === 'freePiece') { L.bwPiece = L.bwPiece || {}; if (!L.bwPiece[x]) { L.bwPiece[x] = true; projAdd(x, 1); } }
     else if (op === 'reveal') bwScout(a);
-    else if (op === 'talent') { const s = x === '_x188' ? OATH_TRAIT[(S._x182 || []).slice(-1)[0]] || mainTrait(a) : x; S.talent[s] = (S.talent[s] || 0) + 2 * (a.stats[s] || 0.5) * cost(a, true) * expMult(s) * talentRate() * 0.5; }
+    else if (op === 'talent') { const s = x === '_x176' ? OATH_TRAIT[(S._x171 || []).slice(-1)[0]] || mainTrait(a) : x; S.talent[s] = (S.talent[s] || 0) + 2 * (a.stats[s] || 0.5) * cost(a, true) * expMult(s) * talentRate() * 0.5; }
     else if (op === 'noSneak') (L.bwNoSneak = L.bwNoSneak || {})[x] = true;
     else if (op === 'nextTo') { if (a.to != null) (L.bwNext = L.bwNext || {})['z' + a.to] = x; }
-    else if (op === 'tideStop') { if (lowTide()) bwGive('_x98', 1); else (L.bwNext = L.bwNext || {}).z106 = 20; }
+    else if (op === 'tideStop') { if (lowTide()) bwGive('_x87', 1); else (L.bwNext = L.bwNext || {}).z106 = 20; }
     else if (op === 'growRow') { if (!L.bwGrew) { const r = farm().rows.find(r => !r.ripe); if (r) { L.bwGrew = true; r.stage++; if (r.stage >= CROPS[r.crop].days) r.ripe = true; } } }
     else if (op === 'sticker') { S.bwFlags = S.bwFlags || {}; S.bwFlags[x] = true; }
     else if (op === 'memory') {
@@ -1040,25 +1040,25 @@ function cost(a, withBear) {
   if (a.travel && L.nyla) c *= 0.5;
   c *= candleCost(a);
   if (a.travel && L.inv.dust > 0) c *= 0.4;
-  if (a.zone === 11 && fellow('_x160')) c *= 0.6;
-  if (a._x100) c *= a._x100();
+  if (a.zone === 11 && fellow('_x148')) c *= 0.6;
+  if (a._x89) c *= a._x89();
   if (a.zone === 45 && !a.travel) c *= L.bwFogFree ? 1 : fogMult();
-  if (a.id === '_x92' && L.bw_race) c *= 0.8;
+  if (a.id === '_x81' && L.bw_race) c *= 0.8;
   c *= weatherCost(a) * focusCost(a);
   if (a.drives) c *= 1 - driftBonus();
   c *= outfitCost(a);
   if (a.downhill && glideOn()) c *= 0.3;
-  if (/^gate\d$/.test(a.id) && farDone('_x36')) c *= 0.5;
-  if (withBear) c *= bearMult(a) * (farDone('_x87') && a.bear && a.bear.tag === 'brave' ? 0.85 : 1);
-  if (a.travel && actOf(a) === 4 && a.zone !== 0 && farDone('_x88')) c *= 0.5;
-  if (withBear && a.travel) c *= (farDone('_x12') ? 0.9 : 1) / phm('_x127');
+  if (/^gate\d$/.test(a.id) && farDone('_x29')) c *= 0.5;
+  if (withBear) c *= bearMult(a) * (farDone('_x76') && a.bear && a.bear.tag === 'brave' ? 0.85 : 1);
+  if (a.travel && actOf(a) === 4 && a.zone !== 0 && farDone('_x77')) c *= 0.5;
+  if (withBear && a.travel) c *= (farDone('_x11') ? 0.9 : 1) / phm('_x117');
   c *= groupMult(a);
-  if (a.train && farDone('_x4')) c *= 0.9;
+  if (a.train && farDone('_x3')) c *= 0.9;
   if (a.travel && L.shoutReady) return MIN_COST;
   if (L.bwFree && L.bwFree[a.id] && S.mastery[a.id] > 0) return MIN_COST;
   const back = behind(a), x = traitX(wl(a)) * masteryX(mLvl(a.id)) / c;
   const first = !a.pro && !(S.mastery[a.id] > 0) ? GAME_MIN_PER_SEC : MIN_COST;
-  const o = withBear && a.travel ? bwOps(a) : null, route = bwHas(o, '_x86') ? 0.5 : bwHas(o, 'scenic') ? 1.2 : 1;
+  const o = withBear && a.travel ? bwOps(a) : null, route = bwHas(o, '_x75') ? 0.5 : bwHas(o, 'scenic') ? 1.2 : 1;
   return Math.max(first, route * paceBase(a) / progOf(a) / (back ? x : softSpeed(x)));
 }
 
@@ -1067,6 +1067,8 @@ const def = a => { A[a.id] = a; ORDER.push(a.id); };
 
 const SKILLS = [["balance","Balance","the bath, the stepping stones, the brook, the log bridge"],["foraging","Foraging","berries, moonpetals, honey, glowcaps"],["reading","Reading","Owl's books, reading by the window"],["storytelling","Storytelling","Grandpa Tortoise, the hummingbirds"],["crafting","Crafting","Hazel's baskets, pupcakes, the footbridge"],["creatures","Creature friends","Nyla"],["moonmagic","Moon magic","moon water, spell jars"],["photography","Photography","catching the light, filling the film cartridge"]];
 const SKILL_NAME = Object.fromEntries(SKILLS.map(([k, n]) => [k, n]));
+
+const SKILL_TWIN = { balance: 'Acrobatics', foraging: 'Survival', reading: 'Arcana and History', storytelling: 'Persuasion', crafting: "artisan's tools", riddles: 'Investigation', swordplay: 'a finesse weapon', creatures: 'Animal Handling', moonmagic: "a druid's spellcasting", aim: 'a ranged attack', painting: "painter's supplies", photography: 'the Observant feat', science: "alchemist's supplies", music: 'Performance', drifting: 'vehicles (land)' };
 const SKILL_GROWS = Object.fromEntries(SKILLS.map(([k, , g]) => [k, g]));
 const SKILL_OF = {
   "bath": "balance",
@@ -1109,14 +1111,15 @@ function gainSkill(a, units) {
   const k = skillOf(a); if (!k) return;
   S.skills = S.skills || {};
   const before = skillLvl(k);
-  S.skills[k] = (S.skills[k] || 0) + units / 6 * (a.train ? 0.5 : 1) * (k === 'music' ? phm('_x78') : 1) * (k === 'moonmagic' ? phm('_x77') : 1) * (k === 'creatures' ? phm('_x109') : 1) * (k === 'painting' ? phm('_x107') : 1) * (k === 'photography' ? phm('_x16') : 1) * (k === 'creatures' ? phm('_x106') : 1) * (k === 'reading' ? phm('_x75') : 1) * (k === 'moonmagic' ? phm('_x105') : 1) * (k === 'painting' ? phm('_x49') : 1) * (k === 'aim' && farDone('_x2') ? 1.1 : 1) * bookSkillMult(k) * (L && L.bwSkill === k ? 1.1 : 1);
+  S.skills[k] = (S.skills[k] || 0) + units / 6 * (a.train ? 0.5 : 1) * (k === 'music' ? phm('_x67') : 1) * (k === 'moonmagic' ? phm('_x66') : 1) * (k === 'creatures' ? phm('_x99') : 1) * (k === 'painting' ? phm('_x97') : 1) * (k === 'photography' ? phm('_x13') : 1) * (k === 'creatures' ? phm('_x96') : 1) * (k === 'reading' ? phm('_x64') : 1) * (k === 'moonmagic' ? phm('_x95') : 1) * (k === 'painting' ? phm('_x41') : 1) * (k === 'aim' && farDone('_x1') ? 1.1 : 1) * bookSkillMult(k) * (L && L.bwSkill === k ? 1.1 : 1);
   const after = skillLvl(k);
   dirty.stats = true;
   if (!S.flags.skillsIntro) {
     S.flags.skillsIntro = true;
     story("Climbing out of the bath without slipping, you feel steadier than before. That's Balance, your first <b>skill</b>. Hop, Sniff, Charm, Smarts and Grit are your <b>traits</b>: they're how quick you are today. Skills are what you've learned, and what you learn, you keep.", 'big');
   }
-  if (after > before) story('🎓 ' + (SKILL_GATE_LINES[k + '|' + after] || `Your ${SKILL_NAME[k]} is ${after} now.`), 'loop');
+  if (after > before) story('🎓 ' + (SKILL_GATE_LINES[k + '|' + after] || `Your ${SKILL_NAME[k]} is ${after} now.`) + (after >= 12 && !S.flags._x90 ? ' Max level. Roll for initiative.' : ''), after >= 12 && !S.flags._x90 ? 'big' : 'loop');
+  if (after >= 12) S.flags._x90 = true;
 }
 
 function migrateSkills() {
@@ -1136,7 +1139,7 @@ const carried = () => Object.entries(L.inv).reduce((t, [k, v]) => t + (NOT_CARRI
 
 const FILLS_BASKET = new Set('hedgehog bake driftwood reeds'.split(' '));
 const weaveNeed = () => 16 * ((S.basketTier || 0) + 1);
-const capacity = () => BASKET_TIERS[Math.min(BASKET_TIERS.length - 1, S.basketTier || 0)] + (S.signs._x155 ? 4 : 0) + (S.flags && S.flags._xfar ? 4 : 0);
+const capacity = () => BASKET_TIERS[Math.min(BASKET_TIERS.length - 1, S.basketTier || 0)] + (S.signs._x144 ? 4 : 0) + (S.flags && S.flags._xfar ? 4 : 0);
 const actOf = a => ZONES[a.zone].act;
 
 const BURROW_FINDS = [[25, 'carrot'], [50, 'cocoatin'], [75, 'bubbles'], [100, 'bookspot']];
@@ -1191,7 +1194,7 @@ const matExtra = k => () => `<span>${MATERIALS[k].icon} ${MATERIALS[k].name} on 
 def({ id: 'wander', zone: 0, icon: '🌼', name: 'Search the Meadow for Nyla', cost: 30, stats: { hop: .4, sniff: .4, smarts: .2 }, track: 'meadow',
   desc: 'Call her name across the clover, and check every spot she likes to nap.' });
 def({ id: 'dew', zone: 0, icon: '💧', name: 'Sip Morning Dew', cost: 5, stats: { hop: .6, grit: .4 },
-  visible: () => P('meadow') >= 2, limited: () => Math.floor(P('meadow') / 4) + (1 * ph('meadowDawn')) + (farDone('_x150') ? 2 : 0), effect: () => { L._x177 += 20; },
+  visible: () => P('meadow') >= 2, limited: () => Math.floor(P('meadow') / 4) + (1 * ph('meadowDawn')) + (farDone('_x139') ? 2 : 0), effect: () => { L._x165 += 20; },
   lockNote: 'Not yet. Dew turns up once the meadow is 4% searched.',
   desc: 'No time for breakfast. A sip of dew keeps you going, and each one adds ' + fmtDur(20) + ' of daylight.' });
 def({ id: 'bushes', gives: 'berries', zone: 0, icon: '🍓', name: 'Check the Berry Bushes', cost: 12, stats: { sniff: .7, smarts: .3 },
@@ -1217,7 +1220,7 @@ def({ id: 'weave', zone: 0, icon: '🧺', name: 'Weave a Bigger Basket with Haze
       story(`Hazel ties off the last reed. Your new basket holds ${capacity()} things, and it stays yours even when the day starts over.` + (S.basketTier === 1 ? ' She squints at something above your head: a frayed silver thread running from you up to the Moon. "Somebody\'s been pulling on that one," she says. "Good. It means it\'s still tied."' : ''), 'big');
     }
   },
-  _x177: () => matExtra('reeds')() + (nutNeed() ? `<span>Korok seeds: ${nutSeeds()} of ${nutNeed()} needed for this one</span>` : '') + `<span class="track"><span class="label">Bigger basket</span><span class="bar"><i style="width:${((S.proj.weave || 0) / weaveNeed() * 100).toFixed(1)}%;background:var(--honey)"></i></span><span class="num">${S.proj.weave || 0}/${weaveNeed()}</span></span>`,
+  _x165: () => matExtra('reeds')() + (nutNeed() ? `<span>Korok seeds: ${nutSeeds()} of ${nutNeed()} needed for this one</span>` : '') + `<span class="track"><span class="label">Bigger basket</span><span class="bar"><i style="width:${((S.proj.weave || 0) / weaveNeed() * 100).toFixed(1)}%;background:var(--honey)"></i></span><span class="num">${S.proj.weave || 0}/${weaveNeed()}</span></span>`,
   desc: 'Hazel is a Weaver: she sees the loose threads between things and stitches them back together. "Things that are mended with care," she says, "stay mended." So a bigger basket, a little each day, stays woven.' });
 def({ id: 'reeds', zone: 0, icon: '🌾', name: 'Cut Moon-Silvered Reeds', cost: 10, stats: { hop: .5, sniff: .5 },
   visible: () => P('meadow') >= 12 && (S.basketTier || 0) < BASKET_TIERS.length - 1, limited: () => 1 + Math.floor(P('meadow') / 30), effect: () => addMat('reeds', 1),
@@ -1228,7 +1231,7 @@ def({ id: 'bake', zone: 0, icon: '🧁', name: 'Bake Nyla\'s Favorite Pupcakes',
   desc: 'Grandpa Tortoise\'s recipe. Two berries make one. Nyla has never once said no to one, though she always accepts it like a lady.' });
 def({ id: 'footbridge', zone: 0, icon: '🔨', name: 'Build a Footbridge', cost: 30, stats: { grit: .6, smarts: .4 },
   project: 'footbridge', visible: () => !!S.reached[1] && !S.flags.footbridge,
-  can: needMat('driftwood'), effect: () => addMat('driftwood', -1), _x177: matExtra('driftwood'),
+  can: needMat('driftwood'), effect: () => addMat('driftwood', -1), _x165: matExtra('driftwood'),
   desc: 'The brook is slowing you down. Each plank takes a piece of moonlit driftwood, and the planks you lay stay laid, even when the day starts over.' });
 def({ id: 'driftwood', zone: 0, icon: '🪵', name: 'Gather Moonlit Driftwood', cost: 10, stats: { sniff: .5, grit: .5 },
   visible: () => !!S.reached[1] && !S.flags.footbridge, limited: () => 1 + Math.floor(P('meadow') / 30), effect: () => addMat('driftwood', 1),
@@ -1239,7 +1242,7 @@ def({ id: 'brook', mystery: [8, .35, 'You know every stepping stone in the brook
 
 const nutSeeds = () => Object.keys(S.nuts || {}).length;
 
-const korokAt = n => (S.flags._x164 ? Math.floor(n / 2) : n);
+const korokAt = n => (S.flags._x152 ? Math.floor(n / 2) : n);
 const nutNeed = () => ((S.basketTier || 0) >= 1 ? S.basketTier : 0);
 const nutFind = key => () => {
   if (PRED) return;
@@ -1269,7 +1272,7 @@ const trainHint = st => {
 def({ id: 'woods', zone: 1, icon: '🌲', name: 'Search the Woods', cost: 35, stats: { sniff: .4, hop: .3, grit: .3 }, track: 'woods',
   desc: 'Pine needles, moss, and a hundred places a dog could hide. Keep calling.' });
 def({ id: 'glowcaps', zone: 1, icon: '🍄', name: 'Gather Glowcaps', cost: 10, stats: { sniff: .5, smarts: .5 },
-  visible: () => P('woods') >= 3, limited: () => Math.floor(P('woods') / 4), effect: () => { L._x177 += 25; },
+  visible: () => P('woods') >= 3, limited: () => Math.floor(P('woods') / 4), effect: () => { L._x165 += 25; },
   lockNote: 'Not yet. Glowcaps turn up once the woods are 4% searched.',
   desc: 'More light means more time to look. Each glowing mushroom holds off dusk for ' + fmtDur(25) + '.' });
 def({ id: 'logs', gives: 'acorns', zone: 1, icon: '🌰', name: 'Rummage Hollow Logs', cost: 15, stats: { grit: .5, sniff: .5 },
@@ -1318,11 +1321,11 @@ def({ id: 'dust', gives: 'dust', zone: 2, icon: '✨', name: 'Catch Fairy Dust',
   lockNote: 'Not yet. Fairy dust turns up once the glade is 6% explored.',
   desc: 'A pinch of glowing dust from the fairy spring. For travel: each travel step uses one pinch and goes 60% faster, so you fly the next stretch of road. Dust empties at dawn.' });
 def({ id: 'petals', gives: 'petals', zone: 2, icon: '🌸', name: 'Pick Moonpetals', cost: 10, stats: { sniff: .5, smarts: .5 },
-  visible: () => P('glade') >= 8, limited: () => Math.floor(P('glade') / 5) + (1 * ph('_x47')), effect: () => { inv().petals++; },
+  visible: () => P('glade') >= 8, limited: () => Math.floor(P('glade') / 5) + (1 * ph('_x39')), effect: () => { inv().petals++; },
   desc: 'Silver flowers that only open in the moss here. Every hedge witch wants some.' });
 def({ id: 'moonwater', zone: 2, icon: '🫙', name: 'Make Moon Water', cost: 20, stats: { smarts: .6, grit: .4 },
   visible: () => P('glade') >= 15, can: () => (inv().petals < 2 ? 'Needs 2 moonpetals' : null),
-  effect: () => { inv().petals -= 2; L._x177 += Math.round((Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x103')) + (10 * ph('_x51')) + (10 * ph('_x126')) + (farDone('_x6') ? 20 : 0)) * (S.signs._x154 ? 1.25 : 1)); },
+  effect: () => { inv().petals -= 2; L._x165 += Math.round((Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x93')) + (10 * ph('_x43')) + (10 * ph('_x116')) + (farDone('_x5') ? 20 : 0)) * (S.signs._x143 ? 1.25 : 1)); },
   desc: 'Spring water and two moonpetals in a jar, left where last night\'s moonlight fell. Adds ' + fmtDur(30) + ' to ' + fmtDur(70) + ' of daylight. The fuller the moon, the stronger it is.' });
 def({ id: 'spelljar', zone: 2, icon: '🫙', name: 'Fill a Moonlit Spell Jar', cost: 25, stats: { smarts: .5, charm: .5 },
   visible: () => P('glade') >= 30,
@@ -1340,7 +1343,7 @@ def({ id: 'gladeBack', mystery: [5, .3, 'You know the shortcut out of the glade.
 def({ id: 'hollow', zone: 3, icon: '🌻', name: 'Explore Honey Hollow', cost: 40, stats: { hop: .3, sniff: .3, grit: .4 }, track: 'hollow',
   desc: 'Wildflowers up to your ears.' });
 def({ id: 'honey', gives: 'honey', zone: 3, icon: '🍯', name: 'Ask the Bees for Honey', cost: 20, stats: { charm: .7, grit: .3 },
-  visible: () => P('hollow') >= 3, limited: () => Math.floor(P('hollow') / 5) + (1 * ph('hollowGold')) + (farDone('_x28') ? 2 : 0), effect: () => { inv().honey++; },
+  visible: () => P('hollow') >= 3, limited: () => Math.floor(P('hollow') / 5) + (1 * ph('hollowGold')) + (farDone('_x21') ? 2 : 0), effect: () => { inv().honey++; },
   lockNote: 'Not yet. Honey turns up once the hollow is 5% explored.',
   desc: 'Bees share with anyone polite enough. More hives turn up as you explore.' });
 def({ id: 'picnic', zone: 3, icon: '🧺', name: 'Moonrise Picnic with Bear', cost: 60, stats: { charm: 1 },
@@ -1361,7 +1364,7 @@ const FAR = {
 };
 const farDone = id => !!S.flags['far_' + id];
 function farMult(s) {
-  return (s === 'hop' && farDone('_x89') ? 1.15 : 1) * (s === 'charm' && farDone('_x133') ? 1.1 : 1) * (s === 'charm' && farDone('_x27') ? 1.1 : 1) * (s === 'charm' && farDone('_x45') ? 1.1 : 1) * (s === 'hop' && farDone('_x7') ? 1.15 : 1);
+  return (s === 'hop' && farDone('_x78') ? 1.15 : 1) * (s === 'charm' && farDone('_x123') ? 1.1 : 1) * (s === 'charm' && farDone('_x20') ? 1.1 : 1) * (s === 'charm' && farDone('_x37') ? 1.1 : 1) * (s === 'hop' && farDone('_x6') ? 1.15 : 1);
 }
 function farDef(o) {
 
@@ -1380,7 +1383,7 @@ farDef({ id: 'farOwlBooks', key: 'owlbooks', zone: 1, name: "Read Owl's Restrict
 
 for (const sp of PHOTO_SPOTS) {
   def({ id: 'photo_' + sp.id, zone: sp.zone, icon: '📸', name: 'Catch the Light: ' + sp.name, cost: 15, stats: { sniff: .5, smarts: .5 },
-    visible: () => lightOn() && sp.known() && !has(sp.id), can: sp.can, photo: sp, _x124: sp._x124,
+    visible: () => lightOn() && sp.known() && !has(sp.id), can: sp.can, photo: sp, _x114: sp._x114,
     effect: () => {
       S.album = S.album || {}; S.album[sp.id] = true;
       story(`You catch the light: ${sp.name}. It goes on the photo wall in the burrow. ${sp.bonus}.`, 'big');
@@ -1421,7 +1424,7 @@ function usesLine(a) {
 }
 
 function planShortLine(a) {
-  if (!U('predictor') || !prediction || prediction.error || prediction._x131) return '';
+  if (!U('predictor') || !prediction || prediction.error || prediction._x121) return '';
   const out = [];
   for (const e of S.queue) {
     if (e.id !== a.id || !e.n) continue;
@@ -1435,9 +1438,9 @@ function planShortLine(a) {
 
 for (const id of ORDER) {
   const a = A[id];
-  if (!a.limited || a.pro || ['_x41', '_x42', '_x146', '_x26', 'milk', '_x63'].includes(id)) continue;
+  if (!a.limited || a.pro || ['_x34', '_x35', '_x136', '_x19', 'milk', '_x55'].includes(id)) continue;
   const base = a.limited;
-  a.limBase = () => base() + (farDone('_x59') && kindOf(a) === '_x159' ? 1 : 0);
+  a.limBase = () => base() + (farDone('_x51') && kindOf(a) === '_x147' ? 1 : 0);
   a.limited = a.limBase;
 }
 
@@ -1458,16 +1461,16 @@ function spentForGood(a) {
   if (a.id === 'oakdoor') return !!S.flags.gladeFound;
   if (a.id === 'film') return !!S.flags.film;
   if (a.id === 'reachbook') return !!(L && L.inv.storybook);
-  if (a.id === '_x164') return !!S.flags._x164;
-  if (a.id === '_x165') return !!S.flags._x204;
-  if (a.id === '_x134') return !!S.flags._x134;
-  if (a.id === '_x21') return !!S.flags._x67;
-  if (a.id === '_x39') return !!S.flags._x148;
-  if (a.id === '_x38') return !!S.flags._x206;
-  if (a.id === '_x37') return EXPERIMENTS.every(([k]) => tested(k));
+  if (a.id === '_x152') return !!S.flags._x152;
+  if (a.id === '_x153') return !!S.flags._x192;
+  if (a.id === '_x124') return !!S.flags._x124;
+  if (a.id === '_x18') return !!S.flags._x56;
+  if (a.id === '_x32') return !!S.flags._x137;
+  if (a.id === '_x31') return !!S.flags._x194;
+  if (a.id === '_x30') return EXPERIMENTS.every(([k]) => tested(k));
   if (a.id === 'weave') return (S.basketTier || 0) >= BASKET_TIERS.length - 1;
-  if (a.id.startsWith('_x186')) return ownsOutfit(a.id.slice(4));
-  if (a.id.startsWith('_x215')) return outfitStars(a.id.slice(3)) >= 2;
+  if (a.id.startsWith('_x174')) return ownsOutfit(a.id.slice(4));
+  if (a.id.startsWith('_x203')) return outfitStars(a.id.slice(3)) >= 2;
   return false;
 }
 const sweepSpent = () => { for (const id of new Set(S.queue.map(e => e.id))) if (spentForGood(A[id])) clearSpent(id); };
@@ -1485,7 +1488,7 @@ const visible = a => !a.pro === !inPrologue() && actOf(a) <= S.act && zoneOpen(a
 const runnable = a => visible(a) || (!!a.planOnly && a.planOnly());
 
 const ONCE_A_DAY = new Set(('spelljar hedgehog coax'
-  + '_x57 _x33 _x8').split(' '));
+  + '_x49 _x26 _x7').split(' '));
 
 function gatherMax(a) {
   if (a.limited && !a.pro && !a.project) return Math.max(0, limLeft(a));
@@ -1586,6 +1589,7 @@ function stickerDay() {
   if (PRED || S.revisit) return;
   const z = L.zonesToday || {}, s = stk(), d = L.didToday || {};
   if (d.moonwater && d.spelljar) s.sill = (s.sill || 0) + 1;
+  if (L.nyla && L.bear && !L.bearAsleep && !inPrologue()) (s.party = s.party || {})[S.act] = 1;
 }
 
 function stickerDawn() {
@@ -1647,6 +1651,7 @@ const lostMorning = () => 0;
 const loreTier = () => false;
 const bearSplit = () => false;
 const fogMult = () => 1;
+const supplies = () => 0;
 const splitTick = () => {};
 const WEATHER_ICON = {};
 const weatherAt = () => "";
@@ -1664,24 +1669,16 @@ const CROPS = {};
 const farm = () => ({ rows: [] });
 const seasonCrops = () => [];
 const dewNote = () => "";
-const marketCrate = () => {};
-const marketDawn = () => {};
-const isles = () => ({ book: [] });
 const openGreene = () => {};
-const greeneIntro = () => {};
 const groupMult = a => 1;
 const groupJoin = () => {};
 const openUnknown = () => {};
-const unknownIntro = () => {};
 const frogName = () => "";
 const frogCroak = () => {};
 const lowTide = () => false;
-const deepIntro = () => {};
 const driftOps = () => null;
 const bookSkillMult = () => 1;
 const TROPHIES = [];
-const tandemLeft = () => 0;
-const openTandem = () => {};
 const tandemLeaving = () => {};
 
 let PRED = null;
@@ -1693,12 +1690,12 @@ function story(text, kind = 'story') {
   dirty.journal = true;
 }
 function bearSays(text) { story('🐻 ' + text, 'bearline'); }
-function findSign(id, text, _x176) {
+function findSign(id, text, _x164) {
   if (S.signs[id]) return;
 
   S.signs[id] = true;
   dirty.signs = true;
-  if (_x176) return;
+  if (_x164) return;
   story(text, 'big');
   const g = SIGNS[id];
   keepPop(`Constellation: ${g.glyph} ${g.name}`, text, g.bonus || STATS[g.stat].name + ' grows 15% faster');
@@ -1713,19 +1710,19 @@ const SIGN_STARS = {
   ] },
 };
 const starsOf = sign => (S.stars && S.stars[sign]) || [];
-function addStar(sign, key, _x176) {
+function addStar(sign, key, _x164) {
   if (PRED) return;
   S.stars = S.stars || {};
   const got = S.stars[sign] = starsOf(sign).slice(), def = SIGN_STARS[sign];
   if (got.includes(key)) return;
   got.push(key);
-  if (!_x176) {
+  if (!_x164) {
     markSeen('s:' + sign + key);
     { const st = def.stars.find(x => x[0] === key); story('⭐ ' + auroraText(st[2], st[1] != null && st[1] > BRIAR_REVEAL), 'big'); }
     if (got.length < def.stars.length) notice(`You found a star of ${SIGNS[sign].glyph} ${SIGNS[sign].name}: ${got.length} of ${def.stars.length}.`, 'moon');
   }
   dirty.signs = true;
-  if (got.length >= def.stars.length) findSign(sign, def.rise, _x176);
+  if (got.length >= def.stars.length) findSign(sign, def.rise, _x164);
 }
 
 function completeSign(sign) { for (const [key] of SIGN_STARS[sign].stars) addStar(sign, key, true); findSign(sign, SIGN_STARS[sign].rise); }
@@ -1734,7 +1731,7 @@ function syncStars() {
   for (const [sign, def] of Object.entries(SIGN_STARS)) {
     if (S.signs[sign]) { for (const [key] of def.stars) if (!starsOf(sign).includes(key)) addStar(sign, key, true); continue; }
     for (const [key, at, , trk] of def.stars) {
-      const earned = at != null ? P(trk || key) >= at : key === '_x214' ? !!S.flags.cryWin : key === '_x63' ? !!S.flags._x63 : false;
+      const earned = at != null ? P(trk || key) >= at : key === '_x202' ? !!S.flags.cryWin : key === '_x55' ? !!S.flags._x55 : false;
       if (earned && !starsOf(sign).includes(key)) addStar(sign, key, true);
     }
   }
@@ -1743,7 +1740,7 @@ function syncStars() {
 const KEEP_MILESTONES = Object.assign({ owl50: "Owl's wisdom", tortoise100: "Grandpa Tortoise's early mornings", get briar80() { return briarName() + "'s moonstone"; } },
   Object.fromEntries(FAIRIES.map(([at, , nm]) => ['fairies' + at, 'Friends with ' + nm])));
 
-const heldBear = text => !!(S && S.flags && S.flags._x43) && bearLostNow() && /\bBear\b/.test(typeof text === 'function' ? text() : text);
+const heldBear = text => !!(S && S.flags && S.flags._x36) && bearLostNow() && /\bBear\b/.test(typeof text === 'function' ? text() : text);
 function releaseHeldLore() {
   if (PRED || bearLostNow() || !(S.heldLore || []).length) return;
   for (const [id, at] of S.heldLore) {
@@ -1773,11 +1770,11 @@ function train(a, mins, withBear) {
   const bwo = withBear ? bwOps(a) : null, half = bwHas(bwo, 'half') ? 0.5 : 1;
   for (const [s, w] of Object.entries(a.stats)) {
     const g = 2 * w * mins * expMult(s) * (a.travel && hasOath('journey') ? 1.5 : 1) * half;
-    L.stat[s] += g; S.talent[s] += g * r * (farDone('_x99') && skillOf(a) === 'science' ? 1.1 : 1);
+    L.stat[s] += g; S.talent[s] += g * r * (farDone('_x88') && skillOf(a) === 'science' ? 1.1 : 1);
   }
   if (withBear) {
-    const t = BEAR_TAGS[a.bear && a.bear.tag || '_x189'];
-    const bg = 1 + 0.1 * ph('_x54'), hg = k => (k === 'heart' ? (1 + 0.1 * ph('_x128')) * (1 + 0.1 * ph('_x74')) : k === 'strength' && farDone('_x60') ? 1.15 : 1);
+    const t = BEAR_TAGS[a.bear && a.bear.tag || '_x177'];
+    const bg = 1 + 0.1 * ph('_x46'), hg = k => (k === 'heart' ? (1 + 0.1 * ph('_x118')) * (1 + 0.1 * ph('_x63')) : k === 'strength' && farDone('_x52') ? 1.15 : 1);
     S.bear.skill[t.skill] += 2 * mins * bg * hg(t.skill);
     for (const k of BEAR_KEYS) if (k !== t.skill) S.bear.skill[k] += 0.5 * mins * bg * hg(k);
     L.bearStam = Math.max(0, L.bearStam - mins * (bwHas(bwo, 'tire2') ? 2 : 1));
@@ -1837,8 +1834,8 @@ function complete(a, e) {
   if (a.travel && L.shoutReady) L.shoutReady = false;
   if (withBear) { S.bearDone = S.bearDone || {}; S.bearDone[a.id] = (S.bearDone[a.id] || 0) + 1; }
   if (withBear && !L.knacked[a.id]) {
-    const k = knack(a.id), t = BEAR_TAGS[a.bear && a.bear.tag || '_x189'], w = bwOf(a);
-    if (k < 5 && bearLvl(t.skill) * (1 + 0.1 * ph('_x68')) >= k * 4) {
+    const k = knack(a.id), t = BEAR_TAGS[a.bear && a.bear.tag || '_x177'], w = bwOf(a);
+    if (k < 5 && bearLvl(t.skill) * (1 + 0.1 * ph('_x57')) >= k * 4) {
       S.bear.knack[a.id] = k + 1; L.knacked[a.id] = true;
       if (!PRED && w && k === 0) bearSays(`🆕 Bear's way: <b>${esc(w.n)}</b>. ${esc(bwFx(w))}`);
       else if (!PRED && w && k === 2 && w.joke) bearSays(w.joke);
@@ -1850,7 +1847,7 @@ function complete(a, e) {
   if (bwHas(bw, 'secondHint') && L.starSense && !L.starSense2) { L.starSense = false; L.starSense2 = true; }
   if (L.bwFree && L.bwFree[a.id]) delete L.bwFree[a.id];
   if (a.zone === 45 && !a.travel && L.bwFogFree && a.id !== 'doors') L.bwFogFree = false;
-  if (a.mystery && S.mastery[a.id] === a.mystery[0]) story('🔎 Mystery solved: ' + a.mystery[2], 'big');
+  if (a.mystery && S.mastery[a.id] === a.mystery[0]) { story((S.flags._x168 ? '🔎 Mystery solved: ' : '🎲 Natural 20! Mystery solved: ') + a.mystery[2], 'big'); if (!PRED) S.flags._x168 = true; }
   if (mLvl(a.id) > mBefore && mLvl(a.id) % 5 === 0) story(`You've done "${a.name}" so many times you could do it in your sleep. Mastery ${mLvl(a.id)}.`);
   { const g0 = 100 * (1 + wl(a) / 20);
     if (a.track) {
@@ -1865,7 +1862,7 @@ function complete(a, e) {
     if (bw) for (const o of bw) if (o[0] === 'also' && TRACKS[o[1]]) addTrack(o[1], g0 * (o[2] || 0.5));
       else if (o[0] === 'also' && A[o[1]] && !A[o[1]].track && A[o[1]].effect && !(A[o[1]].can && A[o[1]].can())) A[o[1]].effect();
   }
-  if (farDone('_x90') && !L.swarmCopied && !a.travel) { L.swarmCopied = true; S.mastery[a.id]++; if (a.track) addTrack(a.track, 100 * (1 + wl(a) / 20)); }
+  if (farDone('_x79') && !L.swarmCopied && !a.travel) { L.swarmCopied = true; S.mastery[a.id]++; if (a.track) addTrack(a.track, 100 * (1 + wl(a) / 20)); }
   if (a.project) {
     let n = 1;
     const tw = bwGet(bw, 'twice');
@@ -1878,7 +1875,7 @@ function complete(a, e) {
   if (a.food && !L.fed) { if (L.inv.lembread > 0) { L.inv.lembread--; L.fed = true; } else L.inv.seedcake -= a.food; }
   if (a.once) { S.flags['far_' + a.id] = true; }
   if (a.id === 'candle' && e.recipe) {
-    inv()._x162--; const salted = e.recipe.l === 'salt' && inv().salt > 0; if (salted) inv().salt--;
+    inv()._x150--; const salted = e.recipe.l === 'salt' && inv().salt > 0; if (salted) inv().salt--;
     L.candle = Object.assign({}, e.recipe, { salted }); L.candle.until = L.time + candleLen(L.candle);
     const k = candleKey(e.recipe);
     if (!PRED) { S.spellbook = S.spellbook || {}; if (!S.spellbook[k]) { S.spellbook[k] = true; story('🕯️ New in your spellbook: ' + candleText(e.recipe)); } }
@@ -1924,9 +1921,9 @@ function step(mins) {
     }
     const a = A[e.id];
 
-    if (!L.started && !runnable(a)) { L.skipped[e.uid] = a.id === '_x146' ? 'No new moon tonight' : 'Not available today'; L.done[e.uid] = L.done[e.uid] || 0; dirty.plan = true; continue; }
-    if (!L.started && a._x124) {
-      const t = a._x124();
+    if (!L.started && !runnable(a)) { L.skipped[e.uid] = a.id === '_x136' ? 'No new moon tonight' : 'Not available today'; L.done[e.uid] = L.done[e.uid] || 0; dirty.plan = true; continue; }
+    if (!L.started && a._x114) {
+      const t = a._x114();
       if (t != null && L.time < t - 1e-9) { const w = Math.min(mins, t - L.time, left); L.time += w; mins -= w; L.idleUntil = t; continue; }
     }
     L.idleUntil = null;
@@ -1955,7 +1952,7 @@ const MOON_MUSINGS = [
   [0, "You're the only one who remembers. That's lonely. It won't always be."],
 ];
 function moonHint() {
-  if (S.flags._x179) return;
+  if (S.flags._x167) return;
   let h = MOON_HINTS.find(([cond]) => { try { return cond(); } catch (e) { return false; } });
   if (!h || (h[1] === S.lastHint && S.loop - S.lastHintLoop < 5)) {
 
@@ -1994,7 +1991,7 @@ function endDay(reason) {
   const nothing = reason === 'done' && L.time < 1;
   if (reason === 'restart') story(dayLabel() + ': you went to bed early, with ' + left + ' of daylight left.' + (changes.length ? ' ' + changes.join(', ') + '.' : ''), 'loop');
   else if (reason === 'act') {  }
-  else if (!nothing) story(dayLabel() + (reason === 'moonrise' ? (S.flags._x179 ? ': the Moon rose and stayed up. A whole night, and then a new morning.' : ': the Moon tried to rise, and the day folded back to dawn.') : reason === 'asleep' ? ': you dozed off with ' + left + ' of daylight left, after the wrong cup.' : reason === 'rule' ? ': you broke a treaty rule and went straight to bed, with ' + left + ' of daylight left.' : ': plan finished with ' + left + ' of daylight left, so you curled up for a nap.') + (changes.length ? ' ' + changes.join(', ') + '.' : (S.flags._x179 ? '' : ' You wake at dawn, same as always.')), 'loop');
+  else if (!nothing) story(dayLabel() + (reason === 'moonrise' ? (S.flags._x167 ? ': the Moon rose and stayed up. A whole night, and then a new morning.' : ': the Moon tried to rise, and the day folded back to dawn.') : reason === 'asleep' ? ': you dozed off with ' + left + ' of daylight left, after the wrong cup.' : reason === 'rule' ? ': you broke a treaty rule and went straight to bed, with ' + left + ' of daylight left.' : ': plan finished with ' + left + ' of daylight left, so you curled up for a nap.') + (changes.length ? ' ' + changes.join(', ') + '.' : (S.flags._x167 ? '' : ' You wake at dawn, same as always.')), 'loop');
   const firstNight = !nothing && reason !== 'act' && !S.flags.firstMoonrise;
   if (firstNight) S.flags.firstMoonrise = true;
   if (!nothing && reason !== 'act' && !firstNight) {
@@ -2105,18 +2102,18 @@ function updateBegin() {
 let prediction = null, predDirty = true, predAt = 0;
 function predict() {
   const realS = S, realL = L;
-  const out = { finish: {}, done: {}, skipped: {}, cut: null, cutDone: 0, end: null, time: 0, len: 0, _x131: null, unknownUid: null };
+  const out = { finish: {}, done: {}, skipped: {}, cut: null, cutDone: 0, end: null, time: 0, len: 0, _x121: null, unknownUid: null };
   try {
     S = JSON.parse(JSON.stringify(realS));
     L = freshLoop();
-    PRED = { finish: out.finish, end: null, _x131: null };
+    PRED = { finish: out.finish, end: null, _x121: null };
     let guard = 0;
     while (!PRED.end && guard++ < 4000) {
       const cur = L.curUid;
       step(60);
-      if (PRED._x131 && !out.unknownUid) out.unknownUid = cur != null ? cur : L.curUid;
+      if (PRED._x121 && !out.unknownUid) out.unknownUid = cur != null ? cur : L.curUid;
     }
-    out.end = PRED.end; out._x131 = PRED._x131;
+    out.end = PRED.end; out._x121 = PRED._x121;
     out.time = L.time; out.len = dayLen();
     Object.assign(out.done, L.done); Object.assign(out.skipped, L.skipped);
     if (out.end === 'moonrise' && L.curUid != null) { out.cut = L.curUid; }
@@ -2133,7 +2130,7 @@ function predSummary(p) {
   const start = dayStart();
   const Q = S.queue;
   const idx = uid => Q.findIndex(e => e.uid === uid) + 1;
-  if (p._x131) return `🔮 From dawn, the plan runs until step ${idx(p.unknownUid) || '?'}. After that it depends on something Bunny doesn't know yet.`;
+  if (p._x121) return `🔮 From dawn, the plan runs until step ${idx(p.unknownUid) || '?'}. After that it depends on something Bunny doesn't know yet.`;
   if (p.end === 'moonrise') {
     const e = Q.find(x => x.uid === p.cut);
     return e ? `🔮 From dawn, moonrise comes during step ${idx(p.cut)}, ${A[e.id].name} (${p.done[p.cut] || 0} of ${e.n} done). Steps after it won't happen.`
@@ -2150,7 +2147,7 @@ function predLine(p, e, i) {
   const start = dayStart();
   const Q = S.queue;
   const ui = Q.findIndex(x => x.uid === p.unknownUid);
-  if (p._x131 && ui >= 0 && i >= ui) return [i === ui ? 'Depends on something Bunny doesn\'t know yet' : 'Uncertain', 'pred-unk'];
+  if (p._x121 && ui >= 0 && i >= ui) return [i === ui ? 'Depends on something Bunny doesn\'t know yet' : 'Uncertain', 'pred-unk'];
   const d = p.done[e.uid] || 0;
   if (e.n === 0) return ['Off (×0)', ''];
   if (p.skipped[e.uid]) return d ? [`${d} of ${e.n}, then stops: ${p.skipped[e.uid]}`, 'pred-warn'] : ['Will be skipped: ' + p.skipped[e.uid], 'pred-bad'];
@@ -2177,14 +2174,14 @@ function loadTemplate(T, replace) {
 }
 let tplSig = '';
 function renderTemplates() {
-  const on = !!S.flags._x67 && !inPrologue();
+  const on = !!S.flags._x56 && !inPrologue();
   $('tplBtn').hidden = !on; $('tplBtn').setAttribute('aria-expanded', String(!!(on && S.ui.tplOpen)));
   $('tplBox').hidden = !(on && S.ui.tplOpen);
   if ($('tplBox').hidden) return;
-  const sig = JSON.stringify(S._x67.map(t => [t.name, t.steps.length])) + S.queue.length;
+  const sig = JSON.stringify(S._x56.map(t => [t.name, t.steps.length])) + S.queue.length;
   if (sig === tplSig) return; tplSig = sig;
   $('tplBox').innerHTML = `<div class="tpl-row"><span class="tn">Saved plans</span><button class="btn" data-tpl="save" title="Save the current plan under a name">Save plan as…</button></div>` +
-    (S._x67.length ? S._x67.map((t, i) => `<div class="tpl-row"><span class="tn" title="${esc(t.name)}">${esc(t.name)} <small>${t.steps.length} step${t.steps.length === 1 ? '' : 's'}</small></span>
+    (S._x56.length ? S._x56.map((t, i) => `<div class="tpl-row"><span class="tn" title="${esc(t.name)}">${esc(t.name)} <small>${t.steps.length} step${t.steps.length === 1 ? '' : 's'}</small></span>
       <button class="btn" data-tpl="load" data-i="${i}" title="Replace the plan with this one">Load</button><button class="btn" data-tpl="add" data-i="${i}" title="Add these steps to the end of the plan">Add</button><button class="btn" data-tpl="ren" data-i="${i}" title="Rename" aria-label="Rename">✎</button><button class="btn" data-tpl="del" data-i="${i}" title="Delete" aria-label="Delete">✕</button></div>`).join('')
       : '<div class="tpl-empty">No saved plans yet.</div>');
 }
@@ -2261,7 +2258,7 @@ const UNLOCKS = [
   ['bank', () => S.loop >= 4, 'The Moon whispers: while you rest, I keep a little moonlight for you. Spend it to make the day run faster. Stored moonlight and faster speeds are now available.'],
   ['moonphase', () => S.loop >= 6, 'The Moon has a new shape today. She changes every day, and the fuller she is, the faster your talent grows.'],
   ['signs', () => Object.keys(S.signs).length > 0 || Object.values(S.stars || {}).some(v => v.length), null],
-  ['_x56', () => (S.mastery.moonwater || 0) + (S.mastery.spelljar || 0) > 0, 'You set your first jar on the burrow windowsill. From now on, the burrow keeps your witchcraft: what today\'s moon water and a spell jar would do.'],
+  ['_x48', () => (S.mastery.moonwater || 0) + (S.mastery.spelljar || 0) > 0, 'You set your first jar on the burrow windowsill. From now on, the burrow keeps your witchcraft: what today\'s moon water and a spell jar would do.'],
   ['photowall', () => lightOn(), null],
   ['predictor', () => 0 >= 25, null],
   ['training', () => S.flags.metNyla && visible(A.train1_grit), 'Some days you just need practice. There\'s a training step for every trait: cheap, repeatable all day, and it builds only that trait and its talent (and a little of one skill).'],
@@ -2271,9 +2268,9 @@ const UNLOCK_TITLES = {
   talent: 'Talent',
   amounts: 'Adding more at once',
   basket: 'The basket',
-  bank: 'Stored _x83',
+  bank: 'Stored _x72',
   moonphase: 'Moon phases',
-  _x56: 'The _x56',
+  _x48: 'The _x48',
   mastery: 'Mastery',
   training: 'Training',
 };
@@ -2289,7 +2286,7 @@ function checkNewActions() {
 }
 function checkUnlocks() {
   syncStars();
-  if (S.flags._x115 == null && !S.flags.film && !inPrologue() && visible(A.film)) S.flags._x115 = S.loop;
+  if (S.flags._x105 == null && !S.flags.film && !inPrologue() && visible(A.film)) S.flags._x105 = S.loop;
   checkNewActions();
   for (const [key, when, text] of UNLOCKS) {
     if (S.unlocked[key]) continue;
@@ -2325,7 +2322,7 @@ function applyUnlocks() {
   $('bookBar').hidden = !inBook();
   if (inBook()) $('bookBarText').textContent = `📖 ${SIDES[S.away.id].name} · its own day, at 1× · the day at home waits and the Moon keeps your moonlight` + (bookDone(S.away.id) ? ' · finished: only lore, stickers and photos are left' : '');
   $('revisitBtn').hidden = !!S.revisit || inPrologue();
-  $('burrowPanel').hidden = !(Object.keys(S.stickers || {}).length || U('_x56') || U('photowall') || U('_x34') || U('candles') || U('outfits') || U('painting'));
+  $('burrowPanel').hidden = !(Object.keys(S.stickers || {}).length || U('_x48') || U('photowall') || U('_x27') || U('candles') || U('outfits') || U('painting'));
 }
 
 const dirty = { all: true, actions: true, plan: true, journal: true, signs: true };
@@ -2430,11 +2427,11 @@ const BEAR_NONE = new Set([]);
 for (const [id, w] of Object.entries(BEAR_WAYS)) if (w.st) STICKERS.push({ id: 'bw_' + id, page: "Bear's Ways", icon: w.st[0], name: w.st[1], how: `Try "${A[id] ? A[id].name : id}" with Bear.`, caption: w.n + '.', kind: 'along', test: () => knack(id) >= 1 });
 for (const [id, w] of Object.entries(BEAR_WAYS)) {
   const ls = (ACTION_LORE_BEAR[id] || []).filter(([k]) => k !== 1);
-  ACTION_LORE_BEAR[id] = [[1, w.after ? () => (S.flags._x179 ? w.after : w.line) : w.line]].concat(ls);
+  ACTION_LORE_BEAR[id] = [[1, w.after ? () => (S.flags._x167 ? w.after : w.line) : w.line]].concat(ls);
 }
 
-const AFTER_LORE = { _x26: { 30: "You've watched the Moon rise from this blanket more times than anyone. Now you get to watch her stay." } };
-const loreText = (id, n, text) => (S.flags && S.flags._x179 && AFTER_LORE[id] && AFTER_LORE[id][n]) || text;
+const AFTER_LORE = { _x19: { 30: "You've watched the Moon rise from this blanket more times than anyone. Now you get to watch her stay." } };
+const loreText = (id, n, text) => (S.flags && S.flags._x167 && AFTER_LORE[id] && AFTER_LORE[id][n]) || text;
 const bearDid = id => ((S.bearDone || {})[id] || 0);
 const bearTimesLabel = n => '🐻 with Bear, ' + timesLabel(n);
 function bwLoreRows(id) {
@@ -2467,12 +2464,12 @@ function masteryTip(id) {
   return `Mastery ${l}: done ${n} time${n === 1 ? '' : 's'}, so this step is ${faster}% faster for good. Next level at ${(l + 1) * (l + 1)}.`;
 }
 
-const ACT_GROUPS = [['explore', 'Exploring and friends'], ['_x159', 'Gathering'], ['spend', 'Crafting and Shopping'], ['project', 'Projects'], ['_x132', 'Special'], ['train', 'Training'], ['travel', 'Travel']];
+const ACT_GROUPS = [['explore', 'Exploring and friends'], ['_x147', 'Gathering'], ['spend', 'Crafting and Shopping'], ['project', 'Projects'], ['_x122', 'Special'], ['train', 'Training'], ['travel', 'Travel']];
 const KIND_OF = {
   spend: 'hedgehog bake moonwater spelljar coax cocoa nylabed bath readwin',
-  _x159: 'nutMeadow reachbook',
+  _x147: 'nutMeadow reachbook',
   project: 'weave',
-  _x132: 'oakdoor light picnic',
+  _x122: 'oakdoor light picnic',
 };
 const kindOf = a => {
   if (a.train) return 'train';
@@ -2480,8 +2477,8 @@ const kindOf = a => {
   if (a.travel) return 'travel';
   if (a.track) return 'explore';
   if (a.project || a.far) return 'project';
-  if (a.limited || a.good || a.gives || a.photo) return '_x159';
-  return '_x132';
+  if (a.limited || a.good || a.gives || a.photo) return '_x147';
+  return '_x122';
 };
 
 const isFinished = a => !!a.track && P(a.track) >= 100;
@@ -2498,7 +2495,7 @@ function renderActions() {
   let lastKind = null;
   const counts = {}; for (const id of ids) counts[kindOf(A[id])] = (counts[kindOf(A[id])] || 0) + 1;
 
-  const folded = k => !inPrologue() && (k in S.ui.groups ? S.ui.groups[k] : (k === 'travel' || k === '_x132' || k === 'train') && counts[k] > 3);
+  const folded = k => !inPrologue() && (k in S.ui.groups ? S.ui.groups[k] : (k === 'travel' || k === '_x122' || k === 'train') && counts[k] > 3);
   $('acts').innerHTML = ids.map(id => {
     const a = A[id], k = kindOf(a), f = folded(k);
     const head = k !== lastKind ? `<li class="grp"><button type="button" class="grp-tog" data-grp="${k}" aria-expanded="${!f}">${f ? '▸' : '▾'} ${esc(ACT_GROUPS.find(g => g[0] === k)[1])} <span class="when">${counts[k]}</span></button></li>` : '';
@@ -2529,7 +2526,7 @@ function bwIcon(a) {
   if (!w) return BEAR_NONE.has(a.id) ? '<span class="bw-ic" title="No Bear\'s way here">💤</span>' : '';
   const ops = bwOps(a), t = BEAR_TAGS[a.bear.tag];
   if (bwHas(ops, 'errand') || bwHas(ops, 'errandBar')) return '<span class="bw-ic" title="Bear goes off on an errand if nothing after this needs him, back at dusk">↩</span>';
-  if (L && !L.knacked[a.id] && k < 5 && bearLvl(t.skill) * (1 + 0.1 * ph('_x68')) >= k * 4) return `<span class="bw-ic" title="${k ? 'Bear\'s knack can grow today' : 'Bear\'s way: try it with him'}">${k ? '⬆' : '?'}</span>`;
+  if (L && !L.knacked[a.id] && k < 5 && bearLvl(t.skill) * (1 + 0.1 * ph('_x57')) >= k * 4) return `<span class="bw-ic" title="${k ? 'Bear\'s knack can grow today' : 'Bear\'s way: try it with him'}">${k ? '⬆' : '?'}</span>`;
   return '';
 }
 function bearNote(a) {
@@ -2540,7 +2537,7 @@ function bearNote(a) {
     return k < 1 ? `<span class="c-bear">🐻 ${req}??? Try it with Bear.</span>` : `<span class="c-bear">🐻 ${req}<b>${esc(w.n)}</b> · knack ${k}: ${esc(bwFx(w))}</span>`;
   }
   if (BEAR_NONE.has(a.id) && !a.bearOnly) return `<span class="c-bear">🐻💤 No Bear's way here: a once-ever step</span>`;
-  const note = a.bear && a.bear.note ? a.bear.note : BEAR_TAGS[a.bear && a.bear.tag || '_x189'].note;
+  const note = a.bear && a.bear.note ? a.bear.note : BEAR_TAGS[a.bear && a.bear.tag || '_x177'].note;
   const k = knack(a.id);
   return `<span class="c-bear">🐻 ${a.bearOnly ? 'Bear required. ' : ''}${esc(note)}${k ? ` · knack ${k}` : ''}</span>`;
 }
@@ -2565,22 +2562,22 @@ function actExtra(a) {
     const g = goodState(a);
     h += `<span>${g.checked} of ${g.total} ${a.good.noun} checked · ${g.known ? Math.max(0, g.known - g.usedGood) + ' of ' + g.known + ' ' + a.good.goodNoun + ' left today' : 'no ' + a.good.goodNoun + ' ones found yet'}</span>`;
   }
-  if (a._x207) {
-    const k = S._x207.known.map((v, i) => (v ? `round ${i + 1}: ${v}` : null)).filter(Boolean);
+  if (a._x195) {
+    const k = S._x195.known.map((v, i) => (v ? `round ${i + 1}: ${v}` : null)).filter(Boolean);
     h += `<span>${k.length ? 'You remember ' + esc(k.join(', ')) : 'You have no idea which cup is which. Yet.'}</span>`;
   }
-  if (a._x214) {
+  if (a._x202) {
     const k = CRY_GUESTS.map((g, i) => {
-      const t = S._x214.tried[i], right = S._x214.ans[i];
+      const t = S._x202.tried[i], right = S._x202.ans[i];
       if (t.includes(right)) return `${g}: ${CRY_KINDS[right]}`;
       if (t.length >= 2) return `${g}: ${CRY_KINDS[right]}`;
       return t.length ? `${g}: not ${t.map(x => CRY_KINDS[x]).join(' or ')}` : null;
     }).filter(Boolean);
-    h += `<span>${k.length ? 'You remember: ' + esc(k.join(' · ')) : 'You have no idea what makes a Ripple _x214. Yet.'}</span>`;
+    h += `<span>${k.length ? 'You remember: ' + esc(k.join(' · ')) : 'You have no idea what makes a Ripple _x202. Yet.'}</span>`;
   }
-  if (a.far && a.far.length) h += `<span class="far">✦ For later. Needs: ${a.far.map(([_x216, ok]) => (ok() ? '✓ ' : '✗ ') + esc(_x216)).join(' · ')}</span>`;
+  if (a.far && a.far.length) h += `<span class="far">✦ For later. Needs: ${a.far.map(([_x204, ok]) => (ok() ? '✓ ' : '✗ ') + esc(_x204)).join(' · ')}</span>`;
   if (a.timeGate) { const [k, n] = a.timeGate, long = cost(a) > dayLen(); h += `<span class="far">⏳ ${long ? 'Too long for one day yet. ' : ''}It gets shorter as your ${SKILL_NAME[k]} grows (it's made for ${SKILL_NAME[k]} ${n}; yours is ${skillLvl(k)}).</span>`; }
-  if (a._x177) h += a._x177();
+  if (a._x165) h += a._x165();
   if (a.mystery) {
     const n = Math.min(a.mystery[0], S.mastery[a.id] || 0);
     h += solved(a) ? `<span class="ok">🔎 Solved: about ${Math.round(1 / (a.mystery[1] * (loreTier(a) ? 0.6 : 1)))}× faster</span>` : `<span>🔎 Mystery: ${n} of ${a.mystery[0]} times to figure it out</span>`;
@@ -2755,7 +2752,7 @@ function renderSkills() {
   const has = SKILLS.filter(([k]) => skillPts(k) > 0);
   $('skillsBox').hidden = !has.length;
   if (!has.length) return;
-  const h = has.map(([k, n, g]) => `<tr title="Grows from: ${esc(g)}"><td class="n">${esc(n)}</td><td class="l">${skillLvl(k)}</td><td class="b"><div class="bar" title="${esc(n)} ${skillLvl(k)} → ${skillLvl(k) + 1}: ${Math.floor(skillFrac(k) * 100)}%"><i style="width:${(skillFrac(k) * 100).toFixed(1)}%;background:var(--moon)"></i></div></td></tr>`).join('');
+  const h = has.map(([k, n, g]) => `<tr title="${esc(n)}, like ${esc(SKILL_TWIN[k] || n)}. It grows from ${esc(g)}."><td class="n">${esc(n)}</td><td class="l">${skillLvl(k)}</td><td class="b"><div class="bar" title="${esc(n)} ${skillLvl(k)} → ${skillLvl(k) + 1}: ${Math.floor(skillFrac(k) * 100)}%"><i style="width:${(skillFrac(k) * 100).toFixed(1)}%;background:var(--moon)"></i></div></td></tr>`).join('');
   if ($('skills')._h !== h) { $('skills').innerHTML = h; $('skills')._h = h; }
 }
 function renderStats() {
@@ -2765,7 +2762,7 @@ function renderStats() {
   if (focusOn()) {
     const opts = v => '<option value="">nothing</option>' + STAT_KEYS.map(k => `<option value="${k}"${v === k ? ' selected' : ''}>${STATS[k].name}</option>`).join('');
     if ($('focus1')._v !== (S.focus || '')) { $('focus1').innerHTML = opts(S.focus); $('focus1')._v = S.focus || ''; }
-    $('focus2').hidden = !farDone('_x119');
+    $('focus2').hidden = !farDone('_x109');
     if (!$('focus2').hidden && $('focus2')._v !== (S.focus2 || '')) { $('focus2').innerHTML = opts(S.focus2); $('focus2')._v = S.focus2 || ''; }
   }
   $('bearPanel').hidden = !S.bear.unlocked;
@@ -2782,7 +2779,7 @@ const times = n => { n = n || 0; return n === 1 ? 'once' : n + ' times'; };
 let burrowSig = '';
 function renderBurrow() {
   if ($('burrowPanel').hidden) return;
-  const sig = JSON.stringify([S.stickers, S.stickerNew, U('painting'), S.gallery, S.paint, fame(), U('outfits'), S.outfits, S.flags._x35, L.outfit, S.signs._x219, U('candles'), S.spellbook, S.flags._x9, S.album, S.mastery.moonwater, S.mastery.spelljar, U('_x56'), U('photowall'), U('_x34'), S.drift, moonIdx(), PHOTO_SPOTS.map(sp => sp.known())]);
+  const sig = JSON.stringify([S.stickers, S.stickerNew, U('painting'), S.gallery, S.paint, fame(), U('outfits'), S.outfits, S.flags._x28, L.outfit, S.signs._x207, U('candles'), S.spellbook, S.flags._x8, S.album, S.mastery.moonwater, S.mastery.spelljar, U('_x48'), U('photowall'), U('_x27'), S.drift, moonIdx(), PHOTO_SPOTS.map(sp => sp.known())]);
   if (sig === burrowSig) return;
   burrowSig = sig;
   let h = '';
@@ -2790,8 +2787,8 @@ function renderBurrow() {
     const n = Object.keys(S.stickers).length, nn = Object.keys(S.stickerNew || {}).length;
     h += `<div class="corner"><h3>📒 The Sticker Book</h3><p>${n} sticker${n === 1 ? '' : 's'} so far${nn ? ` · <b>${nn} new</b>` : ''}. One page for each world, and a few for everything in between.</p><button type="button" class="btn" data-stickers>Open the book</button></div>`;
   }
-  if (U('_x56')) {
-    h += `<div class="corner"><h3>🫙 The windowsill</h3><p>Today's moon water would add ${fmtDur(Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x103')) + (farDone('_x6') ? 20 : 0))} of daylight (the fuller the moon, the stronger). A spell jar doubles talent growth for the day.</p></div>`;
+  if (U('_x48')) {
+    h += `<div class="corner"><h3>🫙 The windowsill</h3><p>Today's moon water would add ${fmtDur(Math.round(30 + 40 * moonLight()) + (10 * ph('gladeFull')) + (10 * ph('_x93')) + (farDone('_x5') ? 20 : 0))} of daylight (the fuller the moon, the stronger). A spell jar doubles talent growth for the day.</p></div>`;
   }
   if (U('photowall')) {
     const spots = PHOTO_SPOTS.filter(sp => has(sp.id) || (ZONES[sp.zone].act <= S.act && sp.known()));
@@ -2901,7 +2898,7 @@ function loreLine(label, text, found, st) {
 }
 
 const LORE_BEATS = [
-  { t: 'A _x176 night', g: -1, have: () => true, html: () => PROLOGUE_INTRO },
+  { t: 'A _x164 night', g: -1, have: () => true, html: () => PROLOGUE_INTRO },
   { t: 'The strange light', g: -1, have: () => !!S.flags.held, html: () => beatHtml('The strange light') },
   { t: ACTS[0].name, g: 0, have: () => !!S.flags.held, html: () => ACTS[0].intro },
   { t: 'The first moonrise', g: 0, have: () => !!S.flags.firstMoonrise, html: () => beatHtml('The first moonrise') },
@@ -2981,7 +2978,7 @@ function keepsakes() {
   const grp = z => ZONES[z].side || ZONES[z].act;
   add('moon', `${moonHealed()} of ${MOON_PIECES} pieces of the Moon home`, `Every day is ${fmtDur(HEALED_DAY * moonHealed())} longer, and moon bonuses are ${10 * moonHealed()}% stronger`, moonHealed());
   for (const sign of Object.keys(SIGN_STARS)) { const g = SIGNS[sign]; add(SIGN_ACT[sign], `${g.glyph} ${g.name}`, g.bonus || `${STATS[g.stat].name} grows 15% faster`, S.signs[sign]); }
-  for (const [at, st, nm] of FAIRIES) add(0, `Friends with ${nm}`, `${STATS[st].name} grows ${farDone('_x10') ? 35 : 25}% faster`, P('fairies') >= at);
+  for (const [at, st, nm] of FAIRIES) add(0, `Friends with ${nm}`, `${STATS[st].name} grows ${farDone('_x9') ? 35 : 25}% faster`, P('fairies') >= at);
   add(0, 'Moonlit film', 'Photos keep, even when the day starts over', S.flags.film);
   add(0, "Owl's wisdom", 'Talent grows 50% faster', P('owl') >= 50);
   add(0, "Grandpa Tortoise's early mornings", `Every day starts ${fmtDur(30)} earlier`, P('tortoise') >= 100);
@@ -3037,7 +3034,7 @@ function openKeepsakesNow() {
   const pct = x => `+${Math.round((x - 1) * 100)}%`;
   const totals = STAT_KEYS.map(s => `${STATS[s].name} ${pct(mult(s))}`).join(' · ');
   const talent = (P('owl') >= 50 ? 1.5 : 1) * (farDone('farOwlBooks') ? 1.15 : 1) * (trophy('cup') ? 1.05 : 1);
-  const day = `Every day: ${fmtDur(BASE_DAY + HEALED_DAY * moonHealed() + dawnBonus() + (S.flags._x63 ? 40 : 0) + shrineDay())} (it started at ${fmtDur(BASE_DAY)})`;
+  const day = `Every day: ${fmtDur(BASE_DAY + HEALED_DAY * moonHealed() + dawnBonus() + (S.flags._x55 ? 40 : 0) + shrineDay())} (it started at ${fmtDur(BASE_DAY)})`;
   const groups = [['moon', 'The Moon']];
   for (let n = S.act; n >= 0; n--) groups.push([n, `Day ${n + 1} · ${worldName(n)}`]);
   for (const [k, side] of Object.entries(SIDES)) if (side.open()) groups.push([k, side.name + ' (side story)']);
@@ -3203,7 +3200,7 @@ const BEAT_HTML = {
   'The first moonrise': first => '<p>The Moon comes up over the pines, pale and broken, and tries to rise. She can\'t. For a moment everything goes very still, like a held breath.</p>' +
     '<p>Then it\'s dawn again. You\'re standing at the burrow door in your dry coat, lantern in your paw. Nyla\'s bed is empty. The pawprints are fresh in the clover, exactly where they were.</p>' +
     '<p>Everyone else has forgotten yesterday. You haven\'t. The light that touched your cheek last night is still there, and it remembers every step you took. So do you.</p>',
-  'Moonrise picnic': first => "<p>The Moon comes up over Honey Hollow, pale and cracked, the way she has every night. Bear is on the blanket with the honey pot, watching the path, watching the path. When he sees you, he jumps up so fast he knocks over the honey. \"There you are, Bunny. I was starting to think you weren't coming.\" Then Nyla trots out from behind you, and his whole face lights up. \"You found her!\"</p><p>You sit down beside him, and it all comes out at once: the night the Moon cracked, the pawprints, the same morning over and over, the fairies, Briar Rose and her godmothers, Nyla in the ferns. Bear listens to every word. He doesn't understand half of it. He believes all of it.</p><p>\"So every night,\" he says slowly, \"I was sitting here waiting, and you were out there looking for her.\"</p><p>\"Every night,\" you say. \"I could see the Moon come up over the Hollow, and I knew you'd be under it. I always meant to come and tell you. The Moon folded the day back first, every time.\"</p><p>Bear thinks about that. \"I'd have waited,\" he says. \"However many nights it took.\"</p><p>\"I know,\" you say. \"I dreamed about you long before I ever met you. You were waiting in those, too.\"</p><p>Bear is quiet for a moment. Then he rights the honey pot. \"Save me the last bit?\" you ask. \"As you wish,\" he says. Nyla gazes at it so politely that you give it to her anyway.</p><p>That's when Nyla stands, walks over to Bear, and sets the moon shard very carefully in his lap, as if she's been waiting all this time to give it to him. It glows, lifts out of his paws, and floats up and up until it clicks back into the Moon. She shines a little brighter.</p><p>\"Thank you,\" says the Moon, clearly now. \"When I broke, I fell into the stories I love best. You'll know them. I've been reading them over your shoulder for years. Find the rest of me. And find each other, every time.\"</p><p>\"Can you feel it? I can hold on a little longer now. Your days will be longer too.\"</p><p>\"I'm brighter, but I'm not whole. Until I am, I can't hold the night. Every piece you bring home gives the world one more day. Bring them all home, and I'll give you tomorrow.\"</p><p>Over Honey Hollow, the Crab you found star by star shines down on the blanket: <b>Cancer, your rising sign</b>. \"My own sign,\" says the Moon, \"rising over your home. I'm glad you found it first.\"</p><p>The shard's light hasn't quite left Bear's paws: a faint silver shimmer, like pollen from a moonflower. He turns them over and looks at them. \"Will I remember this?\" he asks. \"In the morning?\"</p><p>\"Nobody ever has,\" you say. \"But nobody's ever held a piece of the Moon before.\"</p><p>He walks you home through the clover, with Nyla trotting very properly between you. At your door, he stops. \"Same spot tomorrow? Just in case it comes.\"</p><p>\"Same spot,\" you say. And for the first time in a long time, you let yourself hope it will.</p>".replace('Briar Rose and her _x55', briarName() + ' and her _x55'),
+  'Moonrise picnic': first => "<p>The Moon comes up over Honey Hollow, pale and cracked, the way she has every night. Bear is on the blanket with the honey pot, watching the path, watching the path. When he sees you, he jumps up so fast he knocks over the honey. \"There you are, Bunny. I was starting to think you weren't coming.\" Then Nyla trots out from behind you, and his whole face lights up. \"You found her!\"</p><p>You sit down beside him, and it all comes out at once: the night the Moon cracked, the pawprints, the same morning over and over, the fairies, Briar Rose and her godmothers, Nyla in the ferns. Bear listens to every word. He doesn't understand half of it. He believes all of it.</p><p>\"So every night,\" he says slowly, \"I was sitting here waiting, and you were out there looking for her.\"</p><p>\"Every night,\" you say. \"I could see the Moon come up over the Hollow, and I knew you'd be under it. I always meant to come and tell you. The Moon folded the day back first, every time.\"</p><p>Bear thinks about that. \"I'd have waited,\" he says. \"However many nights it took.\"</p><p>\"I know,\" you say. \"I dreamed about you long before I ever met you. You were waiting in those, too.\"</p><p>Bear is quiet for a moment. Then he rights the honey pot. \"Save me the last bit?\" you ask. \"As you wish,\" he says. Nyla gazes at it so politely that you give it to her anyway.</p><p>That's when Nyla stands, walks over to Bear, and sets the moon shard very carefully in his lap, as if she's been waiting all this time to give it to him. It glows, lifts out of his paws, and floats up and up until it clicks back into the Moon. She shines a little brighter.</p><p>\"Thank you,\" says the Moon, clearly now. \"When I broke, I fell into the stories I love best. You'll know them. I've been reading them over your shoulder for years. Find the rest of me. And find each other, every time.\"</p><p>\"Can you feel it? I can hold on a little longer now. Your days will be longer too.\"</p><p>\"I'm brighter, but I'm not whole. Until I am, I can't hold the night. Every piece you bring home gives the world one more day. Bring them all home, and I'll give you tomorrow.\"</p><p>Over Honey Hollow, the Crab you found star by star shines down on the blanket: <b>Cancer, your rising sign</b>. \"My own sign,\" says the Moon, \"rising over your home. I'm glad you found it first.\"</p><p>The shard's light hasn't quite left Bear's paws: a faint silver shimmer, like pollen from a moonflower. He turns them over and looks at them. \"Will I remember this?\" he asks. \"In the morning?\"</p><p>\"Nobody ever has,\" you say. \"But nobody's ever held a piece of the Moon before.\"</p><p>He walks you home through the clover, with Nyla trotting very properly between you. At your door, he stops. \"Same spot tomorrow? Just in case it comes.\"</p><p>\"Same spot,\" you say. And for the first time in a long time, you let yourself hope it will.</p>".replace('Briar Rose and her _x47', briarName() + ' and her _x47'),
   'The strange light': first => '<p>You open the burrow door, and Nyla shoots past your ankles into the dark.</p>' +
     '<p>Up above, the Moon makes a sound like a tiny bell. A crack runs all the way across her face, and a sliver of silver light falls, turning over and over, into the Whispering Woods.</p>' +
     '<p>On its way down it passes right over you. For a moment the light rests on your cheek, warm, like a hand.</p>' +
@@ -3212,7 +3209,7 @@ const BEAT_HTML = {
 };
 const beatHtml = (title, first) => BEAT_HTML[title](!!first);
 
-const BEAT_TITLES = new Set(["A _x176 night","The strange light","The first moonrise","Found her!","Aurora","Moonrise picnic"]);
+const BEAT_TITLES = new Set(["A _x164 night","The strange light","The first moonrise","Found her!","Aurora","Moonrise picnic"]);
 const nowStamp = () => ({ a: inPrologue() ? -1 : S.act, m: morningNo(), side: !inPrologue() && L && ZONES[L.zone].side ? ZONES[L.zone].side : null });
 function recordBeat(title, html) {
   S.beats = S.beats || [];
@@ -3256,38 +3253,17 @@ function awayEnter(a) { S.away = a; dirty.all = true; }
 function awayShow(html) { const el = $('away'); el.innerHTML = html; el.hidden = false; const c = $('awayClose'); if (c) c.onclick = () => awayLeave(); }
 function awayLeave() {
   if (!S.away) return;
-  if (S.away.kind === '_x146') tandemLeaving();
+  if (S.away.kind === '_x136') tandemLeaving();
   S.away = null; $('away').hidden = true; $('away').innerHTML = '';
   dirty.all = true; saveLocal(); render();
 }
-const shelfOpen = () => !!(S.bear && S.bear.unlocked) && !inPrologue() && !S.revisit && !S.away;
-function openShelf() {
-  if (!shelfOpen()) return;
-  const left = tandemLeft(), lost = bearLostNow();
-  const rows = [`<li><b>🏎️ Moonlit Tandem</b>: drifting down the old logging road with Bear, in its own window. ${lost ? 'Bear isn\'t here today.' : left ? `${left} run${left === 1 ? '' : 's'} left today.` : 'No runs left today.'} Best run ${S.drift.best}, Drifting ${driftLvl()}.
-    ${!lost && left ? '<button class="btn primary" id="shelfTandem">Drive</button>' : ''}</li>`];
-  showModal('📚 The shelf', `<p class="hint">The day waits while you're in one of these, and the Moon keeps your moonlight for you.</p><ul class="shelf">${rows.concat(bookShelfRows()).join('')}</ul>`, [['Close', null]]);
-  const b = $('shelfTandem'); if (b) b.onclick = () => { $('modal').hidden = true; openTandem(); };
-}
+const shelfOpen = () => false;
+function openShelf() {}
 
-const BOOKS = {
-  _x149: { start: 4, done: () => !!S.flags._x149 },
-  _x157: { start: 73, done: () => !!S.flags._x65, onOpen: () => marketCrate(), dawn: l => marketDawn(l) },
-  floor: { start: 67, done: () => !!S.flags._x64 },
-  _x156: { start: 70, done: () => !!S.flags._x13, onOpen: () => { S.skyLast = S.loop; } },
-  _x184: { start: 76, done: () => !!S.flags._x22 },
-  painted: { start: 79, done: () => !!S.flags._x14 },
-  isles: { start: 82, done: () => !!S.flags._x23 },
-  _x191: { start: 85, done: () => !!S.flags._x24 },
-  _x212: { start: 88, done: () => !!S.flags._x66 },
-  _x147: { start: 92, done: () => !!S.flags._x147 },
-  _x158: { start: 96, done: () => !!S.flags._x25, intro: () => greeneIntro(), onOpen: () => { S.greeneLast = S.loop; } },
-  _x131: { start: 99, done: () => !!S.flags._x44, intro: () => unknownIntro(), onOpen: () => { S.unknownLast = S.loop; } },
-  _x213: { start: 103, done: () => !!S.flags._x1, intro: () => deepIntro(), onOpen: () => { S.deepLast = S.loop; } },
-};
+const BOOKS = {};
 const BOOK_DAY = 3 * 60 * GAME_MIN_PER_SEC;
 
-const BOOK_TRIM = { _x149: 0.6, floor: 0.7, _x156: 1, _x184: 0.85, painted: 0.65, isles: 0.5, _x191: 0.9, _x212: 0.75, _x147: 0.6, _x157: 1, _x158: 1.7, _x131: 1, _x213: 1 };
+const BOOK_TRIM = {};
 const inBook = () => !!(typeof S !== 'undefined' && S && S.away && S.away.kind === 'book');
 const bookOf = z => (ZONES[z] && ZONES[z].side && BOOKS[ZONES[z].side] ? ZONES[z].side : null);
 const bookDone = id => !!(BOOKS[id] && BOOKS[id].done());
@@ -3343,12 +3319,7 @@ function bookVisible(a) {
   if (a.travel && a.to != null && bookOf(a.to)) return false;
   return !bz || (!!a.anyZone && bookDone(bz));
 }
-function bookShelfRows() {
-  return Object.keys(BOOKS).filter(id => SIDES[id] && SIDES[id].open()).map(id => {
-    const st = bookDone(id) ? 'Finished: only lore, stickers and photos are left to find.' : S.books && S.books[id] ? 'In progress.' : 'New.';
-    return `<li><b>📖 ${esc(SIDES[id].name)}</b>: ${st} <button class="btn${bookDone(id) ? '' : ' primary'}" data-book="${id}">Open</button></li>`;
-  });
-}
+function bookShelfRows() { return []; }
 
 { const done = new Set();
   for (const id of ORDER) { const a = A[id], b = bookOf(a.zone); if (a.track && b && !done.has(a.track) && TRACKS[a.track]) { done.add(a.track); TRACKS[a.track].k *= BOOK_TRIM[b] ?? 1; } } }
@@ -3415,7 +3386,7 @@ $('coachSkip').addEventListener('click', () => { S.tut = 99; saveSoon(); updateC
 const PROLOGUE_INTRO = '<p>It\'s a quiet night at the edge of Clover Meadow. Tomorrow is picnic night with Bear in Honey Hollow. Up above, the Moon looks pale and tired, thinner than you remember her. She\'s been getting dimmer for years. You stopped reading by her a long time ago.</p>' +
   '<p>Nyla is restless. You are not. It\'s time to get ready for bed.</p>';
 function intro() {
-  if (inPrologue()) recordBeat('A _x176 night', PROLOGUE_INTRO);
+  if (inPrologue()) recordBeat('A _x164 night', PROLOGUE_INTRO);
   showModal('Moonward', (inPrologue() ? PROLOGUE_INTRO : ACTS[S.act].intro) +
     (inPrologue()
       ? '<ul><li>Tap <b>+1</b> on a step under <b>Things to do</b> to add it to the plan.</li>' +
@@ -3454,12 +3425,12 @@ function testSave(stage) {
 
   if (/^(greene|unknown|deep)(end)?$/.test(stage)) {
     const end = stage.endsWith('end'), id = stage.replace(/end$/, '');
-    const d = testSave({ _x158: 'a10start', _x131: 'a5start', _x213: 'a11start' }[id]);
+    const d = testSave({ _x146: 'a10start', _x121: 'a5start', _x201: 'a11start' }[id]);
     const tr = o => { for (const [k, v] of Object.entries(o)) d.track[k] = expForPct(k, v); };
     d.bear.unlocked = true; d.flags[id + 'Open'] = true; d[id + 'Last'] = d.loop;
-    if (end && id === '_x158') { tr({ _x167: 50, _x144: 50, _x20: 40, _x120: 100, _x5: 100, _x46: 100, _x180: 40, _x172: 40 }); d.flags._x145 = true; d.proj._x145 = 60; d.reached[96] = d.reached[97] = d.reached[98] = true; }
-    if (end && id === '_x131') { tr({ _x95: 60, _x194: 100, _x195: 100, _x96: 100, _x198: 30, _x101: 100, _x173: 20 }); Object.assign(d.flags, { _x97: true, _x196: true }); d.proj._x97 = 60; for (const z of [99, 100, 101, 102]) d.reached[z] = true; }
-    if (end && id === '_x213') { tr({ _x199: 50, _x123: 50, _x174: 60, _x151: 100, _x200: 40, _x121: 30, _x201: 100, _x122: 100, _x202: 100, _x175: 45 }); Object.assign(d.flags, { _x40: true, _x62: true }); d.proj._x40 = 60; for (const z of [103, 104, 105, 106]) d.reached[z] = true; }
+    if (end && id === '_x146') { tr({ _x155: 50, _x134: 50, _x17: 40, _x110: 100, _x4: 100, _x38: 100, _x169: 40, _x160: 40 }); d.flags._x135 = true; d.proj._x135 = 60; d.reached[96] = d.reached[97] = d.reached[98] = true; }
+    if (end && id === '_x121') { tr({ _x84: 60, _x182: 100, _x183: 100, _x85: 100, _x186: 30, _x91: 100, _x161: 20 }); Object.assign(d.flags, { _x86: true, _x184: true }); d.proj._x86 = 60; for (const z of [99, 100, 101, 102]) d.reached[z] = true; }
+    if (end && id === '_x201') { tr({ _x187: 50, _x113: 50, _x162: 60, _x140: 100, _x188: 40, _x111: 30, _x189: 100, _x112: 100, _x190: 100, _x163: 45 }); Object.assign(d.flags, { _x33: true, _x54: true }); d.proj._x33 = 60; for (const z of [103, 104, 105, 106]) d.reached[z] = true; }
     return d;
   }
   const t = freshSave();
@@ -3488,7 +3459,7 @@ function testSave(stage) {
     case 'a1mid': act1mid(); break;
     case 'a1end': act1end(); break;
   }
-  if (t.act >= 3 || stage === 'a3end') t.flags._x67 = true;
+  if (t.act >= 3 || stage === 'a3end') t.flags._x56 = true;
 
   if (stage !== 'prologue') { const L0 = stage === 'a1start' ? 0 : Math.min(12, 2 + t.act); const FROM = { crafting: 1, riddles: 1, swordplay: 1, drifting: 1, creatures: 2, music: 4, aim: 5, painting: 5, science: 6 }; t.skills = Object.fromEntries(SKILLS.filter(([k]) => (FROM[k] || 0) <= t.act).map(([k]) => [k, SKILL_AT(L0)])); t.skills.balance = Math.max(SKILL_AT(1), t.skills.balance); t.skillsV = 1; t.flags.skillsIntro = true; }
   return t;
@@ -3515,7 +3486,7 @@ function testSaveCode(stage, label) {
 function retroTemplates() {
   if (S.flags.tplChecked) return;
   S.flags.tplChecked = true;
-  if (!S.flags._x67 && (S.act >= 3 || 0 >= 20)) S.flags._x67 = true;
+  if (!S.flags._x56 && (S.act >= 3 || 0 >= 20)) S.flags._x56 = true;
 }
 
 function demoCarryOver() {
@@ -3592,7 +3563,7 @@ $('burrow').addEventListener('click', ev => {
   if (add) { const box = add.closest('.candles'), v = k => box.querySelector(`[data-cpart="${k}"]`).value; addCandle({ c: v('c'), h: v('h'), l: v('l') }); return; }
   if (ev.target.matches && ev.target.matches('[data-paint-next]')) return;
   const w = ev.target.closest('[data-wear]');
-  if (w) { addToPlan('_x163' + w.dataset.wear, 1); toast('Added: Put On the ' + OUTFITS[w.dataset.wear].name); render(); return; }
+  if (w) { addToPlan('_x151' + w.dataset.wear, 1); toast('Added: Put On the ' + OUTFITS[w.dataset.wear].name); render(); return; }
   const k = ev.target.closest('[data-candle-key]');
   if (k) { const [c, h, l] = k.dataset.candleKey.split('|'); addCandle({ c, h, l }); }
 });
@@ -3654,21 +3625,21 @@ $('bearJob').addEventListener('change', ev => { S.bearJob = ev.target.value; sav
 $('tplBtn').addEventListener('click', () => { S.ui.tplOpen = !S.ui.tplOpen; tplSig = ''; saveSoon(); render(); });
 $('tplBox').addEventListener('click', ev => {
   const b = ev.target.closest('button[data-tpl]'); if (!b) return;
-  const op = b.dataset.tpl, i = +b.dataset.i, T = S._x67[i];
+  const op = b.dataset.tpl, i = +b.dataset.i, T = S._x56[i];
   if (op === 'save') {
     if (!S.queue.length) { notice('The plan is empty, so there is nothing to save.', 'plan'); return; }
-    const name = (prompt('Name this plan:', 'Plan ' + (S._x67.length + 1)) || '').trim().slice(0, 40);
+    const name = (prompt('Name this plan:', 'Plan ' + (S._x56.length + 1)) || '').trim().slice(0, 40);
     if (!name) return;
     const steps = S.queue.map(e => Object.assign({ id: e.id, n: e.n, bear: !!e.bear }, e.recipe ? { recipe: Object.assign({}, e.recipe) } : {}));
-    const old = S._x67.findIndex(x => x.name === name);
+    const old = S._x56.findIndex(x => x.name === name);
     if (old >= 0 && !confirm('Replace the saved plan "' + name + '"?')) return;
-    if (old >= 0) S._x67[old].steps = steps; else S._x67.push({ name, steps });
-    S.mastery._x21 = Math.max(S.mastery._x21 || 0, S._x67.length);
+    if (old >= 0) S._x56[old].steps = steps; else S._x56.push({ name, steps });
+    S.mastery._x18 = Math.max(S.mastery._x18 || 0, S._x56.length);
     notice('Saved the plan as "' + name + '".', 'plan');
   } else if (!T) return;
   else if (op === 'load' || op === 'add') loadTemplate(T, op === 'load');
   else if (op === 'ren') { const name = (prompt('Rename "' + T.name + '" to:', T.name) || '').trim().slice(0, 40); if (name) T.name = name; }
-  else if (op === 'del') { if (confirm('Delete the saved plan "' + T.name + '"?')) S._x67.splice(i, 1); }
+  else if (op === 'del') { if (confirm('Delete the saved plan "' + T.name + '"?')) S._x56.splice(i, 1); }
   tplSig = ''; saveSoon(); render();
 });
 $('usePlan').addEventListener('click', () => { applyPlanNow(); dismissNotice('plandone'); toast('Today now follows your plan. What\'s done stays done.'); render(); });
@@ -3709,12 +3680,12 @@ let lastT = 0, sinceSave = 0;
 function frame() {
   const now = performance.now(), dt = Math.min(1000, now - lastT); lastT = now;
   const running = speed > 0 && $('modal').hidden && L.begun && !L.waiting && !(S.away && S.away.kind !== 'book');
-  if (!running) S.bank = Math.min(maxBank(), S.bank + dt / 1000 * (L && L._x117 ? 1.5 : 1));
+  if (!running) S.bank = Math.min(maxBank(), S.bank + dt / 1000 * (L && L._x107 ? 1.5 : 1));
   else {
     let sp = speed;
     if (inBook()) { sp = 1; S.bank = Math.min(maxBank(), S.bank + dt / 1000); }
     if (sp > 1 && S.bank <= 0) sp = 1;
-    if (sp > 1) S.bank = Math.max(0, S.bank - (sp - 1) * dt / 1000 * (S.signs._x116 ? 0.75 : 1));
+    if (sp > 1) S.bank = Math.max(0, S.bank - (sp - 1) * dt / 1000 * (S.signs._x106 ? 0.75 : 1));
     step(dt / 1000 * GAME_MIN_PER_SEC * sp);
   }
   render();
