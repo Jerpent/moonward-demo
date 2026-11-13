@@ -349,7 +349,8 @@ textarea { width: 100%; min-height: 70px; font-family: var(--font-mono); font-si
 .td-wrap { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; justify-content: center; }
 #tdCanvas { width: min(420px, 100%); aspect-ratio: 420 / 560; border-radius: 12px; touch-action: none; background: #0b1020; }
 .td-side { max-width: 320px; display: flex; flex-direction: column; gap: 8px; }
-.td-drift { font-size: 18px; padding: 14px 18px; touch-action: none; user-select: none; }
+.td-drift { font-size: 18px; padding: 14px 18px; touch-action: none; user-select: none; flex: 1; }
+.td-pads { display: flex; gap: 8px; } .td-pad { font-size: 20px; padding: 12px 18px; touch-action: none; user-select: none; }
 .shelf { list-style: none; padding: 0; margin: 8px 0 0; } .shelf li { margin: 8px 0; }
 .shelf-card { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; }
 button.shelf-card:hover, button.shelf-card:focus-visible { border-color: var(--moon); box-shadow: 0 0 0 2px color-mix(in srgb, var(--moon) 25%, transparent); outline: none; }
@@ -934,7 +935,7 @@ const photoMult = s => (s === 'grit' ? phm('_x38') : 1) * (s === 'smarts' ? phm(
 const buff = n => !!(L.buffs && L.buffs[n] > L.time);
 const fellow = n => !!(L.fellow && L.fellow[n]);
 const fellowMax = () => (0 >= 100 ? 3 : 2);
-const buffMult = s => (s === 'hop' ? (trophy('silver') ? 1.05 : 1) * (trophy('gold') ? 1.05 : 1) : 1) * (buff('_x68') ? 1.25 : 1) * (s === 'grit' && buff('_x32') ? 1.5 : 1) * (s === 'sniff' && fellow('_x152') ? 1.5 : 1) * farMult(s);
+const buffMult = s => (s === 'hop' ? (trophy('gold') ? 1.1 : 1) : 1) * (buff('_x68') ? 1.25 : 1) * (s === 'grit' && buff('_x32') ? 1.5 : 1) * (s === 'sniff' && fellow('_x152') ? 1.5 : 1) * farMult(s);
 const expMult = s => focusMult(s) * buffMult(s) * candleMult(s) * (1 + 0.1 * lvl(S.talent[s])) * (L.nyla && s === 'sniff' ? 2 : 1) * fairyMult(s) * signMult(s) * photoMult(s);
 const wl = a => Object.entries(a.stats).reduce((t, [s, w]) => t + w * lvl(L.stat[s]), 0);
 const mLvl = id => Math.floor(Math.sqrt(S.mastery[id] || 0));
@@ -969,7 +970,7 @@ const actNow = () => { let n = 0; while (n < 12 && S.flags['act' + (n + 1)]) n++
 const behind = a => (ZONES[a.zone].side ? 0 : Math.max(0, actNow() - actOf(a)));
 const softSpeed = x => (x <= 4 ? x : 4 * Math.sqrt(x / 4));
 const bearLvl = k => lvl(S.bear.skill[k] * 0.4);
-const bearMax = () => (30 * ph('_x85')) + (30 * ph('_x56')) + (30 * ph('_x89')) + (farDone('_x2') && moonIdx() === 0 ? 30 : 0) + (30 * ph('_x91')) + (30 * ph('_x63')) + (farDone('_x78') ? 30 : 0) + (farDone('_x9') ? 30 : 0) + (30 * ph('_x13')) + (farDone('_x75') ? 60 : 0) + (farDone('_x99') ? 30 : 0) + (30 * ph('_x106')) + 240 + 25 * bearLvl('heart') + (30 * ph('_x66')) + (30 * ph('_x83')) + (30 * ph('_x22')) + (trophy('bronze') ? 15 : 0);
+const bearMax = () => (30 * ph('_x85')) + (30 * ph('_x56')) + (30 * ph('_x89')) + (farDone('_x2') && moonIdx() === 0 ? 30 : 0) + (30 * ph('_x91')) + (30 * ph('_x63')) + (farDone('_x78') ? 30 : 0) + (farDone('_x9') ? 30 : 0) + (30 * ph('_x13')) + (farDone('_x75') ? 60 : 0) + (farDone('_x99') ? 30 : 0) + (30 * ph('_x106')) + 240 + 25 * bearLvl('heart') + (30 * ph('_x66')) + (30 * ph('_x83')) + (30 * ph('_x22')) + (trophy('silver') ? 15 : 0);
 const knack = id => S.bear.knack[id] || 0;
 function bearMult(a) {
   const t = BEAR_TAGS[a.bear && a.bear.tag || '_x156'];
@@ -1060,6 +1061,7 @@ function cost(a, withBear) {
   let c = 1;
   if (solved(a)) c *= a.mystery[1] * (loreTier(a) ? 0.6 : 1);
   if (a.travel && L.nyla) c *= 0.5;
+  if (a.travel && trophy('bronze')) c *= 0.95;
   c *= candleCost(a);
   if (a.travel && L.inv.dust > 0) c *= 0.4;
   if (a.zone === 11 && fellow('_x132')) c *= 0.6;
@@ -3067,7 +3069,7 @@ function realView(fn) {
 }
 function openKeepsakes() { return realView(openKeepsakesNow); }
 function openKeepsakesNow() {
-  const K = keepsakes(), mult = s => fairyMult(s) * signMult(s) * photoMult(s) * farMult(s) * (s === 'hop' ? (trophy('silver') ? 1.05 : 1) * (trophy('gold') ? 1.05 : 1) : 1);
+  const K = keepsakes(), mult = s => fairyMult(s) * signMult(s) * photoMult(s) * farMult(s) * (s === 'hop' ? (trophy('gold') ? 1.1 : 1) : 1);
   const pct = x => `+${Math.round((x - 1) * 100)}%`;
   const totals = STAT_KEYS.map(s => `${STATS[s].name} ${pct(mult(s))}`).join(' · ');
   const talent = (P('owl') >= 50 ? 1.5 : 1) * (farDone('farOwlBooks') ? 1.15 : 1) * (trophy('cup') ? 1.05 : 1);
