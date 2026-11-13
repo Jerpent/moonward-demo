@@ -102,6 +102,7 @@ details.panel[open] > summary h2::before { content: "▾ "; }
 .seg button { border: 0; background: transparent; padding: 5px 10px; font-size: 13px; font-weight: 700; }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button[aria-pressed="true"] { background: var(--moss); color: var(--moss-ink); }
+.seg button:disabled { opacity: .4; cursor: not-allowed; }
 .btn { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; padding: 5px 12px; font-size: 13px; font-weight: 700; }
 .btn:hover { border-color: var(--moss); }
 .btn.primary { background: var(--moss); color: var(--moss-ink); border-color: var(--moss); }
@@ -361,6 +362,13 @@ button.shelf-card:hover, button.shelf-card:focus-visible { border-color: var(--m
 .sc-go { flex: none; font-size: 13px; font-weight: 800; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
 .sc-go.primary { background: var(--moss); color: var(--moss-ink); border-color: var(--moss); }
 @media (max-width: 420px) { .shelf-card { gap: 10px; padding: 9px 10px; } .sc-cover { width: 36px; height: 46px; font-size: 20px; } .sc-go { padding: 3px 10px; } }
+
+/* Phones: the speeds get their own line, the buttons the next; the place label drops under its heading. */
+@media (max-width: 480px) {
+  .status-in .ctrls { flex-wrap: wrap; flex-basis: 100%; gap: 6px; }
+  .status-in .ctrls .seg { flex: 1 1 100%; } .status-in .ctrls .seg button { flex: 1 1 0; }
+  .sec-h { flex-wrap: wrap; } .sec-h .label { flex-basis: 100%; }
+}
 </style>
 
 <header class="sky">
@@ -2538,7 +2546,15 @@ function renderActions() {
   { const all = hiddenWithLore(), here = all.filter(id => A[id].zone === viewZone).length;
     $('unhideLore').hidden = !all.length;
     $('unhideLore').textContent = `📜 Unhide steps with lore left (${here === all.length ? all.length : here + ' here, ' + all.length + ' in all'})`; }
-  $('moreHint').hidden = inPrologue() || !ORDER.some(id => A[id].zone === viewZone && actOf(A[id]) <= S.act && !visible(A[id]));
+  if (_x204() && _x206(S.away.id)) {
+    const left = ORDER.some(id => _x205(A[id].zone) === S.away.id && !A[id].travel && visible(A[id]));
+    $('moreHint').textContent = left ? 'The end of this story. A step leaves the list once nothing is left to find in it: lore, a photo or a far-off. The rest are kept in the Lore book.'
+      : 'The end of this story, and nothing is left to find here. Everything you found is in the Lore book. Close the book whenever you like.';
+    $('moreHint').hidden = false;
+  } else {
+    $('moreHint').textContent = 'Keep exploring. More turns up the better you know a place.';
+    $('moreHint').hidden = inPrologue() || !ORDER.some(id => A[id].zone === viewZone && actOf(A[id]) <= S.act && !visible(A[id]));
+  }
   updateActions();
 }
 const bwFx = w => w.fx;
@@ -3095,7 +3111,7 @@ function updateHeader() {
   if ($('moonPill')._h !== mt) { $('moonPill').innerHTML = mt; $('moonPill')._h = mt; $('moonPill').title = `Today's moon: ${n}` + (mb > 0 ? `. Talent grows ${mb}% faster today.` : ''); }
   const bt = '✨ ' + fmtSecs(S.bank) + ' stored';
   if ($('bankPill').textContent !== bt) $('bankPill').textContent = bt;
-  for (const b of $('speed').children) { const v = +b.dataset.speed; b.disabled = v > 1 && S.bank <= 0; }
+  for (const b of $('speed').children) { const v = +b.dataset.speed, book = v > 1 && _x204(); b.disabled = book || (v > 1 && S.bank <= 0); b.title = book ? 'Moonlight keeps while you\'re in a book: a book runs at 1×' : ''; }
 }
 
 function applyPanels() {
@@ -3292,6 +3308,7 @@ const _x206 = id => !!(_x200[id] && _x200[id].done());
 let _x214 = null;
 const _x215 = {};
 
+const firstPage = html => String(html).replace(/<p><b>New:<\/b>(?:(?!<p>)[\s\S])*<\/p>\s*$/, '');
 const _x197 = {};
 function _x202(id, fromIntro) {
   const b = _x200[id];
@@ -3310,7 +3327,7 @@ function _x202(id, fromIntro) {
   viewZone = L.zone; tabsSig = ''; predDirty = true; noticeSig = null; setSpeed(0); dirty.all = true; saveLocal(); render();
   for (const r of _x212(id)) if (_x205(A[r].to) === id && A[r].effect) A[r].effect();
   if (first && b.intro) b.intro();
-  else if (first && !fromIntro && _x197[id]) { markSeen(id + 'Page'); showModal(_x197[id][0], _x197[id][1](), [['Begin', null]]); }
+  else if (first && !fromIntro && _x197[id]) { markSeen(id + 'Page'); showModal(_x197[id][0], firstPage(_x197[id][1]()), [['Begin', null]]); }
   const lines = _x213(id);
   if (lines.length) story('📖 ' + lines[(bk.opens - 1) % lines.length], 'story');
 }
